@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shivam Bairwa - Info</title>
+  <style>
+    /* Loader styles */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+     background-color: rgb(255, 255, 255);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgb(22, 21, 21);
+      font-size: 24px;
+      font-family: 'Courier New', monospace;
+      z-index: 9999;
+    }
+
+    .typewriter-text {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid rgb(8, 116, 116);
+      width: 0;
+      animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    body.hidden {
+      overflow: hidden;
+    }
+
+    body.loaded #loader {
+      display: none;
+    }
+
+    body.loaded .main-content {
+      display: block;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      display: none;
+      text-align: center;
+      margin: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .profile-pic {
+      width: 150px;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    h2 {
+      background-color: aqua;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body class="hidden">
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="typewriter-text">Loading ShivamCS Portfolio...</div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2>My Information</h2>
+    <img src="image.html/16.jpg" alt="Shivam's Photo" class="profile-pic" />
+    <p>Name: <strong>Shivam Bairwa (shivamcs)</strong></p>
+    <p>Email: shivamsyber@gmail.com</p>
+    <p>From: Garhi ka Bairwa, Bamanwas, Rajasthan</p>
+
+    <h2>Contact Me</h2>
+    <p><strong>Phone:</strong> 8875761835</p>
+    <p><strong>Email:</strong> shivamsyber@gmail.com</p>
+    <p><strong>Location:</strong> Garhi ka Bairwa, Bamanwas, Rajasthan</p>
+
+    <footer>
+      <p>&copy; 2025 ShivamCS. All rights reserved.</p>
+      <div class="social-icons">
+        <a href="https://www.instagram.com/shivamcs" target="_blank">Instagram</a> |
+        <a href="https://www.linkedin.com/in/shivamcs" target="_blank">LinkedIn</a> |
+        <a href="https://www.facebook.com/shivamcs" target="_blank">Facebook</a> |
+        <a href="https://twitter.com/shivamcs" target="_blank">X (Twitter)</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Script to hide loader and show content -->
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.body.classList.remove('hidden');
+        document.body.classList.add('loaded');
+      }, 3200); // 3.2 sec delay to match typewriter animation
+    });
+  </script>
+
+</body>
+</html>

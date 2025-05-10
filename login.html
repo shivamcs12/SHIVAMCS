@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+    }
+
+    .typing-loader {
+      font-size: 22px;
+      color: #444;
+      border-right: 2px solid #444;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      animation: typing 2s steps(30, end) forwards;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 230px; }
+    }
+
+    #main-content {
+      display: none;
+      width: 100%;
+      max-width: 380px;
+      padding: 20px;
+      background: #ffffffcc;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .data-box {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #ffffff, #d3e0ff);
+      padding: 50px;
+      text-align: center;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .data-box h3 {
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .data-box p {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="typing-loader">Loading your secure panel...</div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <h2>Admin Login</h2>
+    <input type="text" id="userId" placeholder="User ID">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Submit</button>
+    <p id="message"></p>
+  </div>
+
+  <!-- Data Boxes -->
+  <div id="shivamData" class="data-box">
+    <h3>Welcome Shivam Bairwa</h3>
+    <p><strong>DOB:</strong> 5 June 2002</p>
+    <p><strong>College:</strong> Compucom Institute of Technology & Management</p>
+    <p><strong>BFF:</strong> Ajay Meena</p>
+    <p><strong>Village:</strong> Garhi ka Bairwa, Bamanwas, Sawai Madhopur</p>
+  </div>
+
+  <div id="ajayData" class="data-box">
+    <h3>Welcome Ajay Meena</h3>
+    <p><strong>Current Class:</strong> 12th</p>
+    <p><strong>City:</strong> Jaipur</p>
+    <p><strong>Girlfriend:</strong> Karishma</p>
+    <p><strong>Sisters:</strong> Pooja (big), Ronu (small)</p>
+  </div>
+
+  <script>
+    // Loader fade out
+    window.onload = function() {
+      setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+      }, 2000);
+    };
+
+    // Add event listener to check Enter key press
+    document.getElementById('userId').addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
+
+    document.getElementById('password').addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
+
+    // Login Function
+    function login() {
+      const uid = document.getElementById('userId').value;
+      const pwd = document.getElementById('password').value;
+      const message = document.getElementById('message');
+
+      document.getElementById('main-content').style.display = 'none';
+
+      if (uid === '1200' && pwd === 'your2005') {
+        document.getElementById('shivamData').style.display = 'block';
+        message.textContent = "";
+      } else if (uid === '1300' && pwd === '2006') {
+        document.getElementById('ajayData').style.display = 'block';
+        message.textContent = "";
+      } else {
+        message.textContent = "❌ Invalid ID or Password";
+        message.style.color = 'red';
+        document.getElementById('main-content').style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>
