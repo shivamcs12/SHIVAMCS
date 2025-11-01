@@ -48,25 +48,48 @@
       padding: 1rem;
     }
 
+    /* Navigation */
     nav {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       background-color: #255a61;
-      padding: 10px;
-      color: rgb(243, 226, 226);
-      text-decoration: solid;
+      padding: 10px 20px;
+      color: white;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 20px;
     }
 
     nav a {
       color: white;
       margin: 0 10px;
       text-decoration: none;
-    }
-
-    .logo {
       font-weight: bold;
+      transition: color 0.3s;
     }
 
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    /* Sliding Bar */
     .sliding-bar {
       background-color: rgb(255, 255, 255);
       overflow: hidden;
@@ -97,7 +120,7 @@
 
     .slider-track {
       display: flex;
-      width: calc(200px * 8); /* 8 images (4 x repeated) */
+      width: calc(200px * 8);
       animation: scroll 20s linear infinite;
     }
 
@@ -115,6 +138,7 @@
       100% { transform: translateX(-50%); }
     }
 
+    /* Content */
     .content {
       padding: 20px;
       text-align: center;
@@ -136,6 +160,19 @@
     footer .social-icons {
       margin-top: 10px;
     }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .slider-track img {
+        width: 150px;
+        height: 200px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -153,9 +190,10 @@
   <!-- Navigation -->
   <nav>
     <div class="logo-container">
-    <img src="21.jpg" class="logo-image" />
-    shivamcs
-</div>
+      <img src="21.jpg" class="logo-image" alt="Logo" />
+      <span class="logo">shivamcs</span>
+    </div>
+    <div>
       <a href="#">Home</a>
       <a href="about.html">About</a>
       <a href="services.html">Services</a>
@@ -176,7 +214,6 @@
       <img src="13.jpg" alt="2">
       <img src="14.jpg" alt="3">
       <img src="15.jpg" alt="4">
-      <!-- Repeat to make infinite loop effect -->
       <img src="12.jpg" alt="1">
       <img src="13.jpg" alt="2">
       <img src="16.jpg" alt="3">
@@ -200,8 +237,8 @@
       <a href="https://www.instagram.com/shivamcs/?hl=en" target="_blank">Instagram</a> |
       <a href="https://in.linkedin.com/in/shivam-bairwa-23a36b345" target="_blank">LinkedIn</a> |
       <a href="https://www.facebook.com/shivamcs1/" target="_blank">Facebook</a> |
-      <a href="https://x.com/shivambairwacs" target="_blank">X (Twitter)</a>
-      <a href="https://www.youtube.com/@shivamcs01" target="_blank">youtube</a>
+      <a href="https://x.com/shivambairwacs" target="_blank">X (Twitter)</a> |
+      <a href="https://www.youtube.com/@shivamcs01" target="_blank">YouTube</a>
     </div>
   </footer>
 
@@ -216,6 +253,3 @@
 
 </body>
 </html>
-
-
-
