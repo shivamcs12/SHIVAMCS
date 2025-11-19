@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ShivamCS | HOMEPAGE</title>
   <style>
+    :root{
+      --accent: #255a61;
+      --muted: #6b6b6b;
+    }
+
     body, html {
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
+      font-family: Inter, Arial, sans-serif;
       background: linear-gradient(to bottom, #f9f9f9, #ececec);
+      color: #222;
     }
 
     /* Loader */
@@ -28,24 +33,25 @@
     }
 
     .spinner {
-      width: 100px;
-      height: 100px;
-      background-image: url('21.jpg'); /* 👈 Updated here */
+      width: 90px;
+      height: 90px;
+      background-image: url('21.jpg');
       background-size: cover;
       background-position: center;
       border-radius: 50%;
-      animation: spin 1s infinite linear;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      animation: breathe 1.8s ease-in-out infinite;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    @keyframes breathe{
+      0%{ transform: scale(0.95); opacity: .9 }
+      50%{ transform: scale(1.02); opacity: 1 }
+      100%{ transform: scale(0.95); opacity: .9 }
     }
 
     header, footer {
       background-color: #c7dcf0;
-      color: grey;
+      color: var(--muted);
       text-align: center;
       padding: 1rem;
     }
@@ -55,125 +61,116 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #255a61;
+      background-color: var(--accent);
       padding: 10px 20px;
       color: white;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .logo-container {
-      display: flex;
-      align-items: center;
+    .logo-container { display:flex; align-items:center; }
+    .logo-image { width:60px; height:60px; border-radius:50%; margin-right:10px; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,0.15); }
+    .logo { font-weight:700; font-size:20px; letter-spacing:0.6px }
+
+    nav a { color: white; margin: 0 8px; text-decoration: none; font-weight:600; }
+    nav a:hover { color: #ffd700; }
+
+    /* Sliding Bar (now static but styled to stand out) */
+    .sliding-bar{
+      background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
+      border-top: 1px solid rgba(0,0,0,0.04);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      padding: 10px 16px;
+      display:flex; justify-content:center; align-items:center;
     }
 
-    .logo-image {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin-right: 10px;
-      object-fit: cover;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    .sliding-text{
+      font-size:22px;
+      font-weight:700;
+      color: #0b3b3a;
+      background: linear-gradient(90deg,#0b3b3a,#2a7a79);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 0.4px;
+      /* subtle entrance */
+      animation: fadeIn 0.8s ease both;
     }
 
-    .logo {
-      font-weight: bold;
-      font-size: 20px;
-    }
+    @keyframes fadeIn{ from{ transform: translateY(6px); opacity:0 } to{ transform:none; opacity:1 } }
 
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s;
-    }
-
-    nav a:hover {
-      color: #ffd700;
-    }
-
-    /* Sliding Bar */
-    .sliding-bar {
-      background-color: rgb(255, 255, 255);
-      overflow: hidden;
-    }
-
-    .sliding-text {
-      display: inline-block;
-      padding-left: 100%;
-      animation: slide-left 10s linear infinite;
-      color: #1a3d3a;
-      font-size: 24px;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    @keyframes slide-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-
-    /* Continuous Image Slider */
-    .slider-container {
+    /* Improved Continuous Image Slider */
+    .slider-container{
+      --img-w: 220px; /* base image width */
       overflow: hidden;
       width: 100%;
-      background: #fff;
-      padding: 20px 0;
+      background: linear-gradient(180deg, #ffffff, #fbfbfb);
+      padding: 24px 0;
+      box-shadow: inset 0 1px 0 rgba(0,0,0,0.02);
     }
 
-    .slider-track {
-      display: flex;
-      width: calc(200px * 8);
-      animation: scroll 20s linear infinite;
+    .slider-viewport{ /* keeps center & max width */
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
     }
 
-    .slider-track img {
-      width: 200px;
-      height: 250px;
-      object-fit: cover;
-      margin: 0 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    .slider-track{
+      display:flex;
+      gap: 18px;
+      align-items:center;
+      /* width will be implicitly large because we duplicate the images */
+      animation: scroll 22s linear infinite;
+      will-change: transform;
     }
 
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    /* pause when user hovers - gives user control and shows "how did they do this?" */
+    .slider-container:hover .slider-track{ animation-play-state: paused; }
+
+    .slider-track img{
+      width: var(--img-w);
+      height: 300px;
+      object-fit:cover;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      transition: transform 350ms cubic-bezier(.2,.8,.2,1), box-shadow 350ms;
+      transform-origin: center;
+      flex-shrink:0;
+      background: #efefef;
+    }
+
+    /* subtle interaction to delight visitors */
+    .slider-track img:hover{
+      transform: translateY(-10px) scale(1.06);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    }
+
+    /* duplicate images in markup so the animation appears continuous */
+    @keyframes scroll{
+      0%{ transform: translateX(0); }
+      100%{ transform: translateX(-50%); }
     }
 
     /* Content */
-    .content {
-      padding: 20px;
-      text-align: center;
-    }
+    .content{ padding: 28px 20px; text-align:center; }
+    .info-section img{ width:180px; border-radius:50%; margin-bottom:12px; box-shadow:0 6px 18px rgba(0,0,0,0.12); }
+    .info-card{ display:inline-block; background: white; padding:18px 22px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); text-align:left; max-width:720px; }
 
-    .info-section img {
-      width: 180px;
-      border-radius: 50%;
-      margin-bottom: 15px;
-      box-shadow: 0 0 15px #999;
-    }
+    .social-icons a{ margin:0 10px; color: #131111; text-decoration:none; }
 
-    .social-icons a {
-      margin: 0 10px;
-      color: rgb(19, 17, 17);
-      text-decoration: none;
-    }
-
-    footer .social-icons {
-      margin-top: 10px;
-    }
+    footer .social-icons{ margin-top:10px; }
 
     /* Responsive */
-    @media (max-width: 600px) {
-      nav {
-        flex-direction: column;
-        text-align: center;
-      }
+    @media (max-width: 900px){
+      .slider-viewport{ padding: 0 18px }
+      .slider-track img{ height: 240px; }
+      .sliding-text{ font-size:20px }
+    }
 
-      .slider-track img {
-        width: 150px;
-        height: 200px;
-      }
+    @media (max-width: 600px){
+      nav{ flex-direction:column; text-align:center }
+      .slider-track img{ width: 160px; height: 200px; }
+      .info-card{ width: calc(100% - 40px)}
     }
   </style>
 </head>
@@ -204,32 +201,42 @@
     </div>
   </nav>
 
-  <!-- Sliding Bar -->
+  <!-- Sliding Bar (now static, visually appealing) -->
   <div class="sliding-bar">
-    <div class="sliding-text">Welcome to my website - ShivamCS</div>
+    <div class="sliding-text"> Gallery </div> 
   </div>
 
-  <!-- Auto-Sliding Images -->
-  <div class="slider-container">
-    <div class="slider-track">
-      <img src="12.jpg" alt="1">
-      <img src="13.jpg" alt="2">
-      <img src="14.jpg" alt="3">
-      <img src="15.jpg" alt="4">
-      <img src="12.jpg" alt="1">
-      <img src="13.jpg" alt="2">
-      <img src="16.jpg" alt="3">
-      <img src="15.jpg" alt="4">
+  <!-- Improved Auto-Sliding Images -->
+  <div class="slider-container" aria-label="Image showcase. Hover to pause">
+    <div class="slider-viewport">
+      <div class="slider-track" id="sliderTrack">
+        <!-- original set -->
+        <img src="12.jpg" alt="showcase-1">
+        <img src="13.jpg" alt="showcase-2">
+        <img src="14.jpg" alt="showcase-3">
+        <img src="15.jpg" alt="showcase-4">
+        <img src="16.jpg" alt="showcase-5">
+        <!-- duplicate set to make the loop seamless -->
+        <img src="12.jpg" alt="showcase-1">
+        <img src="13.jpg" alt="showcase-2">
+        <img src="14.jpg" alt="showcase-3">
+        <img src="15.jpg" alt="showcase-4">
+        <img src="16.jpg" alt="showcase-5">
+      </div>
     </div>
   </div>
 
   <!-- Info Section -->
-  <div class="content info-section">
-    <h2>My Information</h2>
-    <img src="16.jpg" alt="Shivam's Photo" />
-    <p><strong>Name:</strong> Shivam Bairwa (shivamcs)</p>
-    <p><strong>Email:</strong> shivamsyber@gmail.com</p>
-    <p><strong>From:</strong> Rajasthan</p>
+  <div class="content">
+    <div class="info-card">
+      <div style="text-align:center;">
+        <img src="16.jpg" alt="Shivam's Photo" />
+      </div>
+      <h2 style="margin-top:6px">My Information</h2>
+      <p><strong>Name:</strong> Shivam Bairwa (shivamcs)</p>
+      <p><strong>Email:</strong> shivamsyber@gmail.com</p>
+      <p><strong>From:</strong> Rajasthan</p>
+    </div>
   </div>
 
   <!-- Footer -->
@@ -245,14 +252,20 @@
   </footer>
 
   <script>
-    // Hide loader after 5 seconds
-    window.addEventListener("load", function() {
+    // Hide loader when all is loaded (or after fallback time)
+    window.addEventListener('load', function(){
       setTimeout(() => {
-        document.getElementById("loader").style.display = "none";
-      }, 5000);
+        const l = document.getElementById('loader');
+        if(l) l.style.display = 'none';
+      }, 900);
     });
+
+    // Accessibility improvement: if user prefers reduced motion, stop the animation
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(prefersReduced.matches){
+      document.querySelectorAll('.slider-track').forEach(el => el.style.animation = 'none');
+    }
   </script>
 
 </body>
 </html>
-
