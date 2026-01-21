@@ -71,9 +71,21 @@ button{
 .stat-item b { display: block; font-size: 16px; color: #1d2671; }
 
 .search-box { margin-bottom: 10px; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-th { background-color: #1d2671; color: white; }
+
+/* Table Styling Updated for Columns */
+.table-wrapper {
+    overflow-x: auto; /* Horizontal scroll agar columns zyada ho */
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 12px; 
+    margin-top: 10px; 
+    white-space: nowrap; /* Data ek line me rahega */
+}
+th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+th { background-color: #1d2671; color: white; position: sticky; top: 0; }
+tr:nth-child(even) {background-color: #f2f2f2;}
 
 /* ===== RECEIPT DESIGN ===== */
 .receipt-box{ border:1px solid #000; padding:10px; margin-bottom:15px; }
@@ -82,6 +94,7 @@ th { background-color: #1d2671; color: white; }
 .row{ display:flex; justify-content:space-between; font-size:14px; }
 .amount{ border-top:1px dashed #000; margin-top:6px; padding-top:6px; }
 .cut{ border-top:2px dashed #000; margin:15px 0; }
+.receipt-id { font-weight: bold; font-family: monospace; }
 
 /* ===== PRINT ===== */
 @media print{
@@ -153,18 +166,21 @@ th { background-color: #1d2671; color: white; }
   </div>
 
   <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search Name or Mobile..." onkeyup="searchData()">
+      <input type="text" id="searchInput" placeholder="Search Name, Mobile or Receipt No..." onkeyup="searchData()">
   </div>
 
-  <div style="overflow-x:auto;">
+  <div class="table-wrapper">
       <table id="dataTable">
           <thead>
               <tr>
+                  <th>Rcpt No</th>
                   <th>Name</th>
+                  <th>Mobile</th>
                   <th>Service</th>
+                  <th>Total</th>
                   <th>Paid</th>
                   <th>Pending</th>
-                  <th>Date</th>
+                  <th>Date & Time</th>
               </tr>
           </thead>
           <tbody id="tableBody">
@@ -177,9 +193,14 @@ th { background-color: #1d2671; color: white; }
 
 <div class="container" id="receiptPage">
   <div id="printArea">
+    
     <div class="receipt-box">
       <div class="header"><h3>Shivam e-Mitra Center</h3></div>
       <div class="copy-title">Customer Copy</div>
+      
+      <div class="row"><b>Receipt No:</b><span class="receipt-id" id="rid1"></span></div>
+      <div class="row" style="margin-bottom:5px;"><small>Date: <span id="rdate1"></span> | <span id="rtime1"></span></small></div>
+
       <div class="row"><span>Name</span><span id="rname1"></span></div>
       <div class="row"><span>Mobile</span><span id="rmobile1"></span></div>
       <div class="row"><span>Service</span><span id="rservice1"></span></div>
@@ -187,7 +208,6 @@ th { background-color: #1d2671; color: white; }
         <div class="row"><b>Total</b><b>₹<span id="rtotal1"></span></b></div>
         <div class="row"><span>Paid</span><span>₹<span id="rpaid1"></span></span></div>
         <div class="row"><span>Pending</span><span>₹<span id="rpending1"></span></span></div>
-        <div class="row"><small>Date: <span id="rdate1"></span></small></div>
       </div>
     </div>
 
@@ -196,6 +216,10 @@ th { background-color: #1d2671; color: white; }
     <div class="receipt-box">
       <div class="header"><h3>Shivam e-Mitra Center</h3></div>
       <div class="copy-title">Office Copy</div>
+      
+      <div class="row"><b>Receipt No:</b><span class="receipt-id" id="rid2"></span></div>
+      <div class="row" style="margin-bottom:5px;"><small>Date: <span id="rdate2"></span> | <span id="rtime2"></span></small></div>
+
       <div class="row"><span>Name</span><span id="rname2"></span></div>
       <div class="row"><span>Mobile</span><span id="rmobile2"></span></div>
       <div class="row"><span>Service</span><span id="rservice2"></span></div>
@@ -203,7 +227,6 @@ th { background-color: #1d2671; color: white; }
         <div class="row"><b>Total</b><b>₹<span id="rtotal2"></span></b></div>
         <div class="row"><span>Paid</span><span>₹<span id="rpaid2"></span></span></div>
         <div class="row"><span>Pending</span><span>₹<span id="rpending2"></span></span></div>
-        <div class="row"><small>Date: <span id="rdate2"></span></small></div>
       </div>
     </div>
   </div>
@@ -215,11 +238,9 @@ th { background-color: #1d2671; color: white; }
 <script>
 const PASSCODE = "38765700";
 
-// 1. Enter Key Feature
+// Enter Key Logic
 function checkEnter(event) {
-    if (event.key === "Enter") {
-        unlock();
-    }
+    if (event.key === "Enter") unlock();
 }
 
 function unlock(){
@@ -230,10 +251,7 @@ function unlock(){
     errDiv.style.display="none";
     document.getElementById("lockScreen").style.display="none";
     document.getElementById("loader").style.display="flex";
-
-    setTimeout(()=>{
-      document.getElementById("loader").style.display="none";
-    }, 1500);
+    setTimeout(()=>{ document.getElementById("loader").style.display="none"; }, 1500);
   }else{
     errDiv.style.display="block";
   }
@@ -245,7 +263,7 @@ function calcPending(){
   document.getElementById("pending").value = (Number(total||0) - Number(paid||0));
 }
 
-// Data Saving Helper
+// Save Data Function
 function saveRecord(data) {
     let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
     records.push(data);
@@ -253,44 +271,40 @@ function saveRecord(data) {
 }
 
 function generateReceipt(){
-  // Get Values
   const name = document.getElementById("custName").value;
   const mob = document.getElementById("mobile").value;
   const srv = document.getElementById("service").value;
   const tot = document.getElementById("total").value;
   const pd = document.getElementById("paid").value;
   const pnd = document.getElementById("pending").value;
+  
   const dateStr = new Date().toLocaleDateString('en-IN');
+  const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const uniqueID = "#SEM-" + Math.floor(100000 + Math.random() * 900000); 
 
   if(!name || !tot) { alert("Please fill Name and Amount!"); return; }
 
-  // 2. Save Data Logic
   const dataObj = {
-      name: name,
-      mobile: mob,
-      service: srv,
-      total: tot,
-      paid: pd,
-      pending: pnd,
-      date: dateStr,
-      timestamp: new Date().getTime() // for sorting
+      id: uniqueID, name: name, mobile: mob, service: srv,
+      total: tot, paid: pd, pending: pnd,
+      date: dateStr, time: timeStr, timestamp: new Date().getTime()
   };
   saveRecord(dataObj);
 
-  // Update Receipt UI
+  document.getElementById("rid1").innerText=uniqueID; document.getElementById("rid2").innerText=uniqueID;
+  document.getElementById("rdate1").innerText=dateStr; document.getElementById("rdate2").innerText=dateStr;
+  document.getElementById("rtime1").innerText=timeStr; document.getElementById("rtime2").innerText=timeStr;
   document.getElementById("rname1").innerText=name; document.getElementById("rname2").innerText=name;
   document.getElementById("rmobile1").innerText=mob; document.getElementById("rmobile2").innerText=mob;
   document.getElementById("rservice1").innerText=srv; document.getElementById("rservice2").innerText=srv;
   document.getElementById("rtotal1").innerText=tot; document.getElementById("rtotal2").innerText=tot;
   document.getElementById("rpaid1").innerText=pd; document.getElementById("rpaid2").innerText=pd;
   document.getElementById("rpending1").innerText=pnd; document.getElementById("rpending2").innerText=pnd;
-  document.getElementById("rdate1").innerText=dateStr; document.getElementById("rdate2").innerText=dateStr;
-
+  
   document.getElementById("formPage").style.display="none";
   document.getElementById("receiptPage").style.display="block";
 }
 
-// 3. Dashboard & Search Logic
 function openDashboard() {
     document.getElementById("formPage").style.display="none";
     document.getElementById("dashboardPage").style.display="block";
@@ -304,9 +318,7 @@ function closeDashboard() {
 
 function loadData() {
     let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
-    // Sort by latest first
     records.sort((a, b) => b.timestamp - a.timestamp);
-    
     renderTable(records);
     calculateTodayStats(records);
 }
@@ -324,23 +336,30 @@ function calculateTodayStats(records) {
             pending += Number(rec.pending || 0);
         }
     });
-
     document.getElementById("d_cust").innerText = custCount;
     document.getElementById("d_income").innerText = income;
     document.getElementById("d_pending").innerText = pending;
 }
 
+// Updated Table Rendering with Columns
 function renderTable(data) {
     const tbody = document.getElementById("tableBody");
     tbody.innerHTML = "";
 
     data.forEach(rec => {
+        const displayID = rec.id || "-";
+        const displayTime = rec.time || "";
+
+        // Creating separate columns for everything
         const row = `<tr>
-            <td>${rec.name}<br><small>${rec.mobile}</small></td>
+            <td style="font-weight:bold">${displayID}</td>
+            <td>${rec.name}</td>
+            <td>${rec.mobile}</td>
             <td>${rec.service}</td>
-            <td style="color:green">₹${rec.paid}</td>
-            <td style="color:red">₹${rec.pending}</td>
-            <td>${rec.date}</td>
+            <td>${rec.total}</td>
+            <td style="color:green">${rec.paid}</td>
+            <td style="color:${rec.pending > 0 ? 'red' : 'green'}; font-weight:bold">${rec.pending}</td>
+            <td>${rec.date} <br> <small>${displayTime}</small></td>
         </tr>`;
         tbody.innerHTML += row;
     });
@@ -352,9 +371,9 @@ function searchData() {
     
     const filtered = records.filter(rec => 
         rec.name.toLowerCase().includes(query) || 
-        rec.mobile.includes(query)
+        rec.mobile.includes(query) ||
+        (rec.id && rec.id.toLowerCase().includes(query))
     );
-    
     renderTable(filtered);
 }
 </script>
