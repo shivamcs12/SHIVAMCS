@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Shivam e-Mitra Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ===== GLOBAL ===== */
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f2027;
+}
+
+/* ===== PASSCODE SCREEN ===== */
+#lockScreen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  z-index:1000;
+}
+.lock-box{
+  background:#fff;
+  padding:25px;
+  width:300px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+.lock-box h2{margin:0 0 10px;}
+.lock-box input{
+  width:100%;
+  padding:12px;
+  text-align:center;
+  font-size:18px;
+  letter-spacing:4px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+.lock-box button{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#1d2671;
+  color:#fff;
+  font-size:16px;
+}
+.error{
+  color:red;
+  margin-top:8px;
+  display:none;
+}
+
+/* ===== LOADER ===== */
+#loader{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#000428,#004e92);
+  z-index:999;
+}
+.loader-box{
+  text-align:center;
+  color:#fff;
+}
+.spinner{
+  width:70px;
+  height:70px;
+  border:6px solid rgba(255,255,255,.3);
+  border-top:6px solid #00ffcc;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+@keyframes spin{
+  100%{transform:rotate(360deg);}
+}
+
+/* ===== MAIN APP ===== */
+.container{
+  max-width:420px;
+  margin:20px auto;
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+}
+h1,h3{text-align:center;margin:6px 0;}
+label{font-weight:bold;margin-top:10px;display:block;}
+input,select,button{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+}
+button{
+  background:#1d2671;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+}
+.print-btn{background:#0a7d2c;}
+#receiptPage{display:none;}
+
+/* ===== RECEIPT DESIGN ===== */
+.receipt-box{
+  border:1px solid #000;
+  padding:10px;
+  margin-bottom:15px;
+}
+.header{
+  text-align:center;
+  border-bottom:2px solid #000;
+}
+.copy-title{
+  text-align:center;
+  font-weight:bold;
+  background:#eee;
+  margin:6px 0;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+}
+.amount{
+  border-top:1px dashed #000;
+  margin-top:6px;
+  padding-top:6px;
+}
+.cut{
+  border-top:2px dashed #000;
+  margin:15px 0;
+}
+
+/* ===== PRINT ===== */
+@media print{
+  body *{visibility:hidden;}
+  #printArea,#printArea *{visibility:visible;}
+  #printArea{
+    position:absolute;
+    left:0;top:0;width:100%;
+  }
+  button{display:none;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 PASSCODE -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <h2>🔐 Secure Entry</h2>
+    <p>Enter Passcode</p>
+    <input type="password" id="passcode">
+    <button onclick="unlock()">ENTER</button>
+    <div class="error" id="error">Wrong Passcode ❌</div>
+  </div>
+</div>
+
+<!-- ⏳ LOADER -->
+<div id="loader">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <p>Loading e-Mitra System...</p>
+  </div>
+</div>
+
+<!-- 🧾 MAIN FORM -->
+<div class="container" id="formPage">
+  <h1>Shivam e-Mitra Center</h1>
+
+  <label>Customer Name</label>
+  <input id="custName">
+
+  <label>Mobile Number</label>
+  <input id="mobile">
+
+  <label>Service</label>
+  <input id="service">
+
+  <label>Total Amount</label>
+  <input type="number" id="total" oninput="calcPending()">
+
+  <label>Paid Amount</label>
+  <input type="number" id="paid" oninput="calcPending()">
+
+  <label>Pending Amount</label>
+  <input type="number" id="pending" readonly>
+
+  <label>Payment Mode</label>
+  <select id="mode">
+    <option>Cash</option>
+    <option>Online</option>
+  </select>
+
+  <button onclick="generateReceipt()">Generate Receipt</button>
+</div>
+
+<!-- 🧾 RECEIPT -->
+<div class="container" id="receiptPage">
+  <div id="printArea">
+
+    <div class="receipt-box">
+      <div class="header"><h3>Shivam e-Mitra Center</h3></div>
+      <div class="copy-title">Customer Copy</div>
+
+      <div class="row"><span>Name</span><span id="rname1"></span></div>
+      <div class="row"><span>Mobile</span><span id="rmobile1"></span></div>
+      <div class="row"><span>Service</span><span id="rservice1"></span></div>
+
+      <div class="amount">
+        <div class="row"><b>Total</b><b>₹<span id="rtotal1"></span></b></div>
+        <div class="row"><span>Paid</span><span>₹<span id="rpaid1"></span></span></div>
+        <div class="row"><span>Pending</span><span>₹<span id="rpending1"></span></span></div>
+      </div>
+    </div>
+
+    <div class="cut"></div>
+
+    <div class="receipt-box">
+      <div class="header"><h3>Shivam e-Mitra Center</h3></div>
+      <div class="copy-title">Office Copy</div>
+
+      <div class="row"><span>Name</span><span id="rname2"></span></div>
+      <div class="row"><span>Mobile</span><span id="rmobile2"></span></div>
+      <div class="row"><span>Service</span><span id="rservice2"></span></div>
+
+      <div class="amount">
+        <div class="row"><b>Total</b><b>₹<span id="rtotal2"></span></b></div>
+        <div class="row"><span>Paid</span><span>₹<span id="rpaid2"></span></span></div>
+        <div class="row"><span>Pending</span><span>₹<span id="rpending2"></span></span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
+</div>
+
+<script>
+const PASSCODE = "38765700";
+
+function unlock(){
+  if(passcode.value === PASSCODE){
+    error.style.display="none";
+    lockScreen.style.display="none";
+    loader.style.display="flex";
+
+    // Stylish loader delay
+    setTimeout(()=>{
+      loader.style.display="none";
+    },2000);
+  }else{
+    error.style.display="block";
+  }
+}
+
+function calcPending(){
+  pending.value = (Number(total.value||0)-Number(paid.value||0));
+}
+
+function generateReceipt(){
+  rname1.innerText=custName.value;
+  rname2.innerText=custName.value;
+  rmobile1.innerText=mobile.value;
+  rmobile2.innerText=mobile.value;
+  rservice1.innerText=service.value;
+  rservice2.innerText=service.value;
+  rtotal1.innerText=total.value;
+  rtotal2.innerText=total.value;
+  rpaid1.innerText=paid.value;
+  rpaid2.innerText=paid.value;
+  rpending1.innerText=pending.value;
+  rpending2.innerText=pending.value;
+
+  formPage.style.display="none";
+  receiptPage.style.display="block";
+}
+</script>
+
+</body>
+</html>
