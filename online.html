@@ -7,146 +7,87 @@
 
 <style>
 /* ===== GLOBAL ===== */
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0f2027;
-}
+body{ margin:0; font-family:Arial, sans-serif; background:#0f2027; }
 
 /* ===== PASSCODE SCREEN ===== */
 #lockScreen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:linear-gradient(135deg,#141e30,#243b55);
-  z-index:1000;
+  position:fixed; inset:0; display:flex; justify-content:center; align-items:center;
+  background:linear-gradient(135deg,#141e30,#243b55); z-index:1000;
 }
 .lock-box{
-  background:#fff;
-  padding:25px;
-  width:300px;
-  border-radius:16px;
-  text-align:center;
-  box-shadow:0 15px 40px rgba(0,0,0,.4);
+  background:#fff; padding:25px; width:300px; border-radius:16px;
+  text-align:center; box-shadow:0 15px 40px rgba(0,0,0,.4);
 }
 .lock-box h2{margin:0 0 10px;}
 .lock-box input{
-  width:100%;
-  padding:12px;
-  text-align:center;
-  font-size:18px;
-  letter-spacing:4px;
-  border-radius:10px;
-  border:1px solid #ccc;
+  width:100%; padding:12px; text-align:center; font-size:18px;
+  letter-spacing:4px; border-radius:10px; border:1px solid #ccc;
+  box-sizing: border-box;
 }
 .lock-box button{
-  width:100%;
-  margin-top:15px;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#1d2671;
-  color:#fff;
-  font-size:16px;
+  width:100%; margin-top:15px; padding:12px; border:none;
+  border-radius:10px; background:#1d2671; color:#fff; font-size:16px; cursor: pointer;
 }
-.error{
-  color:red;
-  margin-top:8px;
-  display:none;
-}
+.error{ color:red; margin-top:8px; display:none; }
 
 /* ===== LOADER ===== */
 #loader{
-  position:fixed;
-  inset:0;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:linear-gradient(135deg,#000428,#004e92);
-  z-index:999;
+  position:fixed; inset:0; display:none; justify-content:center; align-items:center;
+  background:linear-gradient(135deg,#000428,#004e92); z-index:999;
 }
-.loader-box{
-  text-align:center;
-  color:#fff;
-}
+.loader-box{ text-align:center; color:#fff; }
 .spinner{
-  width:70px;
-  height:70px;
-  border:6px solid rgba(255,255,255,.3);
-  border-top:6px solid #00ffcc;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin:auto;
+  width:70px; height:70px; border:6px solid rgba(255,255,255,.3);
+  border-top:6px solid #00ffcc; border-radius:50%;
+  animation:spin 1s linear infinite; margin:auto;
 }
-@keyframes spin{
-  100%{transform:rotate(360deg);}
-}
+@keyframes spin{ 100%{transform:rotate(360deg);} }
 
-/* ===== MAIN APP ===== */
+/* ===== MAIN CONTAINER ===== */
 .container{
-  max-width:420px;
-  margin:20px auto;
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
+  max-width:420px; margin:20px auto; background:#fff;
+  padding:15px; border-radius:12px;
 }
 h1,h3{text-align:center;margin:6px 0;}
 label{font-weight:bold;margin-top:10px;display:block;}
 input,select,button{
-  width:100%;
-  padding:8px;
-  margin-top:6px;
+  width:100%; padding:8px; margin-top:6px; box-sizing: border-box;
 }
 button{
-  background:#1d2671;
-  color:#fff;
-  border:none;
-  border-radius:6px;
+  background:#1d2671; color:#fff; border:none; border-radius:6px; cursor: pointer; padding: 10px;
 }
-.print-btn{background:#0a7d2c;}
-#receiptPage{display:none;}
+.print-btn{background:#0a7d2c; margin-bottom: 10px;}
+.record-btn{background:#ff9800; margin-top: 15px;}
+.back-btn{background:#555; margin-top: 10px;}
+
+#receiptPage, #dashboardPage {display:none;}
+
+/* ===== DASHBOARD STYLES ===== */
+.stats-box {
+    display: flex; justify-content: space-between; background: #eee;
+    padding: 10px; border-radius: 8px; margin-bottom: 15px;
+}
+.stat-item { text-align: center; font-size: 12px; }
+.stat-item b { display: block; font-size: 16px; color: #1d2671; }
+
+.search-box { margin-bottom: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background-color: #1d2671; color: white; }
 
 /* ===== RECEIPT DESIGN ===== */
-.receipt-box{
-  border:1px solid #000;
-  padding:10px;
-  margin-bottom:15px;
-}
-.header{
-  text-align:center;
-  border-bottom:2px solid #000;
-}
-.copy-title{
-  text-align:center;
-  font-weight:bold;
-  background:#eee;
-  margin:6px 0;
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-}
-.amount{
-  border-top:1px dashed #000;
-  margin-top:6px;
-  padding-top:6px;
-}
-.cut{
-  border-top:2px dashed #000;
-  margin:15px 0;
-}
+.receipt-box{ border:1px solid #000; padding:10px; margin-bottom:15px; }
+.header{ text-align:center; border-bottom:2px solid #000; }
+.copy-title{ text-align:center; font-weight:bold; background:#eee; margin:6px 0; }
+.row{ display:flex; justify-content:space-between; font-size:14px; }
+.amount{ border-top:1px dashed #000; margin-top:6px; padding-top:6px; }
+.cut{ border-top:2px dashed #000; margin:15px 0; }
 
 /* ===== PRINT ===== */
 @media print{
   body *{visibility:hidden;}
   #printArea,#printArea *{visibility:visible;}
-  #printArea{
-    position:absolute;
-    left:0;top:0;width:100%;
-  }
+  #printArea{ position:absolute; left:0; top:0; width:100%; }
   button{display:none;}
 }
 </style>
@@ -154,18 +95,16 @@ button{
 
 <body>
 
-<!-- 🔐 PASSCODE -->
 <div id="lockScreen">
   <div class="lock-box">
     <h2>🔐 Secure Entry</h2>
     <p>Enter Passcode</p>
-    <input type="password" id="passcode">
+    <input type="password" id="passcode" onkeyup="checkEnter(event)">
     <button onclick="unlock()">ENTER</button>
     <div class="error" id="error">Wrong Passcode ❌</div>
   </div>
 </div>
 
-<!-- ⏳ LOADER -->
 <div id="loader">
   <div class="loader-box">
     <div class="spinner"></div>
@@ -173,7 +112,6 @@ button{
   </div>
 </div>
 
-<!-- 🧾 MAIN FORM -->
 <div class="container" id="formPage">
   <h1>Shivam e-Mitra Center</h1>
 
@@ -181,7 +119,7 @@ button{
   <input id="custName">
 
   <label>Mobile Number</label>
-  <input id="mobile">
+  <input id="mobile" type="number">
 
   <label>Service</label>
   <input id="service">
@@ -201,25 +139,55 @@ button{
     <option>Online</option>
   </select>
 
-  <button onclick="generateReceipt()">Generate Receipt</button>
+  <button onclick="generateReceipt()">Generate Receipt & Save</button>
+  <button class="record-btn" onclick="openDashboard()">📊 View Records / Hisaab</button>
 </div>
 
-<!-- 🧾 RECEIPT -->
+<div class="container" id="dashboardPage">
+  <h1>Daily Report</h1>
+  
+  <div class="stats-box">
+      <div class="stat-item"><b><span id="d_cust">0</span></b>Customers</div>
+      <div class="stat-item"><b>₹<span id="d_income">0</span></b>Income</div>
+      <div class="stat-item"><b>₹<span id="d_pending">0</span></b>Pending</div>
+  </div>
+
+  <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search Name or Mobile..." onkeyup="searchData()">
+  </div>
+
+  <div style="overflow-x:auto;">
+      <table id="dataTable">
+          <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Service</th>
+                  <th>Paid</th>
+                  <th>Pending</th>
+                  <th>Date</th>
+              </tr>
+          </thead>
+          <tbody id="tableBody">
+              </tbody>
+      </table>
+  </div>
+
+  <button class="back-btn" onclick="closeDashboard()">⬅ Back to Form</button>
+</div>
+
 <div class="container" id="receiptPage">
   <div id="printArea">
-
     <div class="receipt-box">
       <div class="header"><h3>Shivam e-Mitra Center</h3></div>
       <div class="copy-title">Customer Copy</div>
-
       <div class="row"><span>Name</span><span id="rname1"></span></div>
       <div class="row"><span>Mobile</span><span id="rmobile1"></span></div>
       <div class="row"><span>Service</span><span id="rservice1"></span></div>
-
       <div class="amount">
         <div class="row"><b>Total</b><b>₹<span id="rtotal1"></span></b></div>
         <div class="row"><span>Paid</span><span>₹<span id="rpaid1"></span></span></div>
         <div class="row"><span>Pending</span><span>₹<span id="rpending1"></span></span></div>
+        <div class="row"><small>Date: <span id="rdate1"></span></small></div>
       </div>
     </div>
 
@@ -228,61 +196,166 @@ button{
     <div class="receipt-box">
       <div class="header"><h3>Shivam e-Mitra Center</h3></div>
       <div class="copy-title">Office Copy</div>
-
       <div class="row"><span>Name</span><span id="rname2"></span></div>
       <div class="row"><span>Mobile</span><span id="rmobile2"></span></div>
       <div class="row"><span>Service</span><span id="rservice2"></span></div>
-
       <div class="amount">
         <div class="row"><b>Total</b><b>₹<span id="rtotal2"></span></b></div>
         <div class="row"><span>Paid</span><span>₹<span id="rpaid2"></span></span></div>
         <div class="row"><span>Pending</span><span>₹<span id="rpending2"></span></span></div>
+        <div class="row"><small>Date: <span id="rdate2"></span></small></div>
       </div>
     </div>
-
   </div>
 
   <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
+  <button class="back-btn" onclick="location.reload()">🔄 New Entry</button>
 </div>
 
 <script>
 const PASSCODE = "38765700";
 
-function unlock(){
-  if(passcode.value === PASSCODE){
-    error.style.display="none";
-    lockScreen.style.display="none";
-    loader.style.display="flex";
+// 1. Enter Key Feature
+function checkEnter(event) {
+    if (event.key === "Enter") {
+        unlock();
+    }
+}
 
-    // Stylish loader delay
+function unlock(){
+  const passInp = document.getElementById("passcode");
+  const errDiv = document.getElementById("error");
+  
+  if(passInp.value === PASSCODE){
+    errDiv.style.display="none";
+    document.getElementById("lockScreen").style.display="none";
+    document.getElementById("loader").style.display="flex";
+
     setTimeout(()=>{
-      loader.style.display="none";
-    },2000);
+      document.getElementById("loader").style.display="none";
+    }, 1500);
   }else{
-    error.style.display="block";
+    errDiv.style.display="block";
   }
 }
 
 function calcPending(){
-  pending.value = (Number(total.value||0)-Number(paid.value||0));
+  const total = document.getElementById("total").value;
+  const paid = document.getElementById("paid").value;
+  document.getElementById("pending").value = (Number(total||0) - Number(paid||0));
+}
+
+// Data Saving Helper
+function saveRecord(data) {
+    let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
+    records.push(data);
+    localStorage.setItem("emitra_records", JSON.stringify(records));
 }
 
 function generateReceipt(){
-  rname1.innerText=custName.value;
-  rname2.innerText=custName.value;
-  rmobile1.innerText=mobile.value;
-  rmobile2.innerText=mobile.value;
-  rservice1.innerText=service.value;
-  rservice2.innerText=service.value;
-  rtotal1.innerText=total.value;
-  rtotal2.innerText=total.value;
-  rpaid1.innerText=paid.value;
-  rpaid2.innerText=paid.value;
-  rpending1.innerText=pending.value;
-  rpending2.innerText=pending.value;
+  // Get Values
+  const name = document.getElementById("custName").value;
+  const mob = document.getElementById("mobile").value;
+  const srv = document.getElementById("service").value;
+  const tot = document.getElementById("total").value;
+  const pd = document.getElementById("paid").value;
+  const pnd = document.getElementById("pending").value;
+  const dateStr = new Date().toLocaleDateString('en-IN');
 
-  formPage.style.display="none";
-  receiptPage.style.display="block";
+  if(!name || !tot) { alert("Please fill Name and Amount!"); return; }
+
+  // 2. Save Data Logic
+  const dataObj = {
+      name: name,
+      mobile: mob,
+      service: srv,
+      total: tot,
+      paid: pd,
+      pending: pnd,
+      date: dateStr,
+      timestamp: new Date().getTime() // for sorting
+  };
+  saveRecord(dataObj);
+
+  // Update Receipt UI
+  document.getElementById("rname1").innerText=name; document.getElementById("rname2").innerText=name;
+  document.getElementById("rmobile1").innerText=mob; document.getElementById("rmobile2").innerText=mob;
+  document.getElementById("rservice1").innerText=srv; document.getElementById("rservice2").innerText=srv;
+  document.getElementById("rtotal1").innerText=tot; document.getElementById("rtotal2").innerText=tot;
+  document.getElementById("rpaid1").innerText=pd; document.getElementById("rpaid2").innerText=pd;
+  document.getElementById("rpending1").innerText=pnd; document.getElementById("rpending2").innerText=pnd;
+  document.getElementById("rdate1").innerText=dateStr; document.getElementById("rdate2").innerText=dateStr;
+
+  document.getElementById("formPage").style.display="none";
+  document.getElementById("receiptPage").style.display="block";
+}
+
+// 3. Dashboard & Search Logic
+function openDashboard() {
+    document.getElementById("formPage").style.display="none";
+    document.getElementById("dashboardPage").style.display="block";
+    loadData();
+}
+
+function closeDashboard() {
+    document.getElementById("dashboardPage").style.display="none";
+    document.getElementById("formPage").style.display="block";
+}
+
+function loadData() {
+    let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
+    // Sort by latest first
+    records.sort((a, b) => b.timestamp - a.timestamp);
+    
+    renderTable(records);
+    calculateTodayStats(records);
+}
+
+function calculateTodayStats(records) {
+    const todayStr = new Date().toLocaleDateString('en-IN');
+    let custCount = 0;
+    let income = 0;
+    let pending = 0;
+
+    records.forEach(rec => {
+        if(rec.date === todayStr) {
+            custCount++;
+            income += Number(rec.paid || 0);
+            pending += Number(rec.pending || 0);
+        }
+    });
+
+    document.getElementById("d_cust").innerText = custCount;
+    document.getElementById("d_income").innerText = income;
+    document.getElementById("d_pending").innerText = pending;
+}
+
+function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    data.forEach(rec => {
+        const row = `<tr>
+            <td>${rec.name}<br><small>${rec.mobile}</small></td>
+            <td>${rec.service}</td>
+            <td style="color:green">₹${rec.paid}</td>
+            <td style="color:red">₹${rec.pending}</td>
+            <td>${rec.date}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+function searchData() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
+    
+    const filtered = records.filter(rec => 
+        rec.name.toLowerCase().includes(query) || 
+        rec.mobile.includes(query)
+    );
+    
+    renderTable(filtered);
 }
 </script>
 
