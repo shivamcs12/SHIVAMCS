@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Shivam e-Mitra Center</title>
+<title>Shivam Online Services</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -69,32 +69,43 @@ button{
 }
 .stat-item { text-align: center; font-size: 12px; }
 .stat-item b { display: block; font-size: 16px; color: #1d2671; }
-
 .search-box { margin-bottom: 10px; }
-
-/* Table Styling Updated for Columns */
-.table-wrapper {
-    overflow-x: auto; /* Horizontal scroll agar columns zyada ho */
-}
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    font-size: 12px; 
-    margin-top: 10px; 
-    white-space: nowrap; /* Data ek line me rahega */
-}
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; white-space: nowrap; }
 th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 th { background-color: #1d2671; color: white; position: sticky; top: 0; }
 tr:nth-child(even) {background-color: #f2f2f2;}
 
 /* ===== RECEIPT DESIGN ===== */
-.receipt-box{ border:1px solid #000; padding:10px; margin-bottom:15px; }
-.header{ text-align:center; border-bottom:2px solid #000; }
-.copy-title{ text-align:center; font-weight:bold; background:#eee; margin:6px 0; }
-.row{ display:flex; justify-content:space-between; font-size:14px; }
-.amount{ border-top:1px dashed #000; margin-top:6px; padding-top:6px; }
-.cut{ border-top:2px dashed #000; margin:15px 0; }
+.receipt-box{ border:1px solid #000; padding:15px; margin-bottom:20px; position: relative; }
+.header{ text-align:center; border-bottom:2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+
+.logo { max-width: 80px; display: block; margin: 0 auto 5px; }
+.shop-name { font-size: 22px; margin: 5px 0; color: #1d2671; text-transform: uppercase; font-weight: 800; }
+.tagline { font-size: 12px; font-style: italic; margin-top: -5px; margin-bottom: 5px; color: #555; font-weight: bold; }
+.address-line { font-size: 12px; margin-bottom: 2px; }
+.contact-line { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+
+.copy-title{ text-align:center; font-weight:bold; background:#eee; margin:6px 0; border: 1px solid #ddd; font-size: 12px; }
+.row{ display:flex; justify-content:space-between; font-size:14px; margin-bottom: 4px; }
+.amount{ border-top:1px dashed #000; margin-top:8px; padding-top:8px; }
+.cut{ border-top:2px dashed #000; margin:25px 0; }
 .receipt-id { font-weight: bold; font-family: monospace; }
+
+/* TERMS SECTION UPDATED */
+.terms-box {
+    margin-top: 15px;
+    border-top: 1px solid #000;
+    padding-top: 5px;
+    font-size: 10px;
+    text-align: left;
+}
+.terms-box b { text-decoration: underline; font-size: 11px; }
+.terms-box ul { margin: 5px 0; padding-left: 15px; }
+.terms-box li { margin-bottom: 6px; line-height: 1.3; } 
+.hindi-text { font-size: 9px; font-weight: normal; display: block; margin-top: 1px; color: #333; } 
+
+.thank-you { text-align: center; font-weight: bold; margin-top: 10px; font-size: 12px; }
 
 /* ===== PRINT ===== */
 @media print{
@@ -121,12 +132,13 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 <div id="loader">
   <div class="loader-box">
     <div class="spinner"></div>
-    <p>Loading e-Mitra System...</p>
+    <p>Loading System...</p>
   </div>
 </div>
 
 <div class="container" id="formPage">
-  <h1>Shivam e-Mitra Center</h1>
+  <h1>Shivam Online Services</h1>
+  <p style="text-align:center; margin-top:-10px; color:#666;">Your Digital Partner</p>
 
   <label>Customer Name</label>
   <input id="custName">
@@ -158,36 +170,25 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 
 <div class="container" id="dashboardPage">
   <h1>Daily Report</h1>
-  
   <div class="stats-box">
       <div class="stat-item"><b><span id="d_cust">0</span></b>Customers</div>
       <div class="stat-item"><b>₹<span id="d_income">0</span></b>Income</div>
       <div class="stat-item"><b>₹<span id="d_pending">0</span></b>Pending</div>
   </div>
-
   <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search Name, Mobile or Receipt No..." onkeyup="searchData()">
+      <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchData()">
   </div>
-
   <div class="table-wrapper">
       <table id="dataTable">
           <thead>
               <tr>
-                  <th>Rcpt No</th>
-                  <th>Name</th>
-                  <th>Mobile</th>
-                  <th>Service</th>
-                  <th>Total</th>
-                  <th>Paid</th>
-                  <th>Pending</th>
-                  <th>Date & Time</th>
+                  <th>ID</th><th>Name</th><th>Mobile</th><th>Service</th>
+                  <th>Total</th><th>Paid</th><th>Pending</th><th>Date</th>
               </tr>
           </thead>
-          <tbody id="tableBody">
-              </tbody>
+          <tbody id="tableBody"></tbody>
       </table>
   </div>
-
   <button class="back-btn" onclick="closeDashboard()">⬅ Back to Form</button>
 </div>
 
@@ -195,7 +196,14 @@ tr:nth-child(even) {background-color: #f2f2f2;}
   <div id="printArea">
     
     <div class="receipt-box">
-      <div class="header"><h3>Shivam e-Mitra Center</h3></div>
+      <div class="header">
+        <img src="shivamonline.jpg" alt="shivam online" class="logo">
+        <h2 class="shop-name">Shivam Online Services</h2>
+        <p class="tagline">Your Digital Partner</p>
+        <div class="address-line">Jaipur, Rajasthan</div>
+        <div class="contact-line">Mob: 8875761835</div>
+      </div>
+      
       <div class="copy-title">Customer Copy</div>
       
       <div class="row"><b>Receipt No:</b><span class="receipt-id" id="rid1"></span></div>
@@ -204,17 +212,52 @@ tr:nth-child(even) {background-color: #f2f2f2;}
       <div class="row"><span>Name</span><span id="rname1"></span></div>
       <div class="row"><span>Mobile</span><span id="rmobile1"></span></div>
       <div class="row"><span>Service</span><span id="rservice1"></span></div>
+      
       <div class="amount">
-        <div class="row"><b>Total</b><b>₹<span id="rtotal1"></span></b></div>
-        <div class="row"><span>Paid</span><span>₹<span id="rpaid1"></span></span></div>
+        <div class="row"><b>Total Amount</b><b>₹<span id="rtotal1"></span></b></div>
+        <div class="row"><span>Paid Amount</span><span>₹<span id="rpaid1"></span></span></div>
         <div class="row"><span>Pending</span><span>₹<span id="rpending1"></span></span></div>
+      </div>
+
+      <div class="terms-box">
+          <b>Terms & Conditions / नियम व शर्तें:</b>
+          <ul>
+              <li>
+                  Recharge, Bill, Loan/Card Repayment & Online Services are non-refundable.
+                  <span class="hindi-text">रिचार्ज, बिल, लोन/क्रेडिट कार्ड पेमेंट और अन्य ऑनलाइन सेवाएं रिफंड नहीं होंगी।</span>
+              </li>
+              <li>
+                  Please check Mobile No. & ID before payment.
+                  <span class="hindi-text">पेमेंट से पहले अपना नंबर और ID चेक कर लें।</span>
+              </li>
+              <li>
+                  Duplicate receipt will not be issued if lost.
+                  <span class="hindi-text">रसीद खो जाने पर दूसरी रसीद नहीं दी जाएगी।</span>
+              </li>
+              <li>
+                  Verify details by visiting Shivam Online Services.
+                  <span class="hindi-text">आप शिवम ऑनलाइन सर्विसेज पर जाकर जानकारी चेक करवा सकते हैं।</span>
+              </li>
+              <li>
+                  As per Shivam Online Services rules.
+                  <span class="hindi-text">शिवम ऑनलाइन सर्विसेज के नियमों के अनुसार।</span>
+              </li>
+          </ul>
+          <div class="thank-you">Thank You! Visit Again.</div>
       </div>
     </div>
 
-    <div class="cut"></div>
+    <div class="cut">--- Cut Here ---</div>
 
     <div class="receipt-box">
-      <div class="header"><h3>Shivam e-Mitra Center</h3></div>
+      <div class="header">
+        <img src="logo.jpg" alt="[LOGO]" class="logo">
+        <h2 class="shop-name">Shivam Online Services</h2>
+        <p class="tagline">Your Digital Partner</p>
+        <div class="address-line">Jaipur, Rajasthan</div>
+        <div class="contact-line">Mob: 8875761835</div>
+      </div>
+      
       <div class="copy-title">Office Copy</div>
       
       <div class="row"><b>Receipt No:</b><span class="receipt-id" id="rid2"></span></div>
@@ -223,12 +266,32 @@ tr:nth-child(even) {background-color: #f2f2f2;}
       <div class="row"><span>Name</span><span id="rname2"></span></div>
       <div class="row"><span>Mobile</span><span id="rmobile2"></span></div>
       <div class="row"><span>Service</span><span id="rservice2"></span></div>
+      
       <div class="amount">
-        <div class="row"><b>Total</b><b>₹<span id="rtotal2"></span></b></div>
-        <div class="row"><span>Paid</span><span>₹<span id="rpaid2"></span></span></div>
+        <div class="row"><b>Total Amount</b><b>₹<span id="rtotal2"></span></b></div>
+        <div class="row"><span>Paid Amount</span><span>₹<span id="rpaid2"></span></span></div>
         <div class="row"><span>Pending</span><span>₹<span id="rpending2"></span></span></div>
       </div>
+
+      <div class="terms-box">
+        <b>Terms & Conditions / नियम व शर्तें:</b>
+        <ul>
+            <li>
+                Recharge, Bill, Loan/Card Repayment & Online Services are non-refundable.
+                <span class="hindi-text">रिचार्ज, बिल, लोन/क्रेडिट कार्ड पेमेंट और अन्य ऑनलाइन सेवाएं रिफंड नहीं होंगी।</span>
+            </li>
+            <li>
+                Duplicate receipt will not be issued if lost.
+                <span class="hindi-text">रसीद खो जाने पर दूसरी रसीद नहीं दी जाएगी।</span>
+            </li>
+            <li>
+                As per Shivam Online Services rules.
+                <span class="hindi-text">शिवम ऑनलाइन सर्विसेज के नियमों के अनुसार।</span>
+            </li>
+        </ul>
+      </div>
     </div>
+
   </div>
 
   <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
@@ -239,22 +302,17 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 const PASSCODE = "38765700";
 
 // Enter Key Logic
-function checkEnter(event) {
-    if (event.key === "Enter") unlock();
-}
+function checkEnter(event) { if (event.key === "Enter") unlock(); }
 
 function unlock(){
   const passInp = document.getElementById("passcode");
   const errDiv = document.getElementById("error");
-  
   if(passInp.value === PASSCODE){
     errDiv.style.display="none";
     document.getElementById("lockScreen").style.display="none";
     document.getElementById("loader").style.display="flex";
     setTimeout(()=>{ document.getElementById("loader").style.display="none"; }, 1500);
-  }else{
-    errDiv.style.display="block";
-  }
+  }else{ errDiv.style.display="block"; }
 }
 
 function calcPending(){
@@ -263,7 +321,6 @@ function calcPending(){
   document.getElementById("pending").value = (Number(total||0) - Number(paid||0));
 }
 
-// Save Data Function
 function saveRecord(data) {
     let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
     records.push(data);
@@ -280,7 +337,7 @@ function generateReceipt(){
   
   const dateStr = new Date().toLocaleDateString('en-IN');
   const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-  const uniqueID = "#SEM-" + Math.floor(100000 + Math.random() * 900000); 
+  const uniqueID = "#SOS-" + Math.floor(100000 + Math.random() * 900000); 
 
   if(!name || !tot) { alert("Please fill Name and Amount!"); return; }
 
@@ -291,6 +348,7 @@ function generateReceipt(){
   };
   saveRecord(dataObj);
 
+  // Fill Data in Both Receipts
   document.getElementById("rid1").innerText=uniqueID; document.getElementById("rid2").innerText=uniqueID;
   document.getElementById("rdate1").innerText=dateStr; document.getElementById("rdate2").innerText=dateStr;
   document.getElementById("rtime1").innerText=timeStr; document.getElementById("rtime2").innerText=timeStr;
@@ -325,15 +383,10 @@ function loadData() {
 
 function calculateTodayStats(records) {
     const todayStr = new Date().toLocaleDateString('en-IN');
-    let custCount = 0;
-    let income = 0;
-    let pending = 0;
-
+    let custCount = 0; let income = 0; let pending = 0;
     records.forEach(rec => {
         if(rec.date === todayStr) {
-            custCount++;
-            income += Number(rec.paid || 0);
-            pending += Number(rec.pending || 0);
+            custCount++; income += Number(rec.paid || 0); pending += Number(rec.pending || 0);
         }
     });
     document.getElementById("d_cust").innerText = custCount;
@@ -341,25 +394,16 @@ function calculateTodayStats(records) {
     document.getElementById("d_pending").innerText = pending;
 }
 
-// Updated Table Rendering with Columns
 function renderTable(data) {
     const tbody = document.getElementById("tableBody");
     tbody.innerHTML = "";
-
     data.forEach(rec => {
-        const displayID = rec.id || "-";
-        const displayTime = rec.time || "";
-
-        // Creating separate columns for everything
         const row = `<tr>
-            <td style="font-weight:bold">${displayID}</td>
-            <td>${rec.name}</td>
-            <td>${rec.mobile}</td>
-            <td>${rec.service}</td>
-            <td>${rec.total}</td>
-            <td style="color:green">${rec.paid}</td>
+            <td style="font-weight:bold">${rec.id||'-'}</td>
+            <td>${rec.name}</td><td>${rec.mobile}</td><td>${rec.service}</td>
+            <td>${rec.total}</td><td style="color:green">${rec.paid}</td>
             <td style="color:${rec.pending > 0 ? 'red' : 'green'}; font-weight:bold">${rec.pending}</td>
-            <td>${rec.date} <br> <small>${displayTime}</small></td>
+            <td>${rec.date} <small>${rec.time||''}</small></td>
         </tr>`;
         tbody.innerHTML += row;
     });
@@ -368,7 +412,6 @@ function renderTable(data) {
 function searchData() {
     const query = document.getElementById("searchInput").value.toLowerCase();
     let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
-    
     const filtered = records.filter(rec => 
         rec.name.toLowerCase().includes(query) || 
         rec.mobile.includes(query) ||
