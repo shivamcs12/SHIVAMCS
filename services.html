@@ -112,6 +112,10 @@
         .totals { text-align: right; margin-top: 10px; }
         .totals p { margin: 5px 0; font-size: 14px; }
         .big-total { font-size: 18px; font-weight: bold; }
+
+        .sign-area {
+            text-align: right; margin-top: auto;
+        }
         
         .cut-line { 
             border-top: 2px dashed #000; 
@@ -178,89 +182,96 @@
 </div>
 
 <div id="receiptView">
+    
     <div class="invoice-box">
-        <div class="header">
-            <div class="logo-sec">
-                <h1>Shivam Online Services</h1>
-                <p>📍 Vatica, Jaipur, Rajasthan</p>
-                <p>📞 +91 9664324706</p>
+        <div>
+            <div class="header">
+                <div class="logo-sec">
+                    <h1>Shivam Online Services</h1>
+                    <p>📍 Vatica, Jaipur, Rajasthan</p>
+                    <p>📞 +91 9664324706</p>
+                </div>
+                <div style="text-align:right;">
+                    <h3 style="margin:0;">RECEIPT</h3>
+                    <p>Date: <span class="r-date"></span></p>
+                    <p>Ref: <span class="r-id"></span></p>
+                    <small style="background:#000; color:#fff; padding:2px 5px;">CUSTOMER COPY</small>
+                </div>
             </div>
-            <div style="text-align:right;">
-                <h3 style="margin:0;">RECEIPT</h3>
-                <p>Date: <span class="r-date"></span></p>
-                <p>Ref: <span class="r-id"></span></p>
-                <small style="background:#000; color:#fff; padding:2px 5px;">CUSTOMER COPY</small>
+
+            <div class="info-grid">
+                <div class="box-info">
+                    <strong>Bill To:</strong><br>
+                    <span class="r-name" style="font-size:18px; font-weight:bold;"></span><br>
+                    Mob: <span class="r-mobile"></span>
+                </div>
+                <div class="box-info">
+                    <strong>Payment Details:</strong><br>
+                    Mode: <span class="r-mode"></span><br>
+                    Status: <span class="r-status"></span>
+                </div>
+            </div>
+
+            <table class="inv-table">
+                <thead><tr><th>Description</th><th>Amount</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="r-service">Service Charge</td>
+                        <td>₹ <span class="r-total"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <p>Sub Total: ₹ <span class="r-total"></span></p>
+                <p>Paid Amount: ₹ <span class="r-paid"></span></p>
+                <p class="big-total">Pending Balance: ₹ <span class="r-pending"></span></p>
+            </div>
+            
+            <div style="margin-top:10px; font-size:11px; color:#555;">
+                * Fees once paid is non-refundable.
             </div>
         </div>
 
-        <div class="info-grid">
-            <div class="box-info">
-                <strong>Bill To:</strong><br>
-                <span class="r-name" style="font-size:18px; font-weight:bold;"></span><br>
-                Mob: <span class="r-mobile"></span>
-            </div>
-            <div class="box-info">
-                <strong>Payment Details:</strong><br>
-                Mode: <span class="r-mode"></span><br>
-                Status: <span class="r-status"></span>
-            </div>
-        </div>
-
-        <table class="inv-table">
-            <thead><tr><th>Description</th><th>Amount</th></tr></thead>
-            <tbody>
-                <tr>
-                    <td class="r-service">Service Charge</td>
-                    <td>₹ <span class="r-total"></span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="totals">
-            <p>Sub Total: ₹ <span class="r-total"></span></p>
-            <p>Paid Amount: ₹ <span class="r-paid"></span></p>
-            <p class="big-total">Pending Balance: ₹ <span class="r-pending"></span></p>
-        </div>
-
-        <div style="margin-top:20px; font-size:12px; border-top:1px solid #ccc; padding-top:5px;">
-            <strong>Terms & Conditions:</strong><br>
-            1. Fees once paid is non-refundable.<br>
-            2. This is a computer generated receipt.
+        <div class="sign-area">
+            <br>___________________<br>Authorized Signature
         </div>
     </div>
 
     <div class="cut-line"></div>
 
     <div class="invoice-box">
-        <div class="header">
-            <div class="logo-sec">
-                <h1>Shivam Online Services</h1>
-                <p>📍 Vatica, Jaipur, Rajasthan</p>
+        <div>
+            <div class="header">
+                <div class="logo-sec">
+                    <h1>Shivam Online Services</h1>
+                    <p>📍 Vatica, Jaipur, Rajasthan</p>
+                </div>
+                <div style="text-align:right;">
+                    <h3 style="margin:0;">OFFICE COPY</h3>
+                    <p>Date: <span class="r-date"></span></p>
+                    <p>Ref: <span class="r-id"></span></p>
+                </div>
             </div>
-            <div style="text-align:right;">
-                <h3 style="margin:0;">OFFICE COPY</h3>
-                <p>Date: <span class="r-date"></span></p>
-                <p>Ref: <span class="r-id"></span></p>
+
+            <div class="info-grid">
+                <div class="box-info">
+                    <strong>Customer:</strong> <span class="r-name"></span><br>
+                    <strong>Mobile:</strong> <span class="r-mobile"></span>
+                </div>
+                <div class="box-info">
+                    <strong>Service:</strong> <span class="r-service"></span>
+                </div>
+            </div>
+
+            <div class="totals" style="text-align:left;">
+                <p>Total: <strong>₹ <span class="r-total"></span></strong></p>
+                <p>Paid: ₹ <span class="r-paid"></span></p>
+                <p style="color:red;">Pending: <strong>₹ <span class="r-pending"></span></strong></p>
             </div>
         </div>
 
-        <div class="info-grid">
-            <div class="box-info">
-                <strong>Customer:</strong> <span class="r-name"></span><br>
-                <strong>Mobile:</strong> <span class="r-mobile"></span>
-            </div>
-            <div class="box-info">
-                <strong>Service:</strong> <span class="r-service"></span>
-            </div>
-        </div>
-
-        <div class="totals" style="text-align:left;">
-            <p>Total: <strong>₹ <span class="r-total"></span></strong></p>
-            <p>Paid: ₹ <span class="r-paid"></span></p>
-            <p style="color:red;">Pending: <strong>₹ <span class="r-pending"></span></strong></p>
-        </div>
-        
-        <div style="margin-top:auto; text-align:right;">
+        <div class="sign-area">
             <br>___________________<br>Authorized Signature
         </div>
     </div>
@@ -270,14 +281,10 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDmi56TXRo9EXZyDHC9ndKrussMvpBoYAbfz-rxBnCqvCk4Eiq5_LUGDlUp9fOoGDv/exec';
     const PASSCODE = "38765700";
 
-    // 1. UNLOCK LOGIC (Keyboard Friendly)
+    // UNLOCK LOGIC (Keyboard Friendly)
     const passInput = document.getElementById("passcode");
-    
-    // Listen for 'Enter' key on the input box
     passInput.addEventListener("keyup", function(event) {
-        if (event.key === "Enter") {
-            unlock();
-        }
+        if (event.key === "Enter") unlock();
     });
 
     function unlock() {
@@ -286,19 +293,19 @@
             document.getElementById("mainForm").style.display = "block";
         } else {
             document.getElementById("errorMsg").style.display = "block";
-            passInput.value = ""; // Clear input
-            passInput.focus(); // Keep cursor in box
+            passInput.value = ""; 
+            passInput.focus();
         }
     }
 
-    // 2. CALCULATOR
+    // CALCULATOR
     function calcPending() {
         let t = document.getElementById("total").value || 0;
         let p = document.getElementById("paid").value || 0;
         document.getElementById("pending").value = t - p;
     }
 
-    // 3. GENERATE & PRINT
+    // GENERATE
     function generateReceipt() {
         let name = document.getElementById("custName").value;
         if(!name) { alert("Please enter Customer Name"); return; }
@@ -320,7 +327,7 @@
             time: d.toLocaleTimeString()
         };
 
-        // Fill all classes in receipt (Handles both copies at once)
+        // Fill all classes
         document.querySelectorAll('.r-id').forEach(e => e.innerText = data.id);
         document.querySelectorAll('.r-date').forEach(e => e.innerText = data.date + " " + data.time);
         document.querySelectorAll('.r-name').forEach(e => e.innerText = data.name);
@@ -332,7 +339,6 @@
         document.querySelectorAll('.r-pending').forEach(e => e.innerText = data.pending);
         document.querySelectorAll('.r-status').forEach(e => e.innerText = data.pending > 0 ? "PARTIAL" : "PAID");
 
-        // Send Data
         fetch(SCRIPT_URL, {
             method: 'POST', body: JSON.stringify(data)
         }).then(() => {
