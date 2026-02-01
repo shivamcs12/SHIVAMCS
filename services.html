@@ -12,11 +12,14 @@
     :root { --primary: #1e3a8a; --bg: #f1f5f9; --text: #333; }
     body { margin: 0; font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); }
 
-    /* LOGIN */
+    /* UTILS */
+    .inp { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    .btn { width: 100%; padding: 12px; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; color: white; background: #2563eb; transition:0.3s;}
+    .btn:hover { opacity:0.9; }
+
+    /* LOGIN SCREEN */
     #login-screen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; justify-content: center; align-items: center; }
     .login-box { background: white; padding: 40px; border-radius: 10px; width: 320px; text-align: center; }
-    .inp { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-    .btn { width: 100%; padding: 10px; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; color: white; background: #2563eb; }
 
     /* DASHBOARD */
     #dashboard { display: none; min-height: 100vh; display: flex; }
@@ -29,39 +32,31 @@
     .row { display: flex; gap: 15px; margin-bottom: 15px; } .col { flex: 1; }
     label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; }
 
-    /* TABLE */
-    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-    th { text-align: left; background: #e2e8f0; padding: 10px; border-bottom: 2px solid #cbd5e1; }
-    td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
-    .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-    .badge-bill { background: #dcfce7; color: #166534; }
-    .badge-refund { background: #fee2e2; color: #991b1b; }
-
-    /* ADMIN ACTIONS */
     .admin-only { display: none !important; }
-    .action-btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-right: 5px; }
-    .edit-btn { background: #3b82f6; color: white; }
-    .print-btn { background: #64748b; color: white; }
 
-    /* EDIT MODAL */
-    #edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 6000; justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 20px; border-radius: 10px; width: 400px; }
-
-    /* PREVIEW (VERTICAL RECEIPT) */
-    #preview-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; justify-content: center; overflow-y: auto; padding-top: 20px; }
-    .receipt-paper { background: white; width: 80mm; padding: 5mm; margin-bottom: 20px; }
-    .rec-box { border: 1px solid #000; padding: 10px; margin-bottom: 5px; }
-    .rec-header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 5px; }
-    .rec-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px; }
-    .cut-line { border-top: 1px dashed #000; margin: 15px 0; text-align: center; font-size: 10px; }
-    .cut-line span { background: #fff; padding: 0 5px; position: relative; top: -8px; }
+    /* PREVIEW MODAL (ONE PAGE A4) */
+    #preview-modal {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000;
+        justify-content: center; overflow-y: auto; padding: 20px;
+    }
+    .receipt-paper { background: white; width: 210mm; min-height: 297mm; padding: 10mm; box-sizing: border-box; position:relative; }
+    
+    /* RECEIPT BOXES */
+    .invoice-box { border: 2px solid #000; padding: 15px; height: 45%; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 20px; }
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; }
+    .info-table { width: 100%; font-size: 14px; margin-top: 10px; }
+    .bill-table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #000; }
+    .bill-table th, .bill-table td { border: 1px solid #000; padding: 8px; text-align: left; }
+    .totals { text-align: right; margin-top: 10px; }
+    .cut-line { border-top: 2px dashed #000; margin: 20px 0; text-align: center; }
+    .cut-line span { background: #fff; padding: 0 10px; position: relative; top: -12px; }
 
     @media print {
         body * { visibility: hidden; }
         #preview-modal, #preview-modal * { visibility: visible; }
-        #preview-modal { position: absolute; left: 0; top: 0; background: white; padding: 0; }
-        .receipt-paper { width: 100%; border: none; }
-        .no-print { display: none; }
+        #preview-modal { position: absolute; left: 0; top: 0; padding: 0; background: white; }
+        .receipt-paper { box-shadow: none; margin: 0; width: 100%; height: 100%; }
+        .no-print { display: none !important; }
     }
 </style>
 </head>
@@ -79,130 +74,149 @@
 
 <div id="dashboard">
     <div class="sidebar">
-        <h3 style="text-align:center; margin-bottom:30px;">SHIVAM .OS</h3>
+        <h3 style="text-align:center;">SHIVAM .OS</h3>
         <div class="menu-item active" onclick="showTab('billing')"><i class="fas fa-file-invoice"></i> Billing</div>
-        <div class="menu-item" onclick="showTab('history')"><i class="fas fa-list"></i> History & Edit</div>
         <div class="menu-item" onclick="location.reload()" style="margin-top:auto;"><i class="fas fa-sign-out-alt"></i> Logout</div>
-        <p style="text-align:center; font-size:11px; color:#94a3b8;">User: <span id="uDisplay" style="color:white"></span></p>
+        <p style="text-align:center; font-size:11px; color:#94a3b8; margin-top:10px;">User: <span id="uDisplay" style="color:white"></span></p>
     </div>
 
     <div class="main-content">
-        
         <div id="tab-billing">
-            <h2>New Transaction</h2>
-            <div class="card" style="max-width:600px;">
+            <h2>Generate Receipt</h2>
+            <div class="card" style="max-width:700px;">
                 <div class="row">
                     <div class="col">
                         <label>Type</label>
                         <select id="txnType" class="inp" onchange="checkType()">
-                            <option value="Bill">📝 Receipt (Bill)</option>
-                            <option value="Refund" class="admin-only">💸 Refund (Admin)</option>
+                            <option value="Bill">📝 Bill (Receipt)</option>
+                            <option value="Refund" class="admin-only">💸 Refund (Admin Only)</option>
                         </select>
                     </div>
                     <div class="col"><label>Date</label><input type="text" id="billDate" class="inp" readonly></div>
                 </div>
+                
                 <div class="row">
                     <div class="col"><label>Customer Name</label><input type="text" id="cName" class="inp"></div>
                     <div class="col"><label>Mobile</label><input type="number" id="cMobile" class="inp"></div>
                 </div>
-                <div class="row"><div class="col"><label>Service</label><input type="text" id="cService" class="inp"></div></div>
+                
                 <div class="row">
-                    <div class="col"><label>Total</label><input type="number" id="cTotal" class="inp" oninput="calc()"></div>
-                    <div class="col"><label>Paid</label><input type="number" id="cPaid" class="inp" oninput="calc()"></div>
+                    <div class="col"><label>Service Details</label><input type="text" id="cService" class="inp"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col"><label>Total Amount</label><input type="number" id="cTotal" class="inp" oninput="calc()"></div>
+                    <div class="col"><label>Paid Amount</label><input type="number" id="cPaid" class="inp" oninput="calc()"></div>
                     <div class="col"><label>Pending</label><input type="number" id="cPending" class="inp" readonly style="background:#f1f5f9;"></div>
                 </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Remark / Refund Reason (Optional)</label>
+                        <input type="text" id="cRemark" class="inp" placeholder="Example: Service Failed, Wrong Transaction...">
+                    </div>
+                </div>
+
                 <button class="btn" id="printBtn" onclick="saveAndPreview()">GENERATE & PRINT</button>
             </div>
         </div>
-
-        <div id="tab-history" style="display:none;">
-            <h2>Transaction History</h2>
-            <div class="card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th><th>Date</th><th>Name</th><th>Service</th><th>Total</th><th>Type</th><th>Created By</th><th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyBody"></tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
 </div>
 
 <div id="preview-modal">
-    <div style="position:fixed; top:20px; right:20px;" class="no-print">
+    <div style="position:fixed; top:20px; right:20px; z-index:5001;" class="no-print">
         <button class="btn" style="width:auto; background:#10b981;" onclick="window.print()">PRINT</button>
         <button class="btn" style="width:auto; background:#ef4444;" onclick="document.getElementById('preview-modal').style.display='none'">CLOSE</button>
     </div>
 
     <div class="receipt-paper">
-        <div class="rec-box">
-            <div class="rec-header">
-                <i class="fas fa-globe-asia" style="font-size:24px; color:#f59e0b;"></i>
-                <h3>SHIVAM ONLINE SERVICES</h3>
-                <div style="font-size:10px;">WATIKA, Jaipur | Mob: 9664324706</div>
-                <div style="font-size:11px; font-weight:bold; margin-top:5px;">Customer Copy</div>
+        <div class="invoice-box">
+            <div class="header">
+                <div>
+                    <h1 style="margin:0; font-size:24px;">SHIVAM ONLINE SERVICES</h1>
+                    <p style="margin:5px 0;">📍 WATIKA, Jaipur | 📞 9664324706</p>
+                </div>
+                <div style="text-align:right;">
+                    <h2 id="r-title1" style="margin:0;">RECEIPT</h2>
+                    <p style="margin:5px 0;"><strong>Txn No:</strong> <span class="r-txn"></span></p>
+                    <p style="margin:0;"><span class="r-date"></span></p>
+                    <small style="background:black; color:white; padding:2px 5px;">CUSTOMER COPY</small>
+                </div>
             </div>
-            <div class="rec-row"><span>Receipt No:</span> <strong class="r-txn"></strong></div>
-            <div class="rec-row"><span>Date:</span> <span class="r-date"></span></div>
-            <hr>
-            <div class="rec-row"><span>Name:</span> <strong class="r-name"></strong></div>
-            <div class="rec-row"><span>Service:</span> <span class="r-service"></span></div>
-            <div class="rec-row"><span>Created By:</span> <span class="r-by"></span></div>
-            <div class="rec-row" style="margin-top:5px; font-size:12px;"><span>Total:</span> <strong>₹<span class="r-total"></span></strong></div>
-            <div class="rec-row"><span>Paid:</span> <span>₹<span class="r-paid"></span></span></div>
-            <div class="rec-row"><span>Pending:</span> <span>₹<span class="r-pending"></span></span></div>
-            <div style="font-size:9px; margin-top:10px; border-top:1px solid #ccc; padding-top:2px;">
-                * Fees non-refundable.<br>*** Thank You ***
+
+            <table class="info-table">
+                <tr>
+                    <td><strong>Bill To:</strong> <span class="r-name" style="font-weight:bold; font-size:16px;"></span></td>
+                    <td style="text-align:right;"><strong>Served By:</strong> <span class="r-by"></span></td>
+                </tr>
+                <tr>
+                    <td><strong>Mobile:</strong> <span class="r-mobile"></span></td>
+                    <td style="text-align:right;"><strong>Remark:</strong> <span class="r-remark"></span></td>
+                </tr>
+            </table>
+
+            <table class="bill-table">
+                <thead><tr><th>Description</th><th style="width:100px;">Amount</th></tr></thead>
+                <tbody><tr><td class="r-service" style="height:60px; vertical-align:top;"></td><td>₹ <span class="r-total"></span></td></tr></tbody>
+            </table>
+
+            <div class="totals">
+                <p style="margin:5px 0;">Total: ₹ <span class="r-total"></span></p>
+                <p style="margin:5px 0;">Paid: ₹ <span class="r-paid"></span></p>
+                <p style="font-size:18px;"><b>Pending: ₹ <span class="r-pending"></span></b></p>
+            </div>
+
+            <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:end;">
+                <div style="font-size:11px;">* Fees once paid is non-refundable.<br>* Terms & Conditions Apply.</div>
+                <div style="text-align:center;">___________________<br>Authorized Signature</div>
             </div>
         </div>
 
         <div class="cut-line"><span>✂ Cut Here</span></div>
 
-        <div class="rec-box">
-            <div class="rec-header">
-                <h3>Shivam Online Services</h3>
-                <div style="font-size:10px;">Office Copy</div>
+        <div class="invoice-box">
+            <div class="header">
+                <div>
+                    <h2 style="margin:0;">Shivam Online Services</h2>
+                    <p style="margin:0;">Office Record</p>
+                </div>
+                <div style="text-align:right;">
+                    <h3 id="r-title2" style="margin:0;">OFFICE COPY</h3>
+                    <p>Txn: <span class="r-txn"></span></p>
+                </div>
             </div>
-            <div class="rec-row"><span>Rec No:</span> <span class="r-txn"></span></div>
-            <div class="rec-row"><span>Name:</span> <span class="r-name"></span></div>
-            <div class="rec-row"><span>Service:</span> <span class="r-service"></span></div>
-            <div class="rec-row"><span>Operator:</span> <span class="r-by"></span></div>
-            <div class="rec-row"><span>Total:</span> <strong>₹<span class="r-total"></span></strong></div>
-            <div class="rec-row" style="color:red;"><span>Pending:</span> <strong>₹<span class="r-pending"></span></strong></div>
-        </div>
-    </div>
-</div>
 
-<div id="edit-modal">
-    <div class="modal-content">
-        <h3>Edit Transaction</h3>
-        <input type="hidden" id="edit-index">
-        <label>Name</label><input type="text" id="edit-name" class="inp">
-        <label>Service</label><input type="text" id="edit-service" class="inp">
-        <label>Total</label><input type="number" id="edit-total" class="inp">
-        <label>Paid</label><input type="number" id="edit-paid" class="inp">
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn" onclick="saveEdit()">SAVE CHANGES</button>
-            <button class="btn" style="background:#ef4444;" onclick="document.getElementById('edit-modal').style.display='none'">CANCEL</button>
+            <table class="info-table">
+                <tr><td><strong>Customer:</strong> <span class="r-name"></span></td><td style="text-align:right;"><strong>Op:</strong> <span class="r-by"></span></td></tr>
+                <tr><td colspan="2"><strong>Remark:</strong> <span class="r-remark"></span></td></tr>
+            </table>
+
+            <table class="bill-table">
+                <thead><tr><th>Description</th><th>Amount</th></tr></thead>
+                <tbody><tr><td class="r-service"></td><td>₹ <span class="r-total"></span></td></tr></tbody>
+            </table>
+
+            <div class="totals">
+                <p>Total: <strong>₹ <span class="r-total"></span></strong></p>
+                <p style="color:red;">Pending: <strong>₹ <span class="r-pending"></span></strong></p>
+            </div>
+            
+            <div style="margin-top:auto; text-align:right;">___________________<br>Receiver Signature</div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- CREDENTIALS ---
+    // 🔥 CONFIG (Paste your App Script URL here)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDmi56TXRo9EXZyDHC9ndKrussMvpBoYAbfz-rxBnCqvCk4Eiq5_LUGDlUp9fOoGDv/exec';
+    
     const ADMIN_USER = "admin"; const ADMIN_PASS = "38765700";
     const STAFF_USER = "staff"; const STAFF_PASS = "1234";
-
     let CURRENT_USER = {};
-    let DB = JSON.parse(localStorage.getItem('shivam_db_v4')) || [];
+    let DB = JSON.parse(localStorage.getItem('shivam_db_v5')) || [];
 
     document.getElementById("billDate").value = new Date().toLocaleDateString();
 
-    // --- LOGIN ---
     function login() {
         let u = document.getElementById("loginUser").value.toLowerCase().trim();
         let p = document.getElementById("loginPass").value.trim();
@@ -210,7 +224,7 @@
         if(u === ADMIN_USER && p === ADMIN_PASS) {
             setup({ name: "Admin", role: "admin" });
         } else if(u === STAFF_USER && p === STAFF_PASS) {
-            setup({ name: "Staff Rahul", role: "staff" });
+            setup({ name: "Rahul Staff", role: "staff" });
         } else {
             document.getElementById("errorMsg").style.display = "block";
         }
@@ -225,21 +239,9 @@
         if(user.role === "admin") {
             document.querySelectorAll(".admin-only").forEach(e => e.style.display = "block");
         } else {
-            // Remove Refund Option for Staff
             let sel = document.getElementById("txnType");
-            for (let i=0; i<sel.length; i++) {
-                if (sel.options[i].value == 'Refund') sel.remove(i);
-            }
+            for (let i=0; i<sel.length; i++) { if (sel.options[i].value == 'Refund') sel.remove(i); }
         }
-        renderHistory();
-    }
-
-    // --- TABS & UI ---
-    function showTab(id) {
-        document.getElementById("tab-billing").style.display = "none";
-        document.getElementById("tab-history").style.display = "none";
-        document.getElementById("tab-"+id).style.display = "block";
-        if(id === 'history') renderHistory();
     }
 
     function calc() {
@@ -251,18 +253,18 @@
     function checkType() {
         let t = document.getElementById("txnType").value;
         let btn = document.getElementById("printBtn");
-        if(t==="Refund") { btn.style.background="red"; btn.innerText="GENERATE REFUND"; }
+        if(t==="Refund") { btn.style.background="red"; btn.innerText="GENERATE REFUND SLIP"; }
         else { btn.style.background="#2563eb"; btn.innerText="GENERATE & PRINT"; }
     }
 
-    // --- CREATE RECEIPT ---
     function saveAndPreview() {
         let name = document.getElementById("cName").value;
-        if(!name) { alert("Name Required"); return; }
-
+        if(!name) { alert("Customer Name Required"); return; }
+        
+        let d = new Date();
         let data = {
             id: "TXN" + Math.floor(1000 + Math.random() * 9000),
-            date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+            date: d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
             name: name,
             mobile: document.getElementById("cMobile").value,
             service: document.getElementById("cService").value,
@@ -270,83 +272,40 @@
             paid: document.getElementById("cPaid").value,
             pending: document.getElementById("cPending").value,
             type: document.getElementById("txnType").value,
-            by: CURRENT_USER.name // Save who created it
+            remark: document.getElementById("cRemark").value, // ✅ Remark Captured
+            by: CURRENT_USER.name
         };
 
+        // 1. Send to Google Sheet
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) })
+        .catch(err => console.log("Offline Mode"));
+
+        // 2. Local Save
         DB.unshift(data);
-        localStorage.setItem('shivam_db_v4', JSON.stringify(DB));
+        localStorage.setItem('shivam_db_v5', JSON.stringify(DB));
         
+        // 3. Show Preview
         fillPreview(data);
     }
 
     function fillPreview(data) {
+        document.getElementById("r-title1").innerText = data.type === "Refund" ? "REFUND SLIP" : "RECEIPT";
+        document.getElementById("r-title2").innerText = data.type === "Refund" ? "REFUND COPY" : "OFFICE COPY";
+
         document.querySelectorAll(".r-txn").forEach(e => e.innerText = data.id);
         document.querySelectorAll(".r-date").forEach(e => e.innerText = data.date);
         document.querySelectorAll(".r-name").forEach(e => e.innerText = data.name);
+        document.querySelectorAll(".r-mobile").forEach(e => e.innerText = data.mobile);
         document.querySelectorAll(".r-service").forEach(e => e.innerText = data.service);
         document.querySelectorAll(".r-total").forEach(e => e.innerText = data.total);
         document.querySelectorAll(".r-paid").forEach(e => e.innerText = data.paid);
         document.querySelectorAll(".r-pending").forEach(e => e.innerText = data.pending);
         document.querySelectorAll(".r-by").forEach(e => e.innerText = data.by);
         
-        document.getElementById("preview-modal").style.display = "flex";
-    }
-
-    // --- HISTORY & EDIT ---
-    function renderHistory() {
-        let tbody = document.getElementById("historyBody");
-        tbody.innerHTML = "";
-        DB.forEach((row, index) => {
-            let badgeClass = row.type === 'Refund' ? 'badge-refund' : 'badge-bill';
-            
-            // ADMIN ACTIONS BUTTONS
-            let actions = "";
-            if(CURRENT_USER.role === "admin") {
-                actions = `
-                    <button class="action-btn edit-btn" onclick="openEdit(${index})">Edit</button>
-                    <button class="action-btn print-btn" onclick='fillPreview(${JSON.stringify(row)})'>Print</button>
-                `;
-            } else {
-                actions = `<span style="color:#aaa; font-size:10px;">View Only</span>`;
-            }
-
-            tbody.innerHTML += `
-                <tr>
-                    <td>${row.id}</td>
-                    <td>${row.date}</td>
-                    <td>${row.name}</td>
-                    <td>${row.service}</td>
-                    <td>₹${row.total}</td>
-                    <td><span class="badge ${badgeClass}">${row.type}</span></td>
-                    <td><strong>${row.by}</strong></td> <td>${actions}</td>
-                </tr>
-            `;
-        });
-    }
-
-    // --- ADMIN EDIT LOGIC ---
-    function openEdit(index) {
-        let row = DB[index];
-        document.getElementById("edit-index").value = index;
-        document.getElementById("edit-name").value = row.name;
-        document.getElementById("edit-service").value = row.service;
-        document.getElementById("edit-total").value = row.total;
-        document.getElementById("edit-paid").value = row.paid;
-        document.getElementById("edit-modal").style.display = "flex";
-    }
-
-    function saveEdit() {
-        let idx = document.getElementById("edit-index").value;
-        DB[idx].name = document.getElementById("edit-name").value;
-        DB[idx].service = document.getElementById("edit-service").value;
-        DB[idx].total = document.getElementById("edit-total").value;
-        DB[idx].paid = document.getElementById("edit-paid").value;
-        DB[idx].pending = DB[idx].total - DB[idx].paid;
+        // Show Remark
+        document.querySelectorAll(".r-remark").forEach(e => e.innerText = data.remark || "-");
         
-        localStorage.setItem('shivam_db_v4', JSON.stringify(DB));
-        document.getElementById("edit-modal").style.display = "none";
-        renderHistory();
-        alert("Transaction Updated!");
+        document.getElementById("preview-modal").style.display = "flex";
     }
 </script>
 
