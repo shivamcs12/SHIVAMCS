@@ -3,312 +3,418 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shivam Enterprise | Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Shivam Enterprise | Billing Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    /* ===== THEME ===== */
+    /* ===== CSS STYLES ===== */
     :root {
-        --primary: #0ea5e9; 
-        --accent: #f97316;
+        --primary: #FF9F1C;
         --bg: #0f172a;
         --card: #1e293b;
-        --border: 1px solid rgba(255, 255, 255, 0.1);
+        --text: #fff;
     }
 
-    body {
-        margin: 0; font-family: 'Poppins', sans-serif;
-        background-color: var(--bg); color: white;
-        height: 100vh; overflow: hidden;
-    }
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
 
-    /* ===== LOGIN ===== */
+    /* LOGIN SCREEN */
     #login-screen {
-        position: fixed; inset: 0; z-index: 9999; background: #000;
+        position: fixed; inset: 0; background: #000; z-index: 9999;
         display: flex; justify-content: center; align-items: center;
     }
-    .login-card {
-        width: 320px; padding: 40px; background: #1e293b;
-        border-radius: 20px; text-align: center; border: 1px solid #333;
+    .login-box {
+        background: var(--card); padding: 40px; border-radius: 15px; text-align: center; border: 1px solid #333; width: 300px;
     }
-    .inp { width: 100%; padding: 12px; margin: 10px 0; background: #0f172a; border: 1px solid #333; color: white; border-radius: 8px; outline:none; }
-    .btn { width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    
-    /* ===== DASHBOARD ===== */
-    #dashboard { display: none; height: 100vh; display: flex; }
-    
-    .sidebar { width: 250px; background: #111; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #333; }
-    .menu-item { padding: 15px; cursor: pointer; color: #888; display: flex; gap: 10px; align-items: center; }
-    .menu-item.active, .menu-item:hover { color: var(--primary); background: #1a1a1a; border-radius: 8px; }
-    
-    .content { flex: 1; padding: 30px; overflow-y: auto; background: #0b0f19; }
-    .page { display: none; }
-    .page.active { display: block; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .inp {
+        width: 100%; padding: 12px; margin: 10px 0; background: #0b0f19;
+        border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box;
+    }
+    .btn {
+        width: 100%; padding: 12px; background: var(--primary); border: none;
+        color: #000; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px;
+    }
 
-    /* CARDS */
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-    .card { background: var(--card); padding: 20px; border-radius: 12px; border: var(--border); }
+    /* DASHBOARD */
+    #dashboard { display: none; min-height: 100vh; }
     
-    /* STAFF TABLE */
-    .staff-card { background: #2d3748; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .sidebar {
+        width: 250px; background: #111; padding: 20px; border-right: 1px solid #333;
+        display: flex; flex-direction: column;
+    }
+    .main-content { flex: 1; padding: 30px; }
+
+    .menu-item {
+        padding: 15px; color: #888; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    }
+    .menu-item.active, .menu-item:hover { color: var(--primary); background: #222; border-radius: 8px; }
+
+    .card { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+    
+    .row { display: flex; gap: 15px; margin-bottom: 15px; }
+    .col { flex: 1; }
+    label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th { text-align: left; color: var(--primary); border-bottom: 1px solid #444; padding: 10px; }
+    td { padding: 10px; border-bottom: 1px solid #333; font-size: 14px; }
 
     /* UTILS */
     .admin-only { display: none; } /* Hidden by default */
+    .show-admin { display: block !important; }
+
+    /* ===== PRINT RECEIPT STYLES (A4) ===== */
+    #receipt-view { display: none; background: white; color: black; }
+
+    @media print {
+        body * { visibility: hidden; }
+        #receipt-view, #receipt-view * { visibility: visible; }
+        #receipt-view { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+        
+        .invoice-box {
+            width: 100%; padding: 20px; border: 2px solid #000; height: 48vh; 
+            display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;
+        }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .info { display: flex; justify-content: space-between; margin: 20px 0; }
+        .r-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .r-table th, .r-table td { border: 1px solid #000; padding: 8px; text-align: left; }
+        .totals { text-align: right; margin-top: 10px; }
+        .cut-line { border-top: 2px dashed #000; margin: 20px 0; text-align: center; }
+        .cut-line::after { content: "✂ Cut Here"; background: #fff; padding: 0 10px; position: relative; top: -12px; }
+    }
 </style>
 </head>
 <body>
 
 <div id="login-screen">
-    <div class="login-card">
-        <h2 style="color:var(--primary); text-transform:uppercase;">System Login</h2>
-        <p style="color:#666; font-size:12px;">Shivam Online Services</p>
-        <input type="text" id="uName" class="inp" placeholder="User ID">
-        <input type="password" id="uPass" class="inp" placeholder="Password">
+    <div class="login-box">
+        <h2 style="color:var(--primary); margin:0 0 20px 0;">SYSTEM LOGIN</h2>
+        <input type="text" id="loginUser" class="inp" placeholder="User ID">
+        <input type="password" id="loginPass" class="inp" placeholder="Password">
         <button class="btn" onclick="login()">LOGIN</button>
-        <p id="errMsg" style="color:red; font-size:12px; display:none; margin-top:10px;">Invalid Credentials</p>
+        <p id="errorMsg" style="color:red; display:none; margin-top:10px;">Invalid Credentials</p>
     </div>
 </div>
 
 <div id="dashboard">
     <div class="sidebar">
-        <h2 style="color:white; margin-bottom:40px;">SHIVAM <span style="color:var(--primary)">.OS</span></h2>
+        <h2 style="color:white; text-align:center;">SHIVAM<span style="color:var(--primary)">.OS</span></h2>
         
-        <div class="menu-item active" onclick="nav('home')"><i class="fas fa-home"></i> Dashboard</div>
-        <div class="menu-item" onclick="nav('billing')"><i class="fas fa-file-invoice"></i> Billing</div>
-        <div class="menu-item" onclick="nav('expense')"><i class="fas fa-wallet"></i> Expenses</div>
-        <div class="menu-item admin-only" onclick="nav('staff')"><i class="fas fa-users-cog"></i> Staff Manager</div>
-        <div class="menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        <div class="menu-item active" onclick="switchTab('billing')"><i class="fas fa-file-invoice"></i> Billing</div>
+        <div class="menu-item" onclick="switchTab('report')"><i class="fas fa-history"></i> Report</div>
+        <div class="menu-item admin-only" onclick="switchTab('staff')"><i class="fas fa-users-cog"></i> Staff Manager</div>
         
-        <div style="margin-top:auto; font-size:12px; color:#555;">
-            Logged in as: <span id="userDisplay" style="color:var(--primary)">Guest</span>
+        <div style="margin-top:auto;">
+            <div class="menu-item" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+            <p style="font-size:12px; text-align:center; color:#555;">User: <span id="uDisplay" style="color:var(--primary)"></span></p>
         </div>
     </div>
 
-    <div class="content">
-        <div id="p-home" class="page active">
-            <h1>Overview</h1>
-            <div class="grid">
-                <div class="card"><h3>Total Bills</h3><h1 id="d-bills">0</h1></div>
-                <div class="card admin-only"><h3>Total Revenue</h3><h1 id="d-rev">₹0</h1></div> </div>
-            <h3>Recent History</h3>
-            <div id="history-list" style="margin-top:10px;"></div>
-        </div>
-
-        <div id="p-billing" class="page">
-            <h1>New Receipt</h1>
-            <div class="card" style="max-width:600px;">
-                <label>Transaction Type</label>
-                <select id="txnType" class="inp" onchange="checkRefund()">
-                    <option value="Bill">New Bill (रसीद)</option>
-                    <option value="Refund" class="admin-only">Refund (Admin Only)</option> </select>
-
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="cName" class="inp" placeholder="Customer Name">
-                    <input type="number" id="cMobile" class="inp" placeholder="Mobile">
+    <div class="main-content">
+        
+        <div id="tab-billing">
+            <h2 style="border-bottom:1px solid #333; padding-bottom:10px;">New Receipt</h2>
+            
+            <div class="card" style="max-width:800px;">
+                <div class="row">
+                    <div class="col">
+                        <label>Type</label>
+                        <select id="txnType" class="inp" onchange="checkType()">
+                            <option value="Bill">Bill (Receipt)</option>
+                            <option value="Refund" class="admin-only">Refund (Admin Only)</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                         <label>Date</label>
+                         <input type="text" id="billDate" class="inp" readonly>
+                    </div>
                 </div>
-                <input type="text" id="cService" class="inp" placeholder="Service (e.g. Pan Card)">
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="cTotal" class="inp" placeholder="Total" oninput="calc()">
-                    <input type="number" id="cPaid" class="inp" placeholder="Paid" oninput="calc()">
-                    <input type="number" id="cPending" class="inp" placeholder="Pending" readonly style="background:#000;">
+
+                <div class="row">
+                    <div class="col"><label>Customer Name</label><input type="text" id="cName" class="inp"></div>
+                    <div class="col"><label>Mobile</label><input type="number" id="cMobile" class="inp"></div>
                 </div>
-                <button class="btn" id="btn-print" onclick="printReceipt()">PRINT RECEIPT</button>
+
+                <div class="row">
+                    <div class="col"><label>Service</label><input type="text" id="cService" class="inp" placeholder="e.g. Pan Card"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col"><label>Total Amount</label><input type="number" id="cTotal" class="inp" oninput="calc()"></div>
+                    <div class="col"><label>Paid Amount</label><input type="number" id="cPaid" class="inp" oninput="calc()"></div>
+                    <div class="col"><label>Pending</label><input type="number" id="cPending" class="inp" readonly style="background:#000;"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col"><label>Payment Mode</label><select id="cMode" class="inp"><option>Cash</option><option>Online UPI</option></select></div>
+                </div>
+
+                <button class="btn" onclick="generateAndPrint()" id="printBtn">PRINT RECEIPT (A4)</button>
             </div>
         </div>
 
-        <div id="p-expense" class="page">
-            <h1>Add Expense</h1>
-            <div class="card" style="max-width:500px;">
-                <input type="text" id="eItem" class="inp" placeholder="Item Name (e.g. Tea)">
-                <input type="number" id="eCost" class="inp" placeholder="Cost">
-                <button class="btn" style="background:var(--accent);" onclick="saveExpense()">SAVE EXPENSE</button>
+        <div id="tab-report" style="display:none;">
+            <h2>Recent History</h2>
+            <div class="card">
+                <table id="historyTable">
+                    <thead><tr><th>ID</th><th>Date</th><th>Name</th><th>Service</th><th>Total</th><th>By</th></tr></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
 
-        <div id="p-staff" class="page">
-            <h1>Staff Management</h1>
-            <div class="card" style="margin-bottom:20px;">
-                <h3>Add New Employee</h3>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="newUser" class="inp" placeholder="User ID">
-                    <input type="text" id="newPass" class="inp" placeholder="Password">
-                    <input type="text" id="newName" class="inp" placeholder="Full Name">
+        <div id="tab-staff" style="display:none;">
+            <h2>Staff Management</h2>
+            <div class="card">
+                <h3>Add New Staff</h3>
+                <div class="row">
+                    <input type="text" id="newSUser" class="inp" placeholder="User ID">
+                    <input type="text" id="newSPass" class="inp" placeholder="Password">
+                    <input type="text" id="newSName" class="inp" placeholder="Full Name">
+                    <button class="btn" style="width:auto;" onclick="addStaff()">ADD</button>
                 </div>
-                <button class="btn" onclick="addStaff()">CREATE STAFF</button>
             </div>
-            <div id="staff-list"></div>
+            <div class="card">
+                <h3>Staff List</h3>
+                <ul id="staffList" style="list-style:none; padding:0;"></ul>
+            </div>
         </div>
+
     </div>
 </div>
 
-<div id="print-area" style="display:none;">
+<div id="receipt-view">
+    <div class="invoice-box">
+        <div class="header">
+            <div>
+                <h1>Shivam Online Services</h1>
+                <p>📍 Vatica, Jaipur, Rajasthan</p>
+                <p>📞 +91 9664324706</p>
+            </div>
+            <div style="text-align:right;">
+                <h2 id="r-title1">RECEIPT</h2>
+                <p>Ref: <span class="r-id"></span></p>
+                <p>Date: <span class="r-date"></span></p>
+                <small style="background:black; color:white; padding:2px;">CUSTOMER COPY</small>
+            </div>
+        </div>
+        <div class="info">
+            <div>
+                <strong>Bill To:</strong><br>
+                <span class="r-name" style="font-size:18px;"></span><br>
+                Mob: <span class="r-mobile"></span>
+            </div>
+            <div style="text-align:right;">
+                <strong>Served By:</strong> <span class="r-by"></span><br>
+                <strong>Mode:</strong> <span class="r-mode"></span>
+            </div>
+        </div>
+        <table class="r-table">
+            <thead><tr><th>Description</th><th>Amount</th></tr></thead>
+            <tbody><tr><td><span class="r-service"></span></td><td>₹ <span class="r-total"></span></td></tr></tbody>
+        </table>
+        <div class="totals">
+            <p>Total: ₹ <span class="r-total"></span></p>
+            <p>Paid: ₹ <span class="r-paid"></span></p>
+            <p style="font-size:18px;"><b>Pending: ₹ <span class="r-pending"></span></b></p>
+        </div>
+        <div style="margin-top:auto; text-align:right;"><br>__________<br>Signature</div>
     </div>
 
+    <div class="cut-line"></div>
+
+    <div class="invoice-box">
+        <div class="header">
+            <div><h1>Shivam Online Services</h1><p>Vatica, Jaipur</p></div>
+            <div style="text-align:right;"><h2 id="r-title2">OFFICE COPY</h2><p>Ref: <span class="r-id"></span></p></div>
+        </div>
+        <div class="info">
+            <div><strong>Customer:</strong> <span class="r-name"></span></div>
+            <div><strong>Operator:</strong> <span class="r-by"></span></div>
+        </div>
+        <div class="totals" style="text-align:left;">
+            <p>Service: <span class="r-service"></span></p>
+            <p>Total: <strong>₹ <span class="r-total"></span></strong></p>
+            <p>Pending: <strong style="color:red">₹ <span class="r-pending"></span></strong></p>
+        </div>
+        <div style="margin-top:auto; text-align:right;"><br>__________<br>Signature</div>
+    </div>
+</div>
+
 <script>
-    // --- CONFIG ---
-    const ADMIN_ID = "admin";
+    // --- INIT ---
+    const ADMIN_USER = "admin";
     const ADMIN_PASS = "38765700";
-    let CURRENT_USER = null; // { name, role, id }
-    
-    // --- DATABASE (LocalStorage) ---
-    // Default Staff if empty
-    let dbStaff = JSON.parse(localStorage.getItem('shivam_staff_v2')) || [
-        { name: "Demo Staff", user: "staff", pass: "1234", role: "Staff" }
+    let CURRENT_USER = {}; 
+
+    // Fake Database (Browser Storage)
+    let staffDB = JSON.parse(localStorage.getItem('shivam_staff_db')) || [
+        { name: "Rahul Staff", user: "staff", pass: "1234" }
     ];
-    let dbHistory = JSON.parse(localStorage.getItem('shivam_history_v2')) || [];
+    let historyDB = JSON.parse(localStorage.getItem('shivam_history_db')) || [];
 
-    // --- LOGIN LOGIC ---
+    document.getElementById("billDate").value = new Date().toLocaleDateString();
+
+    // --- LOGIN ---
     function login() {
-        let u = document.getElementById("uName").value.toLowerCase().trim();
-        let p = document.getElementById("uPass").value.trim();
-        
-        // 1. Check Admin
-        if(u === ADMIN_ID && p === ADMIN_PASS) {
-            setupSession({ name: "Admin", role: "Admin", user: "admin" });
+        let u = document.getElementById("loginUser").value.toLowerCase().trim();
+        let p = document.getElementById("loginPass").value.trim();
+
+        // Check Admin
+        if(u === ADMIN_USER && p === ADMIN_PASS) {
+            setupSession({ name: "Admin", role: "admin" });
             return;
         }
 
-        // 2. Check Staff
-        let found = dbStaff.find(s => s.user === u && s.pass === p);
+        // Check Staff
+        let found = staffDB.find(s => s.user === u && s.pass === p);
         if(found) {
-            setupSession(found);
+            setupSession({ name: found.name, role: "staff" });
             return;
         }
 
-        // 3. Fail
-        document.getElementById("errMsg").style.display = "block";
+        document.getElementById("errorMsg").style.display = "block";
     }
 
     function setupSession(user) {
         CURRENT_USER = user;
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("dashboard").style.display = "flex";
-        document.getElementById("userDisplay").innerText = user.name + " (" + user.role + ")";
-        
-        // Apply Restrictions
-        if(user.role === "Staff") {
-            // Hide all Admin elements
-            document.querySelectorAll(".admin-only").forEach(el => el.remove()); 
-            // Remove Refund Option from Select
-            let sel = document.getElementById("txnType");
-            for (let i=0; i<sel.length; i++) {
-                if (sel.options[i].value == 'Refund') sel.remove(i);
+        document.getElementById("uDisplay").innerText = user.name;
+
+        // Apply Permissions
+        if(user.role === "admin") {
+            document.querySelectorAll(".admin-only").forEach(e => e.classList.add("show-admin"));
+        } else {
+            // STAFF: Refund option remove kar do
+            let select = document.getElementById("txnType");
+            for (let i=0; i<select.length; i++) {
+                if (select.options[i].value == 'Refund') select.remove(i);
             }
         }
-
+        
         loadHistory();
-        if(user.role === "Admin") loadStaffList();
+        if(user.role === "admin") loadStaff();
     }
 
-    function logout() { location.reload(); }
-    function nav(pid) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-        document.getElementById('p-'+pid).classList.add('active');
-        event.currentTarget.classList.add('active');
+    // --- TABS ---
+    function switchTab(id) {
+        document.getElementById("tab-billing").style.display = "none";
+        document.getElementById("tab-report").style.display = "none";
+        document.getElementById("tab-staff").style.display = "none";
+        
+        document.getElementById("tab-"+id).style.display = "block";
+        
+        // Update active class on sidebar items (optional UI fix)
+        document.querySelectorAll(".menu-item").forEach(el => el.style.background = "transparent");
+        event.currentTarget.style.background = "#222";
     }
 
     // --- BILLING ---
     function calc() {
-        document.getElementById("cPending").value = (document.getElementById("cTotal").value || 0) - (document.getElementById("cPaid").value || 0);
+        let t = document.getElementById("cTotal").value || 0;
+        let p = document.getElementById("cPaid").value || 0;
+        document.getElementById("cPending").value = t - p;
     }
 
-    function printReceipt() {
-        // Collect Data
-        let data = {
-            id: Math.floor(Math.random()*10000),
-            date: new Date().toLocaleDateString(),
-            name: document.getElementById("cName").value,
-            service: document.getElementById("cService").value,
-            total: document.getElementById("cTotal").value,
-            by: CURRENT_USER.name
-        };
-
-        if(!data.name) { alert("Enter Name"); return; }
-
-        // Save History
-        dbHistory.unshift(data);
-        localStorage.setItem('shivam_history_v2', JSON.stringify(dbHistory));
-        loadHistory();
-
-        // Actual Print Logic (Simplified for stability)
-        let win = window.open('', '', 'width=800,height=600');
-        win.document.write(`
-            <html><body style="font-family:sans-serif; padding:20px;">
-            <center><h2>Shivam Online Services</h2><p>Vatica | 9664324706</p><hr></center>
-            <p><b>Rcpt:</b> #${data.id} <span style="float:right">${data.date}</span></p>
-            <p><b>Name:</b> ${data.name}</p>
-            <p><b>Service:</b> ${data.service}</p>
-            <h3>Total: ₹${data.total}</h3>
-            <p>Served By: ${data.by}</p>
-            <hr><center>Thank You</center>
-            <script>window.print();window.close();<\/script>
-            </body></html>
-        `);
-    }
-
-    function loadHistory() {
-        let list = document.getElementById("history-list");
-        list.innerHTML = "";
-        let count = 0;
-        
-        dbHistory.forEach(h => {
-            // If staff, show only their entries? Or all? Let's show all for "Receipt data dekhna"
-            let div = document.createElement("div");
-            div.style.padding = "10px";
-            div.style.borderBottom = "1px solid #333";
-            div.innerHTML = `<small>${h.date}</small> <b>${h.name}</b> - ${h.service} (₹${h.total}) <span style="color:#888; float:right">${h.by}</span>`;
-            list.appendChild(div);
-            count++;
-        });
-        document.getElementById("d-bills").innerText = count;
-    }
-
-    // --- EXPENSES ---
-    function saveExpense() {
-        let item = document.getElementById("eItem").value;
-        let cost = document.getElementById("eCost").value;
-        if(item && cost) {
-            alert("Expense Added: " + item);
-            // In a real app, save this too.
-            document.getElementById("eItem").value = "";
-            document.getElementById("eCost").value = "";
+    function checkType() {
+        let type = document.getElementById("txnType").value;
+        let btn = document.getElementById("printBtn");
+        if(type === "Refund") {
+            btn.style.background = "red";
+            btn.innerText = "GENERATE REFUND SLIP";
+        } else {
+            btn.style.background = "#FF9F1C";
+            btn.innerText = "PRINT RECEIPT (A4)";
         }
     }
 
-    // --- STAFF MANAGER (ADMIN) ---
-    function loadStaffList() {
-        let div = document.getElementById("staff-list");
-        div.innerHTML = "";
-        dbStaff.forEach((s, i) => {
-            div.innerHTML += `
-                <div class="staff-card">
-                    <div><b>${s.name}</b> <br> <small>ID: ${s.user} | Pass: ${s.pass}</small></div>
-                    <button onclick="delStaff(${i})" style="background:red; border:none; color:white; padding:5px; cursor:pointer;">X</button>
-                </div>
-            `;
+    function generateAndPrint() {
+        // 1. Get Values
+        let name = document.getElementById("cName").value;
+        if(!name) { alert("Customer Name Required"); return; }
+        
+        let data = {
+            id: Math.floor(Math.random()*10000),
+            date: new Date().toLocaleDateString(),
+            name: name,
+            mobile: document.getElementById("cMobile").value,
+            service: document.getElementById("cService").value,
+            total: document.getElementById("cTotal").value,
+            paid: document.getElementById("cPaid").value,
+            pending: document.getElementById("cPending").value,
+            mode: document.getElementById("cMode").value,
+            type: document.getElementById("txnType").value,
+            by: CURRENT_USER.name
+        };
+
+        // 2. Fill Receipt (Hidden Div)
+        document.getElementById("r-title1").innerText = data.type === "Refund" ? "REFUND SLIP" : "RECEIPT";
+        document.getElementById("r-title2").innerText = data.type === "Refund" ? "REFUND COPY" : "OFFICE COPY";
+        
+        document.querySelectorAll(".r-id").forEach(e => e.innerText = data.id);
+        document.querySelectorAll(".r-date").forEach(e => e.innerText = data.date);
+        document.querySelectorAll(".r-name").forEach(e => e.innerText = data.name);
+        document.querySelectorAll(".r-mobile").forEach(e => e.innerText = data.mobile);
+        document.querySelectorAll(".r-service").forEach(e => e.innerText = data.service);
+        document.querySelectorAll(".r-total").forEach(e => e.innerText = data.total);
+        document.querySelectorAll(".r-paid").forEach(e => e.innerText = data.paid);
+        document.querySelectorAll(".r-pending").forEach(e => e.innerText = data.pending);
+        document.querySelectorAll(".r-mode").forEach(e => e.innerText = data.mode);
+        document.querySelectorAll(".r-by").forEach(e => e.innerText = data.by);
+
+        // 3. Save to History
+        historyDB.unshift(data);
+        localStorage.setItem('shivam_history_db', JSON.stringify(historyDB));
+        loadHistory();
+
+        // 4. Print
+        window.print();
+    }
+
+    // --- REPORT ---
+    function loadHistory() {
+        let tbody = document.querySelector("#historyTable tbody");
+        tbody.innerHTML = "";
+        historyDB.forEach(row => {
+            tbody.innerHTML += `<tr>
+                <td>${row.id}</td><td>${row.date}</td><td>${row.name}</td>
+                <td>${row.service}</td><td>${row.total}</td><td>${row.by}</td>
+            </tr>`;
+        });
+    }
+
+    // --- STAFF MANAGER ---
+    function loadStaff() {
+        let ul = document.getElementById("staffList");
+        ul.innerHTML = "";
+        staffDB.forEach((s, i) => {
+            ul.innerHTML += `<li style="padding:10px; border-bottom:1px solid #444; display:flex; justify-content:space-between;">
+                <span>${s.name} (ID: ${s.user})</span>
+                <button onclick="delStaff(${i})" style="color:red; background:none; border:none; cursor:pointer;">Delete</button>
+            </li>`;
         });
     }
 
     function addStaff() {
-        let u = document.getElementById("newUser").value;
-        let p = document.getElementById("newPass").value;
-        let n = document.getElementById("newName").value;
+        let u = document.getElementById("newSUser").value;
+        let p = document.getElementById("newSPass").value;
+        let n = document.getElementById("newSName").value;
         if(u && p && n) {
-            dbStaff.push({ name: n, user: u, pass: p, role: "Staff" });
-            localStorage.setItem('shivam_staff_v2', JSON.stringify(dbStaff));
-            loadStaffList();
-            alert("Staff Created!");
+            staffDB.push({user: u, pass: p, name: n});
+            localStorage.setItem('shivam_staff_db', JSON.stringify(staffDB));
+            loadStaff();
+            alert("Staff Added");
         }
     }
 
     function delStaff(i) {
-        if(confirm("Delete this staff?")) {
-            dbStaff.splice(i, 1);
-            localStorage.setItem('shivam_staff_v2', JSON.stringify(dbStaff));
-            loadStaffList();
+        if(confirm("Remove this staff?")) {
+            staffDB.splice(i, 1);
+            localStorage.setItem('shivam_staff_db', JSON.stringify(staffDB));
+            loadStaff();
         }
     }
 </script>
