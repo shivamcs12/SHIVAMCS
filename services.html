@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Shivam Online Services - POS</title>
+<title>Shivam Online Services - Secure POS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -32,7 +32,7 @@ body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 .col { flex: 1; }
 
 label { display: block; font-weight: 600; color: #444; margin-bottom: 6px; font-size: 13px; }
-input, select { 
+input, select, textarea { 
     width: 100%; padding: 10px 12px; 
     border: 1px solid #ddd; border-radius: 6px; 
     font-size: 15px; background: #fdfdfd; 
@@ -60,10 +60,11 @@ th { background-color: #f97316; color: white; padding: 12px; text-align: left; p
 td { padding: 10px 12px; border-bottom: 1px solid #eee; color: #555; vertical-align: middle; }
 tr:nth-child(even) { background-color: #f9fafb; }
 
-/* LOCK SCREEN */
+/* LOCK SCREEN (NEW STYLE) */
 #lockScreen { position: fixed; inset: 0; background: #111; z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-.lock-box { background: white; padding: 40px; border-radius: 10px; text-align: center; width: 320px; box-shadow: 0 0 30px rgba(249, 115, 22, 0.3); }
-.lock-box input { text-align: center; letter-spacing: 5px; font-size: 24px; margin: 20px 0; border: 2px solid #f97316; font-weight: bold; }
+.lock-box { background: white; padding: 30px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0 0 30px rgba(249, 115, 22, 0.3); }
+.lock-box input { margin: 10px 0; border: 2px solid #ddd; text-align: center; }
+.lock-box input:focus { border-color: #f97316; }
 
 /* REASON MODAL */
 #reasonModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2500; align-items: center; justify-content: center; }
@@ -99,18 +100,25 @@ tr:nth-child(even) { background-color: #f9fafb; }
 
 <div id="lockScreen">
     <div class="lock-box">
-        <h2 style="margin:0; color:#f97316;">🔐 SYSTEM LOGIN</h2>
-        <input type="number" id="passcode" placeholder="Enter Code" onkeyup="if(event.key==='Enter') attemptLogin()">
-        <button class="btn-orange" onclick="attemptLogin()">LOGIN</button>
-        <p id="errorMsg" style="color:red; display:none; margin-top:10px; font-weight:bold;">🚫 Invalid Access Code!</p>
+        <h2 style="margin:0; color:#f97316; margin-bottom:15px;">🔐 Login</h2>
+        
+        <div style="text-align:left; font-size:12px; font-weight:bold; color:#555;">User ID</div>
+        <input type="text" id="userId" placeholder="Enter ID (e.g. admin)" autocapitalize="off">
+        
+        <div style="text-align:left; font-size:12px; font-weight:bold; color:#555; margin-top:10px;">Password</div>
+        <input type="number" id="userPass" placeholder="Enter Password" onkeyup="if(event.key==='Enter') attemptLogin()">
+        
+        <button class="btn-orange" onclick="attemptLogin()" style="width:100%; margin-top:15px;">LOGIN</button>
+        
+        <p id="errorMsg" style="color:red; display:none; margin-top:10px; font-size:13px; font-weight:bold;">❌ Wrong ID or Password</p>
     </div>
 </div>
 
 <div id="reasonModal">
     <div class="modal-box">
-        <h3 style="color:#dc2626; margin-top:0;">⚠️ Refund Reason Required</h3>
-        <p style="font-size:14px; color:#555;">Why are you refunding <b><span id="refundTargetId"></span></b>?</p>
-        <textarea id="refundReason" placeholder="Type reason here... (e.g., Wrong Entry, Customer Cancelled)"></textarea>
+        <h3 style="color:#dc2626; margin-top:0;">⚠️ Refund Reason</h3>
+        <p style="font-size:14px; color:#555;">Refund for Txn: <b><span id="refundTargetId"></span></b></p>
+        <textarea id="refundReason" placeholder="Enter reason (e.g. Wrong Amount, Customer Cancelled)"></textarea>
         <div style="display:flex; gap:10px;">
             <button class="btn-red" style="display:block;" onclick="processRefundWithReason()">Confirm Refund</button>
             <button class="btn-blue" onclick="closeReasonModal()">Cancel</button>
@@ -254,33 +262,34 @@ tr:nth-child(even) { background-color: #f9fafb; }
     let fetchedData = []; 
     let selectedRefundItem = null; 
 
-    // --- FIX LOGIN PROBLEM HERE ---
+    // --- NEW LOGIN SYSTEM WITH ID & PASSWORD ---
     function attemptLogin() {
-        // .trim() removes extra spaces automatically
-        var input = document.getElementById("passcode").value;
-        if(input) input = input.toString().trim(); // Ensure it's string and trim
+        // Values le rahe hain aur clean kar rahe hain (Trim spaces)
+        let userId = document.getElementById("userId").value.trim().toLowerCase(); // admin ya staff
+        let userPass = document.getElementById("userPass").value.trim(); // password
 
         const badge = document.getElementById("userBadge");
         
-        if(input === "8888") {
+        // ADMIN CHECK
+        if(userId === "admin" && userPass === "8888") {
             CURRENT_ROLE = "admin";
-            badge.innerText = "👨‍💻 ADMIN MODE";
+            badge.innerText = "👨‍💻 ADMIN (Owner)";
             badge.style.background = "#dc2626";
             document.getElementById("adminSearchPanel").style.display = "block";
             document.querySelector(".btn-red").style.display = "block"; 
             loginSuccess();
             fetchRecords(); 
         } 
-        else if(input === "1111") {
+        // EMPLOYEE CHECK
+        else if(userId === "staff" && userPass === "1111") {
             CURRENT_ROLE = "employee";
-            badge.innerText = "👤 EMPLOYEE MODE";
+            badge.innerText = "👤 EMPLOYEE";
             badge.style.background = "#2563eb";
             document.getElementById("adminSearchPanel").style.display = "none";
             loginSuccess();
         } 
+        // WRONG DETAILS
         else {
-            // Show exact error
-            alert("Login Failed. You typed: '" + input + "'");
             document.getElementById("errorMsg").style.display = "block";
         }
     }
@@ -296,6 +305,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
         document.getElementById("pending").value = total - paid;
     }
 
+    // --- SEARCH AND REFUND LOGIC ---
     function findAndInitRefund() {
         const searchId = document.getElementById("searchTxnId").value.trim().toUpperCase();
         if(!searchId) { alert("Please enter a Transaction ID"); return; }
@@ -308,7 +318,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
             document.getElementById("refundReason").value = ""; 
             document.getElementById("reasonModal").style.display = "flex"; 
         } else {
-            alert("Txn ID not found locally. Please click 'View Recent Records' first to load data.");
+            alert("Transaction ID not found. Please click 'View Recent Records' to load latest data.");
         }
     }
 
@@ -334,6 +344,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
         generateReceipt(true); 
     }
 
+    // --- GENERATE RECEIPT ---
     function generateReceipt(isRefund = false) {
         const btn = document.getElementById("saveBtn");
         const name = document.getElementById("custName").value;
@@ -386,7 +397,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
             resetForm();
         })
         .catch(error => {
-            alert("Offline Mode: Receipt Generated.");
+            alert("Saved Offline (Network Error). Receipt Printed.");
             btn.disabled = false;
             showReceiptView();
         });
