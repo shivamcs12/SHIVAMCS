@@ -3,81 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shivam Online | One-Page Receipt</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Shivam Online | Official Receipt</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
     /* ===== THEME ===== */
-    :root { --primary: #FF9F1C; --bg: #0f172a; --card: #1e293b; --text: #fff; }
-    body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
+    :root { --primary: #1e3a8a; --bg: #f1f5f9; --text: #000; }
+    body { margin: 0; font-family: 'Roboto', sans-serif; background: var(--bg); color: #333; }
 
     /* UTILS */
-    .btn { width: 100%; padding: 12px; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-    .btn-primary { background: var(--primary); color: #000; }
-    .btn-danger { background: #ef4444; color: #fff; }
-    .inp { width: 100%; padding: 12px; margin: 5px 0; background: #0b0f19; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+    .btn { width: 100%; padding: 12px; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.2s; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn:hover { opacity: 0.9; }
+    .inp { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
 
-    /* LOGIN */
-    #login-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-    .login-box { background: var(--card); padding: 40px; border-radius: 15px; width: 320px; border: 1px solid #333; text-align: center; }
+    /* LOGIN SCREEN */
+    #login-screen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    .login-box { background: white; padding: 40px; border-radius: 10px; width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
     /* DASHBOARD */
     #dashboard { display: none; min-height: 100vh; display: flex; }
-    .sidebar { width: 250px; background: #111; padding: 20px; border-right: 1px solid #333; display: flex; flex-direction: column; }
+    .sidebar { width: 250px; background: #1e293b; padding: 20px; color: white; display: flex; flex-direction: column; }
     .main-content { flex: 1; padding: 30px; }
-    .menu-item { padding: 15px; color: #888; cursor: pointer; display: flex; gap: 10px; align-items: center; }
-    .menu-item.active { color: var(--primary); background: #222; border-radius: 8px; }
-    .card { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+    
+    .menu-item { padding: 15px; color: #cbd5e1; cursor: pointer; display: flex; gap: 10px; align-items: center; border-radius: 8px; margin-bottom: 5px; }
+    .menu-item.active, .menu-item:hover { background: #334155; color: white; }
+    
+    .card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
     .row { display: flex; gap: 15px; margin-bottom: 15px; } .col { flex: 1; }
-    label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
+    label { display: block; margin-bottom: 5px; font-size: 13px; color: #64748b; font-weight: 500; }
 
-    /* ADMIN ONLY CLASS */
+    /* ADMIN ONLY */
     .admin-only { display: none !important; }
 
-    /* ===== PREVIEW MODAL (ONE PAGE FORMAT) ===== */
+    /* ===== PREVIEW MODAL (EXACT SCREENSHOT LOOK) ===== */
     #preview-modal {
-        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000;
-        justify-content: center; align-items: center; overflow-y: auto; padding: 10px;
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000;
+        justify-content: center; align-items: flex-start; overflow-y: auto; padding-top: 20px;
     }
-    .preview-actions { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 5001; }
-    .action-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; }
-
-    /* A4 PAPER STYLING */
-    .paper {
-        background: white; color: black; width: 210mm; height: 295mm; /* A4 Height */
-        padding: 10mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
-    }
-
-    .invoice-box {
-        border: 2px solid #000; padding: 15px; height: 48%; /* Half Page */
-        display: flex; flex-direction: column; justify-content: space-between;
-        box-sizing: border-box; border-radius: 5px;
-    }
-
-    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; }
-    .shop-title { font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0; line-height: 1; }
-    .info-table { width: 100%; margin-top: 10px; font-size: 14px; }
-    .info-table td { padding: 4px 0; }
     
-    .bill-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #000; }
-    .bill-table th { background: #eee; border: 1px solid #000; padding: 8px; text-align: left; }
-    .bill-table td { border: 1px solid #000; padding: 8px; }
+    /* THE RECEIPT PAPER */
+    .receipt-paper {
+        background: white; width: 85mm; /* Exact Receipt Width */
+        padding: 5mm; margin-bottom: 20px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        border: 1px solid #ddd;
+    }
 
-    .totals { text-align: right; margin-top: 10px; font-size: 14px; }
-    .big-total { font-size: 18px; font-weight: bold; }
+    /* RECEIPT STYLING (Internal) */
+    .rec-box { border: 1px solid #000; padding: 10px; margin-bottom: 5px; }
+    .rec-header { text-align: center; margin-bottom: 10px; }
+    .logo-icon { font-size: 30px; color: #f59e0b; margin-bottom: 5px; display: block; } /* Globe Icon */
+    .shop-name { font-size: 16px; font-weight: 700; text-transform: uppercase; margin: 0; }
+    .shop-details { font-size: 10px; margin: 2px 0; }
     
-    .cut-line { border-top: 2px dashed #000; margin: 5px 0; text-align: center; position: relative; }
-    .cut-line span { background: #fff; padding: 0 10px; position: relative; top: -10px; font-size: 12px; }
+    .divider { border-bottom: 2px solid #000; margin: 5px 0; }
+    .copy-title { text-align: center; font-size: 11px; font-weight: bold; margin: 5px 0; }
+    
+    .rec-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+    .rec-label { font-weight: 500; color: #333; }
+    .rec-val { font-weight: 700; color: #000; text-align: right; }
+    
+    .total-section { border-top: 1px solid #000; margin-top: 5px; padding-top: 5px; }
+    
+    .terms { font-size: 9px; margin-top: 10px; border-top: 1px solid #ccc; padding-top: 5px; }
+    .terms li { margin-bottom: 2px; }
+    
+    .cut-line { border-top: 1px dashed #000; margin: 15px 0; text-align: center; font-size: 10px; position: relative; }
+    .cut-line span { background: #fff; padding: 0 5px; position: relative; top: -8px; }
 
-    /* PRINT SETTINGS (CRITICAL FOR ONE PAGE) */
+    .action-btns { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; }
+    .act-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+    /* PRINT SETTINGS */
     @media print {
-        @page { size: A4; margin: 0; }
         body * { visibility: hidden; }
         #preview-modal, #preview-modal * { visibility: visible; }
-        #preview-modal { position: absolute; left: 0; top: 0; background: white; padding: 0; width: 100%; height: 100%; }
-        .preview-actions { display: none !important; }
-        .paper { width: 100%; height: 100%; padding: 10mm; box-shadow: none; }
+        #preview-modal { position: absolute; left: 0; top: 0; background: white; padding: 0; display: flex; justify-content: center; }
+        .action-btns { display: none !important; }
+        .receipt-paper { box-shadow: none; border: none; margin: 0 auto; width: 80mm; } /* Center on A4 */
+        @page { size: auto; margin: 5mm; }
     }
 </style>
 </head>
@@ -85,139 +91,168 @@
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 style="color:var(--primary);">LOGIN</h2>
+        <h2 style="color:#1e293b;">LOGIN</h2>
         <input type="text" id="loginUser" class="inp" placeholder="User ID">
         <input type="password" id="loginPass" class="inp" placeholder="Password">
-        <button class="btn btn-primary" onclick="login()" style="margin-top:20px;">ENTER</button>
-        <p id="errorMsg" style="color:red; display:none; margin-top:10px;">❌ Invalid Access</p>
+        <button class="btn btn-primary" onclick="login()" style="margin-top:15px;">ENTER</button>
+        <p id="errorMsg" style="color:red; display:none; font-size:12px; margin-top:10px;">Invalid Credentials</p>
     </div>
 </div>
 
 <div id="dashboard">
     <div class="sidebar">
-        <h2 style="color:white; text-align:center;">SHIVAM<span style="color:var(--primary)">.OS</span></h2>
+        <h2 style="text-align:center; margin-bottom:30px;">SHIVAM<span style="color:#f59e0b">.OS</span></h2>
         <div class="menu-item active"><i class="fas fa-file-invoice"></i> Billing</div>
         <div class="menu-item" onclick="location.reload()" style="margin-top:auto;"><i class="fas fa-sign-out-alt"></i> Logout</div>
-        <p style="text-align:center; font-size:12px; color:#555;">User: <span id="uDisplay" style="color:var(--primary)"></span></p>
+        <p style="text-align:center; font-size:11px; margin-top:10px; color:#94a3b8;">User: <span id="uDisplay" style="color:white"></span></p>
     </div>
 
     <div class="main-content">
         <h2>Generate Receipt</h2>
-        <div class="card" style="max-width:800px;">
+        <div class="card" style="max-width:700px;">
             <div class="row">
                 <div class="col">
                     <label>Transaction Type</label>
                     <select id="txnType" class="inp" onchange="checkType()">
-                        <option value="Bill">📝 Bill (Receipt)</option>
-                        <option value="Refund" class="admin-only" style="display:none;">💸 Refund (Admin Only)</option>
+                        <option value="Bill">📝 Receipt</option>
+                        <option value="Refund" class="admin-only" style="display:none;">💸 Refund</option>
                     </select>
                 </div>
                 <div class="col"><label>Date</label><input type="text" id="billDate" class="inp" readonly></div>
             </div>
             <div class="row">
-                <div class="col"><label>Customer Name</label><input type="text" id="cName" class="inp"></div>
-                <div class="col"><label>Mobile</label><input type="number" id="cMobile" class="inp"></div>
+                <div class="col"><label>Customer Name</label><input type="text" id="cName" class="inp" placeholder="Enter Name"></div>
+                <div class="col"><label>Mobile</label><input type="number" id="cMobile" class="inp" placeholder="98XXXXXXXX"></div>
             </div>
-            <div class="row"><div class="col"><label>Service</label><input type="text" id="cService" class="inp" placeholder="e.g. Pan Card"></div></div>
+            <div class="row"><div class="col"><label>Service</label><input type="text" id="cService" class="inp" placeholder="e.g. Pan Card Edit"></div></div>
             <div class="row">
-                <div class="col"><label>Total</label><input type="number" id="cTotal" class="inp" oninput="calc()"></div>
-                <div class="col"><label>Paid</label><input type="number" id="cPaid" class="inp" oninput="calc()"></div>
-                <div class="col"><label>Pending</label><input type="number" id="cPending" class="inp" readonly style="background:#000;"></div>
+                <div class="col"><label>Total (₹)</label><input type="number" id="cTotal" class="inp" oninput="calc()"></div>
+                <div class="col"><label>Paid (₹)</label><input type="number" id="cPaid" class="inp" oninput="calc()"></div>
+                <div class="col"><label>Pending</label><input type="number" id="cPending" class="inp" readonly style="background:#f1f5f9;"></div>
             </div>
-            <button class="btn btn-primary" id="previewBtn" onclick="generatePreview()">👁️ PREVIEW & PRINT</button>
+            <div class="row">
+                <div class="col"><label>Mode</label><select id="cMode" class="inp"><option>Cash</option><option>Online UPI</option></select></div>
+            </div>
+            <button class="btn btn-primary" id="previewBtn" onclick="generatePreview()">GENERATE & PRINT</button>
         </div>
     </div>
 </div>
 
 <div id="preview-modal">
-    <div class="preview-actions">
-        <button class="action-btn" style="background:#22c55e; color:white;" onclick="window.print()">🖨️ PRINT</button>
-        <button class="action-btn" style="background:#ef4444; color:white;" onclick="closePreview()">❌ CLOSE</button>
+    <div class="action-btns">
+        <button class="act-btn" style="background:#10b981;" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+        <button class="act-btn" style="background:#ef4444;" onclick="closePreview()">Close</button>
     </div>
 
-    <div class="paper">
-        <div class="invoice-box">
-            <div class="header">
-                <div>
-                    <h1 class="shop-title">Shivam Online Services</h1>
-                    <p style="margin:5px 0;">📍 Vatica, Jaipur, Rajasthan</p>
-                    <p style="margin:0;">📞 +91 9664324706</p>
+    <div class="receipt-paper">
+        
+        <div class="rec-box">
+            <div class="rec-header">
+                <i class="fas fa-globe-asia logo-icon"></i>
+                <h2 class="shop-name">SHIVAM ONLINE SERVICES</h2>
+                <div class="shop-details">WATIKA , Jaipur | Mob: +91 9664324706</div>
+                <div class="divider"></div>
+                <div class="copy-title">Customer Copy</div>
+            </div>
+
+            <div class="rec-row">
+                <span class="rec-label">Receipt No:</span>
+                <span class="rec-val"><span class="r-txn"></span></span>
+            </div>
+            <div class="rec-row">
+                <span class="rec-label">Date:</span>
+                <span class="rec-val"><span class="r-date"></span> <span class="r-time"></span></span>
+            </div>
+            <div style="border-bottom:1px dashed #ccc; margin:5px 0;"></div>
+
+            <div class="rec-row">
+                <span class="rec-label">Name:</span>
+                <span class="rec-val r-name"></span>
+            </div>
+            <div class="rec-row">
+                <span class="rec-label">Service:</span>
+                <span class="rec-val r-service"></span>
+            </div>
+            <div class="rec-row">
+                <span class="rec-label">Mode:</span>
+                <span class="rec-val r-mode"></span>
+            </div>
+            <div class="rec-row">
+                <span class="rec-label">Served By:</span>
+                <span class="rec-val r-by"></span>
+            </div>
+
+            <div class="total-section">
+                <div class="rec-row">
+                    <span class="rec-label" style="font-size:12px;">Total:</span>
+                    <span class="rec-val" style="font-size:12px;">₹<span class="r-total"></span></span>
                 </div>
-                <div style="text-align:right;">
-                    <h2 style="margin:0;" id="r-title1">RECEIPT</h2>
-                    <p style="margin:5px 0; font-weight:bold;">Txn No: <span class="r-txn"></span></p>
-                    <p style="margin:0;">Date: <span class="r-date"></span> <span class="r-time"></span></p>
-                    <small style="background:black; color:white; padding:2px 5px;">CUSTOMER COPY</small>
+                <div class="rec-row">
+                    <span class="rec-label">Paid:</span>
+                    <span class="rec-val">₹<span class="r-paid"></span></span>
+                </div>
+                <div class="rec-row">
+                    <span class="rec-label">Pending:</span>
+                    <span class="rec-val">₹<span class="r-pending"></span></span>
                 </div>
             </div>
 
-            <table class="info-table">
-                <tr>
-                    <td><strong>Bill To:</strong> <span class="r-name" style="font-weight:bold; font-size:16px;"></span></td>
-                    <td style="text-align:right;"><strong>Served By:</strong> <span class="r-by"></span></td>
-                </tr>
-                <tr>
-                    <td><strong>Mobile:</strong> <span class="r-mobile"></span></td>
-                    <td style="text-align:right;"><strong>Mode:</strong> Cash/UPI</td>
-                </tr>
-            </table>
-
-            <table class="bill-table">
-                <thead><tr><th>Description</th><th style="width:100px;">Amount</th></tr></thead>
-                <tbody><tr><td class="r-service" style="height:50px; vertical-align:top;"></td><td>₹ <span class="r-total"></span></td></tr></tbody>
-            </table>
-
-            <div class="totals">
-                <p style="margin:5px 0;">Total Amount: ₹ <span class="r-total"></span></p>
-                <p style="margin:5px 0;">Paid Amount: ₹ <span class="r-paid"></span></p>
-                <p class="big-total">Pending: ₹ <span class="r-pending"></span></p>
-            </div>
-
-            <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:end;">
-                <div style="font-size:11px;">* Fees once paid is non-refundable.<br>* This is a computer generated receipt.</div>
-                <div style="text-align:center;">___________________<br>Authorized Signature</div>
+            <div class="terms">
+                <strong>Terms & Conditions:</strong>
+                <ul style="padding-left:15px; margin:2px 0;">
+                    <li>DTH & Mobile Recharge is not refundable.</li>
+                    <li>Fees once paid is non-refundable.</li>
+                    <li>Your receipt details verify Shivam Online Services.</li>
+                </ul>
+                <div style="text-align:center; margin-top:5px; font-weight:bold;">*** Thank You Visit Again ***</div>
             </div>
         </div>
 
         <div class="cut-line"><span>✂ Cut Here</span></div>
 
-        <div class="invoice-box">
-            <div class="header">
-                <div>
-                    <h1 class="shop-title">Shivam Online Services</h1>
-                    <p style="margin:5px 0;">OFFICE RECORD</p>
-                </div>
-                <div style="text-align:right;">
-                    <h2 style="margin:0;" id="r-title2">OFFICE COPY</h2>
-                    <p style="margin:5px 0; font-weight:bold;">Txn No: <span class="r-txn"></span></p>
-                    <p style="margin:0;">Date: <span class="r-date"></span></p>
-                </div>
+        <div class="rec-box">
+            <div class="rec-header">
+                <i class="fas fa-globe-asia logo-icon" style="font-size:20px;"></i>
+                <h2 class="shop-name" style="font-size:14px;">Shivam Online Services</h2>
+                <div class="shop-details">Office Copy</div>
+                <div class="divider"></div>
             </div>
 
-            <table class="info-table">
-                <tr>
-                    <td><strong>Customer:</strong> <span class="r-name"></span></td>
-                    <td style="text-align:right;"><strong>Operator:</strong> <span class="r-by"></span></td>
-                </tr>
-                <tr>
-                    <td><strong>Mobile:</strong> <span class="r-mobile"></span></td>
-                </tr>
-            </table>
+            <div class="rec-row">
+                <span class="rec-label">Rec No:</span>
+                <span class="rec-val r-txn"></span>
+            </div>
+            <div class="rec-row">
+                <span class="rec-label">Date:</span>
+                <span class="rec-val"><span class="r-date"></span> <span class="r-time"></span></span>
+            </div>
+            <div style="border-bottom:1px dashed #ccc; margin:5px 0;"></div>
 
-            <table class="bill-table">
-                <thead><tr><th>Description</th><th style="width:100px;">Amount</th></tr></thead>
-                <tbody><tr><td class="r-service"></td><td>₹ <span class="r-total"></span></td></tr></tbody>
-            </table>
-
-            <div class="totals">
-                <p style="margin:5px 0;">Total: <strong>₹ <span class="r-total"></span></strong></p>
-                <p class="big-total" style="color:red;">Pending: ₹ <span class="r-pending"></span></p>
+            <div class="rec-row">
+                <span class="rec-label">Name:</span>
+                <span class="rec-val r-name"></span>
+            </div>
+            <div class="rec-row">
+                <span class="rec-label">Service:</span>
+                <span class="rec-val r-service"></span>
+            </div>
+             <div class="rec-row">
+                <span class="rec-label">Operator:</span>
+                <span class="rec-val r-by"></span>
             </div>
 
-            <div style="margin-top:auto; text-align:right;">
-                ___________________<br>Receiver Signature
+            <div class="total-section">
+                <div class="rec-row">
+                    <span class="rec-label">Total:</span>
+                    <span class="rec-val">₹<span class="r-total"></span></span>
+                </div>
+                <div class="rec-row">
+                    <span class="rec-label">Pending:</span>
+                    <span class="rec-val">₹<span class="r-pending"></span></span>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -268,9 +303,9 @@
         let type = document.getElementById("txnType").value;
         let btn = document.getElementById("previewBtn");
         if(type === "Refund") {
-            btn.style.background = "red"; btn.innerText = "👁️ PREVIEW REFUND SLIP";
+            btn.style.background = "#ef4444"; btn.innerText = "REFUND SLIP";
         } else {
-            btn.style.background = "#FF9F1C"; btn.innerText = "👁️ PREVIEW & PRINT";
+            btn.style.background = "#2563eb"; btn.innerText = "GENERATE & PRINT";
         }
     }
 
@@ -279,7 +314,7 @@
         if(!name) { alert("Customer Name Required"); return; }
         
         // Generate Unique TXN ID
-        let uniqueTxn = "TXN-" + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100);
+        let uniqueTxn = "TXN" + Math.floor(1000 + Math.random() * 9000);
         let d = new Date();
 
         let data = {
@@ -287,29 +322,26 @@
             date: d.toLocaleDateString(),
             time: d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
             name: name,
-            mobile: document.getElementById("cMobile").value || "N/A",
             service: document.getElementById("cService").value,
             total: document.getElementById("cTotal").value,
             paid: document.getElementById("cPaid").value,
             pending: document.getElementById("cPending").value,
+            mode: document.getElementById("cMode").value,
             type: document.getElementById("txnType").value,
-            by: CURRENT_USER.name
+            by: CURRENT_USER.name // This fills the "Served By" field
         };
 
         // Fill Preview
-        document.getElementById("r-title1").innerText = data.type === "Refund" ? "REFUND SLIP" : "RECEIPT";
-        document.getElementById("r-title2").innerText = data.type === "Refund" ? "REFUND COPY" : "OFFICE COPY";
-        
         document.querySelectorAll(".r-txn").forEach(e => e.innerText = data.txn);
         document.querySelectorAll(".r-date").forEach(e => e.innerText = data.date);
         document.querySelectorAll(".r-time").forEach(e => e.innerText = data.time);
         document.querySelectorAll(".r-name").forEach(e => e.innerText = data.name);
-        document.querySelectorAll(".r-mobile").forEach(e => e.innerText = data.mobile);
         document.querySelectorAll(".r-service").forEach(e => e.innerText = data.service);
         document.querySelectorAll(".r-total").forEach(e => e.innerText = data.total);
         document.querySelectorAll(".r-paid").forEach(e => e.innerText = data.paid);
         document.querySelectorAll(".r-pending").forEach(e => e.innerText = data.pending);
-        document.querySelectorAll(".r-by").forEach(e => e.innerText = data.by);
+        document.querySelectorAll(".r-mode").forEach(e => e.innerText = data.mode);
+        document.querySelectorAll(".r-by").forEach(e => e.innerText = data.by); // Fills Operator/Served By
 
         document.getElementById("preview-modal").style.display = "flex";
     }
