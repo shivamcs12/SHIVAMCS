@@ -19,7 +19,7 @@ body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     height: fit-content;
-    display: none; /* Hidden by default until login */
+    display: none; 
 }
 
 /* HEADER */
@@ -48,7 +48,7 @@ button { padding: 12px 25px; border: none; border-radius: 6px; font-size: 15px; 
 .btn-orange:hover { background-color: #e36309; }
 .btn-blue { background-color: #2563eb; }
 .btn-blue:hover { background-color: #1d4ed8; }
-.btn-red { background-color: #dc2626; display: none; } /* Admin Only */
+.btn-red { background-color: #dc2626; display: none; }
 .btn-red:hover { background-color: #b91c1c; }
 
 /* TABLE */
@@ -60,14 +60,15 @@ th { background-color: #f97316; color: white; padding: 12px; text-align: left; p
 td { padding: 10px 12px; border-bottom: 1px solid #eee; color: #555; vertical-align: middle; }
 tr:nth-child(even) { background-color: #f9fafb; }
 
-/* Admin Actions in Table */
-.admin-actions { display: none; gap: 5px; }
-.btn-sm { padding: 5px 10px; font-size: 12px; min-width: auto; flex: none; }
-
 /* LOCK SCREEN */
 #lockScreen { position: fixed; inset: 0; background: #111; z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
 .lock-box { background: white; padding: 40px; border-radius: 10px; text-align: center; width: 320px; box-shadow: 0 0 30px rgba(249, 115, 22, 0.3); }
 .lock-box input { text-align: center; letter-spacing: 5px; font-size: 24px; margin: 20px 0; border: 2px solid #f97316; font-weight: bold; }
+
+/* REASON MODAL */
+#reasonModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2500; align-items: center; justify-content: center; }
+.modal-box { background: #fff; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; }
+.modal-box textarea { width: 100%; height: 80px; margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
 
 /* RECEIPT VIEW */
 #receiptView { display: none; background: #fff; width: 100%; height: 100vh; position: fixed; top: 0; left: 0; z-index: 3000; overflow-y: auto; }
@@ -76,10 +77,9 @@ tr:nth-child(even) { background-color: #f9fafb; }
 .cut-line { border-top: 2px dashed #000; margin: 20px 0; position: relative; }
 .cut-line::after { content: "✂ Cut Here"; position: absolute; top: -10px; left: 40%; background: #fff; padding: 0 5px; font-size: 12px; }
 
-/* SEARCH BOX (Admin) */
+/* SEARCH BOX */
 #adminSearchPanel { display: none; background: #fef2f2; padding: 15px; margin-bottom: 20px; border: 1px solid #fecaca; border-radius: 8px; }
 
-/* MOBILE FIXES */
 @media (max-width: 600px) {
     .row { flex-direction: column; gap: 10px; }
     .btn-container { flex-direction: column; }
@@ -89,7 +89,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
 
 @media print {
     body { background: white; }
-    .main-card, #lockScreen { display: none !important; }
+    .main-card, #lockScreen, #reasonModal { display: none !important; }
     #receiptView { display: block !important; position: static; height: auto; }
     .no-print { display: none; }
 }
@@ -100,12 +100,21 @@ tr:nth-child(even) { background-color: #f9fafb; }
 <div id="lockScreen">
     <div class="lock-box">
         <h2 style="margin:0; color:#f97316;">🔐 SYSTEM LOGIN</h2>
-        <p style="color:#666; font-size:13px; margin-top:5px;">Enter Admin or Employee Code</p>
-        
-        <input type="password" id="passcode" placeholder="****" maxlength="8" onkeyup="if(event.key==='Enter') attemptLogin()">
-        
+        <input type="number" id="passcode" placeholder="Enter Code" onkeyup="if(event.key==='Enter') attemptLogin()">
         <button class="btn-orange" onclick="attemptLogin()">LOGIN</button>
         <p id="errorMsg" style="color:red; display:none; margin-top:10px; font-weight:bold;">🚫 Invalid Access Code!</p>
+    </div>
+</div>
+
+<div id="reasonModal">
+    <div class="modal-box">
+        <h3 style="color:#dc2626; margin-top:0;">⚠️ Refund Reason Required</h3>
+        <p style="font-size:14px; color:#555;">Why are you refunding <b><span id="refundTargetId"></span></b>?</p>
+        <textarea id="refundReason" placeholder="Type reason here... (e.g., Wrong Entry, Customer Cancelled)"></textarea>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-red" style="display:block;" onclick="processRefundWithReason()">Confirm Refund</button>
+            <button class="btn-blue" onclick="closeReasonModal()">Cancel</button>
+        </div>
     </div>
 </div>
 
@@ -117,10 +126,10 @@ tr:nth-child(even) { background-color: #f9fafb; }
     </div>
 
     <div id="adminSearchPanel">
-        <label style="color:#dc2626;">🛠️ Admin Tool: Find Old Transaction for Refund/Reprint</label>
+        <label style="color:#dc2626;">🔍 Search & Refund (पुराना बिल यहाँ ढूंढें)</label>
         <div style="display:flex; gap:10px; margin-top:5px;">
-            <input type="text" id="searchTxnId" placeholder="Enter Txn ID (e.g., TXN4502)">
-            <button class="btn-blue" style="max-width:100px;" onclick="findTransaction()">Search</button>
+            <input type="text" id="searchTxnId" placeholder="Enter Old Txn ID (e.g., TXN1234)">
+            <button class="btn-red" style="max-width:120px; display:block;" onclick="findAndInitRefund()">Search & Refund</button>
         </div>
     </div>
 
@@ -128,7 +137,8 @@ tr:nth-child(even) { background-color: #f9fafb; }
         <div class="col">
             <label>Customer Name (नाम)</label>
             <input type="text" id="custName" placeholder="Enter Name">
-            <input type="hidden" id="txnIdDisplay"> </div>
+            <input type="hidden" id="txnIdDisplay">
+        </div>
         <div class="col">
             <label>Mobile Number (मोबाइल)</label>
             <input type="number" id="mobile" placeholder="Enter Mobile">
@@ -163,31 +173,31 @@ tr:nth-child(even) { background-color: #f9fafb; }
             <select id="payMode">
                 <option value="Cash">Cash (नकद)</option>
                 <option value="Online UPI">Online UPI</option>
-                <option value="Credit/Debit">Card</option>
+                <option value="Card">Card</option>
                 <option value="Net Banking">Net Banking</option>
-                <option value="Refund">REFUND (Admin Only)</option>
+                <option value="Refund" style="color:red; font-weight:bold;">REFUND</option>
             </select>
         </div>
     </div>
 
     <div class="btn-container">
         <button class="btn-orange" id="saveBtn" onclick="generateReceipt()">✅ Generate Receipt</button>
-        <button class="btn-blue" onclick="fetchRecords()">📂 View Records</button>
+        <button class="btn-blue" onclick="fetchRecords()">📂 View Recent Records</button>
         <button class="btn-red" id="clearBtn" onclick="resetForm()">❌ Clear Form</button>
     </div>
 
     <div class="table-section">
         <div class="section-title">
             <span>Recent Transactions</span>
-            <button class="btn-sm btn-blue" onclick="fetchRecords()" style="width:auto;">Refresh</button>
+            <button class="btn-sm btn-blue" onclick="fetchRecords()" style="width:auto; padding:5px 10px;">Refresh Data</button>
         </div>
         <div class="table-wrapper">
             <table>
                 <thead>
-                    <tr><th>Txn ID</th><th>Date</th><th>Name</th><th>Total</th><th>Action</th></tr>
+                    <tr><th>Txn ID</th><th>Date</th><th>Name</th><th>Service</th><th>Total</th></tr>
                 </thead>
                 <tbody id="tableBody">
-                    <tr><td colspan="5" style="text-align:center;">Click "View Records" to load data.</td></tr>
+                    <tr><td colspan="5" style="text-align:center;">Click "View Recent Records" to load.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -196,7 +206,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
 
 <div id="receiptView">
     <div class="receipt-container">
-        
         <div class="receipt-box">
             <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:10px;">
                 <img src="logo.jpg" alt="Logo" style="max-height:60px; display:block; margin:0 auto 5px auto;" onerror="this.style.display='none'">
@@ -204,32 +213,23 @@ tr:nth-child(even) { background-color: #f9fafb; }
                 <div style="font-size:12px;">Vatica, Jaipur | Mob: 9664324706</div>
             </div>
             <div style="text-align:center; font-weight:bold; background:#eee; border:1px solid #ccc; font-size:12px; margin-bottom:10px;">Customer Copy</div>
-            
             <div style="display:flex; justify-content:space-between; font-size:14px;"><b>Receipt No:</b> <span id="rid1"></span></div>
             <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;"><small>Date: <span id="rdate1"></span></small></div>
             <hr style="border-top:1px dashed #000;">
-            
             <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Name:</span> <span id="rname1"></span></div>
             <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Service:</span> <span id="rservice1"></span></div>
             <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Mode:</span> <b id="rmode1"></b></div> 
             <hr style="border-top:1px dashed #000;">
-
             <div style="display:flex; justify-content:space-between; font-size:14px;"><b>Total:</b> <b>₹<span id="rtotal1"></span></b></div>
             <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Paid:</span> <span>₹<span id="rpaid1"></span></span></div>
             <div style="display:flex; justify-content:space-between; font-size:14px;"><span>Pending:</span> <b>₹<span id="rpending1"></span></b></div>
-
             <div style="font-size:11px; margin-top:20px; border-top:1px solid #000; padding-top:10px; line-height:1.6;">
-                <strong>Terms & Conditions:</strong>
-                <ul style="margin:5px 0; padding-left:20px;">
-                    <li>Fees once paid is non-refundable.</li>
-                    <li>Receipt valid for Shivam Online Services.</li>
-                </ul>
+                <strong>Note:</strong>
+                <span id="receiptNote"> Fees once paid is non-refundable.</span>
                 <div style="text-align:center; margin-top:10px;"><b>*** Thank You ***</b></div>
             </div>
         </div>
-
         <div class="cut-line"></div>
-
         <div class="receipt-box">
             <div style="text-align:center; border-bottom:1px solid #000; padding-bottom:5px; margin-bottom:5px;">
                 <div style="font-size:16px; font-weight:bold;">Shivam Online Services</div>
@@ -242,43 +242,45 @@ tr:nth-child(even) { background-color: #f9fafb; }
             <div style="display:flex; justify-content:space-between; font-size:12px;"><span>Service:</span> <span id="rservice2"></span></div>
             <div style="display:flex; justify-content:space-between; font-size:12px;"><b>Total:</b> <b>₹<span id="rtotal2"></span></b></div>
         </div>
-
         <button class="no-print btn-blue" onclick="window.print()" style="width:100%; margin-bottom:10px;">🖨️ Print Receipt</button>
         <button class="no-print btn-orange" onclick="closeReceipt()" style="width:100%;">🔙 Back to Dashboard</button>
     </div>
 </div>
 
 <script>
-    // 🔥 CONFIGURATION
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzDmi56TXRo9EXZyDHC9ndKrussMvpBoYAbfz-rxBnCqvCk4Eiq5_LUGDlUp9fOoGDv/exec';
     
-    // --- LOGIN CREDENTIALS ---
-    const ADMIN_PASS = "8888"; // मालिक का कोड
-    const EMP_PASS = "1111";   // वर्कर का कोड
+    let CURRENT_ROLE = "";
+    let fetchedData = []; 
+    let selectedRefundItem = null; 
 
-    let CURRENT_ROLE = ""; // 'admin' or 'employee'
-    let fetchedData = [];  // Stores data locally for search
-
+    // --- FIX LOGIN PROBLEM HERE ---
     function attemptLogin() {
-        const input = document.getElementById("passcode").value;
+        // .trim() removes extra spaces automatically
+        var input = document.getElementById("passcode").value;
+        if(input) input = input.toString().trim(); // Ensure it's string and trim
+
         const badge = document.getElementById("userBadge");
         
-        if(input === ADMIN_PASS) {
+        if(input === "8888") {
             CURRENT_ROLE = "admin";
             badge.innerText = "👨‍💻 ADMIN MODE";
-            badge.style.background = "#dc2626"; // Red for Admin
+            badge.style.background = "#dc2626";
             document.getElementById("adminSearchPanel").style.display = "block";
-            document.querySelector(".btn-red").style.display = "block"; // Show clear btn
+            document.querySelector(".btn-red").style.display = "block"; 
             loginSuccess();
+            fetchRecords(); 
         } 
-        else if(input === EMP_PASS) {
+        else if(input === "1111") {
             CURRENT_ROLE = "employee";
             badge.innerText = "👤 EMPLOYEE MODE";
-            badge.style.background = "#2563eb"; // Blue for Employee
+            badge.style.background = "#2563eb";
             document.getElementById("adminSearchPanel").style.display = "none";
             loginSuccess();
         } 
         else {
+            // Show exact error
+            alert("Login Failed. You typed: '" + input + "'");
             document.getElementById("errorMsg").style.display = "block";
         }
     }
@@ -294,24 +296,59 @@ tr:nth-child(even) { background-color: #f9fafb; }
         document.getElementById("pending").value = total - paid;
     }
 
-    // --- MAIN FUNCTION: GENERATE RECEIPT ---
-    function generateReceipt() {
+    function findAndInitRefund() {
+        const searchId = document.getElementById("searchTxnId").value.trim().toUpperCase();
+        if(!searchId) { alert("Please enter a Transaction ID"); return; }
+
+        const item = fetchedData.find(x => x.id == searchId);
+
+        if(item) {
+            selectedRefundItem = item;
+            document.getElementById("refundTargetId").innerText = item.id;
+            document.getElementById("refundReason").value = ""; 
+            document.getElementById("reasonModal").style.display = "flex"; 
+        } else {
+            alert("Txn ID not found locally. Please click 'View Recent Records' first to load data.");
+        }
+    }
+
+    function closeReasonModal() {
+        document.getElementById("reasonModal").style.display = "none";
+        selectedRefundItem = null;
+    }
+
+    function processRefundWithReason() {
+        const reason = document.getElementById("refundReason").value.trim();
+        if(!reason) { alert("Reason is required!"); return; }
+
+        document.getElementById("custName").value = selectedRefundItem.name;
+        document.getElementById("mobile").value = selectedRefundItem.mobile;
+        document.getElementById("service").value = `REFUND (${selectedRefundItem.service}) - Remark: ${reason}`;
+        
+        document.getElementById("total").value = -Math.abs(selectedRefundItem.total); 
+        document.getElementById("paid").value = -Math.abs(selectedRefundItem.paid);   
+        document.getElementById("payMode").value = "Refund";
+        calcPending();
+
+        closeReasonModal();
+        generateReceipt(true); 
+    }
+
+    function generateReceipt(isRefund = false) {
         const btn = document.getElementById("saveBtn");
         const name = document.getElementById("custName").value;
         const total = document.getElementById("total").value;
         
         if(!name || !total) { alert("Customer Name and Total are required!"); return; }
 
-        btn.innerText = "Processing...";
+        btn.innerText = "Saving...";
         btn.disabled = true;
 
         const dateObj = new Date();
         const dateStr = dateObj.toLocaleDateString('en-IN');
         const timeStr = dateObj.toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'});
         
-        // If ID exists (reprint/edit), keep it, else generate NEW
-        let uniqueID = document.getElementById("txnIdDisplay").value;
-        if(!uniqueID) uniqueID = "TXN" + Math.floor(1000 + Math.random() * 9000);
+        const uniqueID = "TXN" + Math.floor(1000 + Math.random() * 9000);
 
         const data = {
             id: uniqueID,
@@ -326,10 +363,17 @@ tr:nth-child(even) { background-color: #f9fafb; }
             time: timeStr
         };
 
-        // UI Update
         fillReceiptUI(data);
 
-        // Save to Google Sheet
+        const noteEl = document.getElementById("receiptNote");
+        if(isRefund || data.mode === 'Refund') {
+            document.getElementById("receiptView").style.border = "5px solid red";
+            noteEl.innerHTML = "<b style='color:red;'>REFUND RECEIPT / CREDIT NOTE</b>";
+        } else {
+            document.getElementById("receiptView").style.border = "none";
+            noteEl.innerText = "Fees once paid is non-refundable.";
+        }
+
         fetch(scriptURL, {
             method: 'POST',
             body: JSON.stringify(data),
@@ -339,11 +383,10 @@ tr:nth-child(even) { background-color: #f9fafb; }
             btn.innerText = "✅ Generate Receipt";
             btn.disabled = false;
             showReceiptView();
-            // Optional: If it was a new entry, clear form for next time
-            if(!document.getElementById("txnIdDisplay").value) resetForm(); 
+            resetForm();
         })
         .catch(error => {
-            alert("Network Error! Receipt generated offline.");
+            alert("Offline Mode: Receipt Generated.");
             btn.disabled = false;
             showReceiptView();
         });
@@ -357,7 +400,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
     function closeReceipt() {
         document.getElementById("receiptView").style.display = "none";
         document.getElementById("mainForm").style.display = "block";
-        resetForm();
+        fetchRecords(); 
     }
 
     function fillReceiptUI(d) {
@@ -380,11 +423,11 @@ tr:nth-child(even) { background-color: #f9fafb; }
         document.getElementById("total").value = "";
         document.getElementById("paid").value = "";
         document.getElementById("pending").value = "";
-        document.getElementById("txnIdDisplay").value = ""; // Reset ID
+        document.getElementById("txnIdDisplay").value = "";
         document.getElementById("payMode").value = "Cash";
+        document.getElementById("searchTxnId").value = "";
     }
 
-    // --- DATA FETCHING & ADMIN TOOLS ---
     function fetchRecords() {
         const tbody = document.getElementById("tableBody");
         tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Loading data...</td></tr>";
@@ -392,45 +435,30 @@ tr:nth-child(even) { background-color: #f9fafb; }
         fetch(scriptURL)
         .then(res => res.json())
         .then(data => {
-            fetchedData = data; // Save for local search
-            renderTable(data.slice(0, 15)); // Show top 15
+            fetchedData = data; 
+            renderTable(data.slice(0, 20)); 
         })
         .catch(err => {
-            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Check Internet Connection</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Check Connection</td></tr>";
         });
     }
 
     function renderTable(dataArray) {
         const tbody = document.getElementById("tableBody");
         let html = "";
-        
-        dataArray.forEach((row, index) => {
-            // Check if Admin to show extra buttons
-            let adminBtns = "";
-            if(CURRENT_ROLE === 'admin') {
-                // We pass the index to easily grab data from the array
-                adminBtns = `
-                    <div class="admin-actions" style="display:flex;">
-                        <button class="btn-sm btn-blue" onclick="reprintRow('${row.id}')" title="Reprint">🖨️</button>
-                        <button class="btn-sm btn-red" style="display:block; background:#dc2626;" onclick="refundRow('${row.id}')" title="Refund">↩️</button>
-                    </div>`;
-            } else {
-                adminBtns = `<span style="font-size:10px; color:#999;">View Only</span>`;
-            }
-
-            html += `<tr>
+        dataArray.forEach(row => {
+            let color = row.mode === 'Refund' || row.total < 0 ? '#fecaca' : 'transparent';
+            html += `<tr style="background:${color}">
                 <td style="font-weight:bold; font-size:11px;">${row.id}</td>
                 <td>${row.date}</td>
                 <td>${row.name}</td>
+                <td>${row.service}</td>
                 <td>₹${row.total}</td>
-                <td>${adminBtns}</td>
             </tr>`;
         });
         tbody.innerHTML = html;
     }
+</script>
 
-    // --- ADMIN SPECIFIC FUNCTIONS ---
-    
-    // 1. REPRINT: Just fills the receipt view with old data
-    function reprintRow(id) {
-        const item = fetchedData.find(x => x
+</body>
+</html>
