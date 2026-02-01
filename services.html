@@ -100,16 +100,16 @@ tr:nth-child(even) { background-color: #f9fafb; }
 
 <div id="lockScreen">
     <div class="lock-box">
-        <h2 style="margin:0; color:#f97316; margin-bottom:15px;">🔐 Login</h2>
+        <h2 style="margin:0; color:#f97316; margin-bottom:15px;">🔐 Login System</h2>
         
-        <div style="text-align:left; font-size:12px; font-weight:bold; color:#555;">User ID</div>
-        <input type="text" id="userId" placeholder="admin / staff" autocapitalize="off">
+        <div style="text-align:left; font-size:12px; font-weight:bold; color:#555;">User Name or ID</div>
+        <input type="text" id="userId" placeholder="Enter Name (e.g. shivam)" autocapitalize="off">
         
         <div style="text-align:left; font-size:12px; font-weight:bold; color:#555; margin-top:10px;">Password</div>
-        <input type="number" id="userPass" placeholder="Password" onkeyup="if(event.key==='Enter') attemptLogin()">
+        <input type="tel" id="userPass" placeholder="Enter Code (e.g. 8888)" onkeyup="if(event.key==='Enter') attemptLogin()">
         
-        <button class="btn-orange" onclick="attemptLogin()" style="width:100%; margin-top:15px;">LOGIN</button>
-        <p id="errorMsg" style="color:red; display:none; margin-top:10px; font-size:13px; font-weight:bold;">❌ Wrong ID or Password</p>
+        <button class="btn-orange" onclick="attemptLogin()" style="width:100%; margin-top:15px;">LOGIN NOW</button>
+        <p id="errorMsg" style="color:red; display:none; margin-top:10px; font-size:13px; font-weight:bold;">❌ Try Again!</p>
     </div>
 </div>
 
@@ -268,14 +268,17 @@ tr:nth-child(even) { background-color: #f9fafb; }
     let fetchedData = []; 
     let selectedRefundItem = null; 
 
+    // --- FIXED LOGIN FUNCTION ---
     function attemptLogin() {
-        let userId = document.getElementById("userId").value.trim().toLowerCase(); 
-        let userPass = document.getElementById("userPass").value.trim(); 
+        // Values le rahe hain aur clean kar rahe hain (Trim spaces, Lowercase)
+        // String() wrapper is used to ensure it's treated as text
+        let userId = String(document.getElementById("userId").value).trim().toLowerCase(); 
+        let userPass = String(document.getElementById("userPass").value).trim(); 
 
         const badge = document.getElementById("userBadge");
         
-        // --- ADMIN LOGIN (SHIVAM) ---
-        if(userId === "admin" && userPass === "8888") {
+        // --- ADMIN LOGIN (Allow 'admin' OR 'shivam') ---
+        if((userId === "admin" || userId === "shivam") && userPass === "8888") {
             CURRENT_ROLE = "admin";
             CURRENT_USER_NAME = "Shivam";
             CURRENT_USER_POST = "Admin";
@@ -287,8 +290,8 @@ tr:nth-child(even) { background-color: #f9fafb; }
             loginSuccess();
             fetchRecords(); 
         } 
-        // --- EMPLOYEE LOGIN (RAM) ---
-        else if(userId === "staff" && userPass === "1111") {
+        // --- EMPLOYEE LOGIN (Allow 'staff' OR 'ram') ---
+        else if((userId === "staff" || userId === "ram") && userPass === "1111") {
             CURRENT_ROLE = "employee";
             CURRENT_USER_NAME = "Ram";
             CURRENT_USER_POST = "Staff";
@@ -298,7 +301,9 @@ tr:nth-child(even) { background-color: #f9fafb; }
             document.getElementById("adminSearchPanel").style.display = "none";
             loginSuccess();
         } 
+        // --- ERROR ALERT (Agar fail hua to ye batayega kyu hua) ---
         else {
+            alert("Login Failed!\nआपने डाला (You Typed):\nID: '" + userId + "'\nPass: '" + userPass + "'\n\nPlease check spelling and spaces.");
             document.getElementById("errorMsg").style.display = "block";
         }
     }
@@ -424,4 +429,63 @@ tr:nth-child(even) { background-color: #f9fafb; }
 
     function fillReceiptUI(d) {
         ['1', '2'].forEach(id => {
-            if(document.getElementById('rid'+id)) document.getElementBy
+            if(document.getElementById('rid'+id)) document.getElementById('rid'+id).innerText = d.id;
+            if(document.getElementById('rdate'+id)) document.getElementById('rdate'+id).innerText = d.date + " " + d.time;
+            if(document.getElementById('rname'+id)) document.getElementById('rname'+id).innerText = d.name;
+            if(document.getElementById('rtotal'+id)) document.getElementById('rtotal'+id).innerText = d.total;
+            if(document.getElementById('rpending'+id)) document.getElementById('rpending'+id).innerText = d.pending;
+            if(document.getElementById('rservice'+id)) document.getElementById('rservice'+id).innerText = d.service;
+            if(document.getElementById('rmode'+id)) document.getElementById('rmode'+id).innerText = d.mode;
+            
+            // FILL OPERATOR NAME
+            if(document.getElementById('roperator'+id)) document.getElementById('roperator'+id).innerText = d.operator || (CURRENT_USER_NAME + " (" + CURRENT_USER_POST + ")");
+        });
+        document.getElementById('rpaid1').innerText = d.paid;
+    }
+
+    function resetForm() {
+        document.getElementById("custName").value = "";
+        document.getElementById("mobile").value = "";
+        document.getElementById("service").value = "";
+        document.getElementById("total").value = "";
+        document.getElementById("paid").value = "";
+        document.getElementById("pending").value = "";
+        document.getElementById("txnIdDisplay").value = "";
+        document.getElementById("payMode").value = "Cash";
+        document.getElementById("searchTxnId").value = "";
+    }
+
+    function fetchRecords() {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Loading data...</td></tr>";
+
+        fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+            fetchedData = data; 
+            renderTable(data.slice(0, 20)); 
+        })
+        .catch(err => {
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Check Connection</td></tr>";
+        });
+    }
+
+    function renderTable(dataArray) {
+        const tbody = document.getElementById("tableBody");
+        let html = "";
+        dataArray.forEach(row => {
+            let color = row.mode === 'Refund' || row.total < 0 ? '#fecaca' : 'transparent';
+            html += `<tr style="background:${color}">
+                <td style="font-weight:bold; font-size:11px;">${row.id}</td>
+                <td>${row.date}</td>
+                <td>${row.name}</td>
+                <td>${row.service}</td>
+                <td>₹${row.total}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
