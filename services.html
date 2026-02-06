@@ -1,121 +1,98 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOS Pro - Business Terminal</title>
+    <title>SOS Pro | Command Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --brand: #ff6b00; --bg: #05070a; --surface: #11141b; --text: #f8fafc; --border: rgba(255, 255, 255, 0.1); }
+        :root { --brand: #ff6b00; --bg: #05070a; --surface: #11141b; --danger: #ef4444; --border: rgba(255, 255, 255, 0.1); }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
-        
-        /* Layout */
-        .app-container { display: none; padding: 20px; max-width: 1400px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: var(--surface); padding: 15px 25px; border-radius: 15px; border: 1px solid var(--border); }
-        
-        /* Dashboard Cards */
-        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--surface); padding: 20px; border-radius: 15px; border: 1px solid var(--border); border-left: 4px solid var(--brand); }
-        .stat-card small { color: #94a3b8; font-size: 11px; text-transform: uppercase; }
-        .stat-card h2 { margin: 5px 0 0 0; font-size: 22px; }
+        body { margin: 0; background: var(--bg); color: #fff; }
 
-        /* Main Workspace */
-        .workspace { display: grid; grid-template-columns: 400px 1fr; gap: 25px; }
-        .panel { background: var(--surface); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        /* --- ADMIN REFUND TOP BAR --- */
+        #adminRefundHeader { 
+            background: linear-gradient(90deg, #450a0a, #11141b); 
+            border-bottom: 2px solid var(--danger);
+            padding: 20px 40px; display: none; 
+            animation: slideDown 0.5s ease;
+        }
+        @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+        .refund-flex { display: flex; align-items: center; gap: 20px; max-width: 1300px; margin: auto; }
+        .ref-input { background: #000; border: 1px solid var(--danger); padding: 12px; border-radius: 8px; color: #fff; width: 250px; }
+
+        /* --- DASHBOARD --- */
+        .container { max-width: 1300px; margin: auto; padding: 20px; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: var(--surface); padding: 15px 30px; border-radius: 15px; border: 1px solid var(--border); }
         
-        /* Refund Section (Admin Only) */
-        .refund-box { background: #450a0a; border: 1px solid #7f1d1d; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; }
-        
-        /* Form Styling */
+        .grid { display: grid; grid-template-columns: 400px 1fr; gap: 25px; }
+        .card { background: var(--surface); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+
+        .btn { padding: 12px 25px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-brand { background: var(--brand); color: #fff; width: 100%; }
+        .btn-danger { background: var(--danger); color: #fff; }
+
+        /* --- TABLE & INPUTS --- */
+        input, select { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-top: 5px; }
         .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; margin-bottom: 5px; color: #94a3b8; }
-        input, select { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 14px; }
-        .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .btn-brand { background: var(--brand); color: #fff; }
-        .btn-brand:hover { filter: brightness(1.2); }
+        label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
 
-        /* Table */
-        .table-container { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { text-align: left; padding: 12px; background: rgba(255,255,255,0.03); color: #94a3b8; }
-        td { padding: 12px; border-bottom: 1px solid var(--border); }
+        /* --- RECEIPT --- */
+        #receiptOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; }
+        .receipt-box { background: #fff; color: #000; width: 450px; padding: 20px; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        .cut-line { border-top: 2px dashed #000; margin: 20px 0; text-align: center; position: relative; }
+        .cut-line:after { content: "OFFICE COPY"; position: absolute; top:-10px; left:35%; background:#fff; padding:0 10px; font-size:10px; font-weight:800;}
 
-        /* Dual Receipt */
-        #receiptOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; padding: 20px; overflow-y: auto; }
-        .receipt-paper { background: #fff; color: #000; max-width: 450px; margin: auto; padding: 20px; }
-        .receipt-sec { border: 1px solid #000; padding: 15px; }
-        .cut-line { border-top: 2px dashed #000; margin: 25px 0; text-align: center; position: relative; }
-        .cut-line:after { content: 'OFFICE COPY'; position: absolute; top: -10px; left: 35%; background: #fff; padding: 0 10px; font-size: 10px; font-weight: 800; }
-
-        /* Login */
-        #loginScreen { position: fixed; inset: 0; background: #020617; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--surface); padding: 40px; border-radius: 25px; width: 350px; text-align: center; border: 1px solid var(--border); }
-        
-        @media print { .no-print { display: none; } body { background: #fff; } #receiptOverlay { position: absolute; display: block; background: #fff; width: 100%; } }
+        @media print { .no-print { display: none; } body { background: #fff; } #receiptOverlay { position: static; display: block; } }
     </style>
 </head>
 <body>
 
-<div id="loginScreen">
-    <div class="login-box">
-        <h1 style="color:var(--brand); margin:0;">SOS PRO</h1>
-        <p style="color:#64748b; font-size:14px; margin-bottom:30px;">Professional POS Terminal</p>
-        <input type="text" id="uId" placeholder="User ID" style="margin-bottom:10px; text-align:center;">
-        <input type="password" id="uPass" placeholder="Password" style="margin-bottom:20px; text-align:center;">
-        <button class="btn btn-brand" onclick="login()">LOGIN</button>
+<div id="adminRefundHeader">
+    <div class="refund-flex">
+        <div style="flex: 1;">
+            <h3 style="margin:0; color:var(--danger); font-size: 18px;">🛡️ REFUND CONTROL CENTER</h3>
+            <p style="margin:0; font-size: 11px; color: #ffa3a3;">Process reversals & partial refunds here</p>
+        </div>
+        <input type="text" id="refId" class="ref-input" placeholder="Enter Transaction ID (e.g. SOS123)">
+        <button class="btn btn-danger" onclick="adminFetchRefund()">FETCH & REVERSE</button>
     </div>
 </div>
 
-<div class="app-container" id="app">
-    <div class="header">
+<div class="container">
+    <div class="top-nav">
         <div>
-            <div id="clock" style="font-size:22px; font-weight:800; color:var(--brand);">00:00:00</div>
-            <div id="date" style="font-size:12px; color:#94a3b8;">Loading...</div>
+            <div id="clock" style="font-size: 24px; font-weight: 800; color: var(--brand);">00:00:00</div>
+            <div id="date" style="font-size: 12px; color: #94a3b8;">---</div>
         </div>
-        <div id="userLabel" style="font-weight:700; background:rgba(255,255,255,0.05); padding:8px 15px; border-radius:10px;">Guest</div>
-    </div>
-
-    <div id="adminPanel" style="display:none;">
-        <div class="stats-row">
-            <div class="stat-card"><small>Today's Collection</small><h2 id="st_sales">₹0</h2></div>
-            <div class="stat-card"><small>Total Refunds</small><h2 id="st_ref" style="color:#ef4444;">₹0</h2></div>
-            <div class="stat-card"><small>Transactions</small><h2 id="st_count">0</h2></div>
-        </div>
-        
-        <div class="refund-box" id="refundBar">
-            <label style="color:#fff;">Admin Refund: Enter Txn ID to Fetch Data</label>
-            <div style="display:flex; gap:10px; margin-top:5px;">
-                <input type="text" id="refId" placeholder="SOS1234">
-                <button class="btn btn-brand" onclick="fetchRefund()" style="width:150px; padding:10px;">FETCH</button>
-            </div>
+        <div id="userBadge" style="background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border);">
+            Welcome, Guest
         </div>
     </div>
 
-    <div class="workspace">
-        <div class="panel">
-            <h3 id="formMode">New Transaction</h3>
-            <div class="input-group"><label>Customer Name</label><input type="text" id="cName"></div>
-            <div class="input-group"><label>Mobile Number</label><input type="number" id="cMob"></div>
-            <div class="input-group"><label>Service Details</label><input type="text" id="cServ"></div>
+    <div class="grid">
+        <div class="card">
+            <h3 id="formTitle" style="margin-top:0;">New Entry</h3>
+            <div class="input-group"><label>Customer Name</label><input type="text" id="fName"></div>
+            <div class="input-group"><label>Mobile</label><input type="number" id="fMob"></div>
+            <div class="input-group"><label>Service</label><input type="text" id="fServ"></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="input-group"><label>Total Bill</label><input type="number" id="cTotal" oninput="calc()"></div>
-                <div class="input-group"><label>Paid Amount</label><input type="number" id="cPaid" oninput="calc()"></div>
+                <div class="input-group"><label>Total Bill</label><input type="number" id="fTotal" oninput="calc()"></div>
+                <div class="input-group"><label>Paid</label><input type="number" id="fPaid" oninput="calc()"></div>
             </div>
-            <div class="input-group"><label>Pending Balance</label><input type="number" id="cPend" readonly style="color:#ef4444;"></div>
-            <div class="input-group">
-                <label>Payment Method</label>
-                <select id="cMode"><option>Cash</option><option>UPI/Online</option><option value="Refund">Refund (Reversal)</option></select>
+            <div class="input-group"><label>Method</label>
+                <select id="fMode"><option>Cash</option><option>UPI</option><option value="Refund">Admin Refund</option></select>
             </div>
-            <button class="btn btn-brand" onclick="process()">GENERATE & SAVE</button>
-            <button class="btn" style="margin-top:10px; background:rgba(255,255,255,0.05); color:#fff;" onclick="reset()">RESET</button>
+            <button class="btn btn-brand" onclick="saveTxn()">EXECUTE & PRINT</button>
+            <button class="btn" style="width:100%; margin-top:10px; background:transparent; color:#94a3b8;" onclick="location.reload()">CLEAR</button>
         </div>
 
-        <div class="panel">
-            <h3 style="margin-top:0;">Recent Activity Log</h3>
-            <div class="table-container">
-                <table id="logTable">
-                    <thead><tr><th>ID</th><th>Time</th><th>Customer</th><th>Amount</th><th>Op</th></tr></thead>
+        <div class="card">
+            <h3 style="margin-top:0;">Live Transaction Log</h3>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <thead><tr style="text-align:left; color:#94a3b8;"><th style="padding:10px;">ID</th><th>Time</th><th>Name</th><th>Total</th><th>Op</th></tr></thead>
                     <tbody id="logBody"></tbody>
                 </table>
             </div>
@@ -124,144 +101,123 @@
 </div>
 
 <div id="receiptOverlay">
-    <div class="receipt-paper">
-        <div class="receipt-sec">
+    <div class="receipt-box">
+        <div style="border:1px solid #000; padding:15px;">
             <center>
                 <h2 style="margin:0;">SHIVAM ONLINE SERVICES</h2>
                 <small>Vatica, Jaipur | 9664324706</small><br>
-                <div id="r_tag" style="background:#000; color:#fff; padding:2px 10px; font-size:10px; margin-top:5px; display:inline-block;">CUSTOMER COPY</div>
+                <div id="recTag" style="background:#000; color:#fff; padding:2px 10px; font-size:10px; margin-top:5px; display:inline-block;">CUSTOMER COPY</div>
             </center>
-            <div style="font-size:12px; margin-top:15px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                <b>ID:</b> <span class="r_id"></span> | <span class="r_time"></span>
+            <div style="font-size:12px; margin-top:10px; border-bottom:1px solid #eee; padding-bottom:5px; display:flex; justify-content:space-between;">
+                <span><b>ID:</b> <span class="r-id"></span></span>
+                <span class="r-time"></span>
             </div>
             <div style="font-size:13px; margin:10px 0;">
-                <b>Customer:</b> <span class="r_name"></span><br>
-                <b>Mobile:</b> <span class="r_mob"></span><br>
-                <b>Service:</b> <span class="r_serv"></span>
+                <b>Client:</b> <span class="r-name"></span><br>
+                <b>Mobile:</b> <span class="r-mob"></span><br>
+                <b>Service:</b> <span class="r-serv"></span>
             </div>
-            <div style="background:#f4f4f4; padding:10px; font-size:14px; font-weight:700;">
-                Total: ₹<span class="r_total"></span> | Paid: ₹<span class="r_paid"></span>
+            <div style="background:#f4f4f4; padding:10px; font-weight:800; font-size:14px;">
+                BILL AMT: ₹<span class="r-total"></span> | PAID: ₹<span class="r-paid"></span>
             </div>
-            <p style="font-size:10px; text-align:center;">Generated by: <span class="r_op"></span></p>
+            <p style="font-size:10px; text-align:center;">Operator: <span class="r-op"></span></p>
         </div>
 
         <div class="cut-line"></div>
 
-        <div class="receipt-sec" style="font-size:11px;">
-            <center><h3 style="margin:0;">OFFICE RECORD</h3></center>
-            <b>Txn ID:</b> <span class="r_id"></span> | <b>Name:</b> <span class="r_name"></span><br>
-            <b>Service:</b> <span class="r_serv"></span> | <b>Amt: ₹<span class="r_total"></span></b><br>
-            <b>Method:</b> <span class="r_mode"></span>
+        <div style="border:1px solid #000; padding:10px; font-size:11px;">
+            <center><b>OFFICE COPY - RECORD</b></center>
+            ID: <span class="r-id"></span> | Name: <span class="r-name"></span><br>
+            Service: <span class="r-serv"></span> | Amt: ₹<span class="r-total"></span>
         </div>
 
-        <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
-            <button class="btn btn-brand" onclick="window.print()">PRINT DUAL</button>
-            <button class="btn" style="background:#eee; color:#000;" onclick="document.getElementById('receiptOverlay').style.display='none'">CLOSE</button>
+        <div class="no-print" style="margin-top:15px; display:flex; gap:10px;">
+            <button class="btn btn-brand" onclick="window.print()">PRINT</button>
+            <button class="btn" style="background:#ddd; color:#000; flex:1;" onclick="document.getElementById('receiptOverlay').style.display='none'">CLOSE</button>
         </div>
     </div>
 </div>
 
 <script>
-    let db = []; let user = ""; let role = "";
+    let txns = []; let user = "";
 
-    // Clock Logic
+    // LIVE CLOCK
     setInterval(() => {
         const n = new Date();
         document.getElementById('clock').innerText = n.toLocaleTimeString('en-IN');
         document.getElementById('date').innerText = n.toLocaleDateString('en-IN', {weekday:'long', day:'2-digit', month:'short', year:'numeric'});
     }, 1000);
 
-    function login() {
-        const id = document.getElementById('uId').value.toLowerCase();
-        const pass = document.getElementById('uPass').value;
-        if(id === 'shivam' && pass === '8888') { user = "Shivam"; role = "Admin"; }
-        else if(id === 'ram' && pass === '1111') { user = "Ram"; role = "Staff"; }
-        else { alert("Access Denied"); return; }
-        
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('userLabel').innerText = `${user} (${role})`;
-        if(role === 'Admin') document.getElementById('adminPanel').style.display = 'block';
+    // SIMPLE LOGIN SIMULATION
+    window.onload = () => {
+        const p = prompt("Enter Access Pin (8888 for Admin, 1111 for Ram):");
+        if(p === "8888") { 
+            user = "Shivam (Admin)"; 
+            document.getElementById('adminRefundHeader').style.display = 'block';
+        } else if(p === "1111") {
+            user = "Ram (Staff)";
+        } else {
+            alert("Wrong Pin!"); location.reload();
+        }
+        document.getElementById('userBadge').innerText = "Logged in: " + user;
     }
 
-    function calc() {
-        const t = document.getElementById('cTotal').value || 0;
-        const p = document.getElementById('cPaid').value || 0;
-        document.getElementById('cPend').value = t - p;
-    }
+    function calc() {} // Simple bypass
 
-    // Admin Refund Search
-    function fetchRefund() {
+    // --- ADMIN REFUND FUNCTION ---
+    function adminFetchRefund() {
         const id = document.getElementById('refId').value.toUpperCase();
-        const item = db.find(t => t.id === id);
-        if(item) {
-            document.getElementById('formMode').innerText = "REFUND PROCESSING";
-            document.getElementById('formMode').style.color = "red";
-            document.getElementById('cName').value = item.name;
-            document.getElementById('cMob').value = item.mob;
-            document.getElementById('cServ').value = "REFUND: " + item.serv;
-            document.getElementById('cTotal').value = -Math.abs(item.total);
-            document.getElementById('cPaid').value = -Math.abs(item.paid);
-            document.getElementById('cMode').value = "Refund";
-            calc();
-        } else { alert("ID Not Found"); }
+        const found = txns.find(t => t.id === id);
+        
+        if(found) {
+            document.getElementById('formTitle').innerText = "⚠️ PROCESS REFUND";
+            document.getElementById('formTitle').style.color = "var(--danger)";
+            document.getElementById('fName').value = found.name;
+            document.getElementById('fMob').value = found.mob;
+            document.getElementById('fServ').value = "REFUND: " + found.serv;
+            document.getElementById('fTotal').value = -Math.abs(found.total);
+            document.getElementById('fPaid').value = -Math.abs(found.paid);
+            document.getElementById('fMode').value = "Refund";
+            alert("Data Loaded! You can edit the amount if partial refund is needed.");
+        } else {
+            alert("ID Not Found in current session!");
+        }
     }
 
-    function process() {
-        const data = {
+    function saveTxn() {
+        const d = {
             id: "SOS" + Math.floor(1000 + Math.random() * 9000),
             time: new Date().toLocaleTimeString(),
-            name: document.getElementById('cName').value,
-            mob: document.getElementById('cMob').value,
-            serv: document.getElementById('cServ').value,
-            total: parseFloat(document.getElementById('cTotal').value) || 0,
-            paid: parseFloat(document.getElementById('cPaid').value) || 0,
-            mode: document.getElementById('cMode').value,
+            name: document.getElementById('fName').value,
+            mob: document.getElementById('fMob').value,
+            serv: document.getElementById('fServ').value,
+            total: document.getElementById('fTotal').value,
+            paid: document.getElementById('fPaid').value,
             op: user
         };
-        if(!data.name || !data.total) return alert("Fill Name & Total");
-        
-        db.unshift(data);
-        updateUI(data);
-    }
 
-    function updateUI(d) {
-        // Table Update
-        const row = `<tr><td>${d.id}</td><td>${d.time}</td><td><b>${d.name}</b></td><td>₹${d.total}</td><td>${d.op}</td></tr>`;
+        if(!d.name || !d.total) return alert("Fill Required Fields");
+
+        txns.unshift(d);
+        
+        // Update Log
+        const row = `<tr><td>${d.id}</td><td>${d.time}</td><td><b>${d.name}</b></td><td>₹${d.total}</td><td>${d.op.split(' ')[0]}</td></tr>`;
         document.getElementById('logBody').insertAdjacentHTML('afterbegin', row);
-        
-        // Admin Stats Update
-        if(role === 'Admin') {
-            const sales = db.filter(t => t.total > 0).reduce((a,b) => a + b.total, 0);
-            const refs = db.filter(t => t.total < 0).reduce((a,b) => a + b.total, 0);
-            document.getElementById('st_sales').innerText = "₹" + sales;
-            document.getElementById('st_ref').innerText = "₹" + Math.abs(refs);
-            document.getElementById('st_count').innerText = db.length;
-        }
 
-        // Fill Dual Receipt
-        document.querySelectorAll('.r_id').forEach(e => e.innerText = d.id);
-        document.querySelectorAll('.r_time').forEach(e => e.innerText = d.time);
-        document.querySelectorAll('.r_name').forEach(e => e.innerText = d.name);
-        document.querySelectorAll('.r_mob').forEach(e => e.innerText = d.mob);
-        document.querySelectorAll('.r_serv').forEach(e => e.innerText = d.serv);
-        document.querySelectorAll('.r_total').forEach(e => e.innerText = d.total);
-        document.querySelectorAll('.r_paid').forEach(e => e.innerText = d.paid);
-        document.querySelectorAll('.r_op').forEach(e => e.innerText = d.op);
-        document.querySelectorAll('.r_mode').forEach(e => e.innerText = d.mode);
+        // Receipt
+        document.querySelectorAll('.r-id').forEach(e => e.innerText = d.id);
+        document.querySelectorAll('.r-time').forEach(e => e.innerText = d.time);
+        document.querySelectorAll('.r-name').forEach(e => e.innerText = d.name);
+        document.querySelectorAll('.r-mob').forEach(e => e.innerText = d.mob);
+        document.querySelectorAll('.r-serv').forEach(e => e.innerText = d.serv);
+        document.querySelectorAll('.r-total').forEach(e => e.innerText = d.total);
+        document.querySelectorAll('.r-paid').forEach(e => e.innerText = d.paid);
+        document.querySelectorAll('.r-op').forEach(e => e.innerText = d.op);
         
-        document.getElementById('r_tag').innerText = d.total < 0 ? "REFUND VOUCHER" : "CUSTOMER COPY";
-        document.getElementById('r_tag').style.background = d.total < 0 ? "red" : "#000";
+        document.getElementById('recTag').innerText = d.total < 0 ? "REFUND VOUCHER" : "CUSTOMER COPY";
+        document.getElementById('recTag').style.background = d.total < 0 ? "red" : "#000";
 
         document.getElementById('receiptOverlay').style.display = 'flex';
-        reset();
-    }
-
-    function reset() {
-        document.getElementById('formMode').innerText = "New Transaction";
-        document.getElementById('formMode').style.color = "inherit";
-        ['cName','cMob','cServ','cTotal','cPaid','cPend'].forEach(id => document.getElementById(id).value = "");
-        document.getElementById('cMode').value = "Cash";
     }
 </script>
 </body>
