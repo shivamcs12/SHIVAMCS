@@ -1,375 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Shivam Online Services - Pro POS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS | Enterprise POS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #ff6b00;
+            --bg: #05070a;
+            --surface: #11141b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #6366f1;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { margin: 0; background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow-x: hidden; }
 
-<style>
-/* ===== MODERN ANIMATIONS & DESIGN ===== */
-:root {
-    --primary: #f97316;
-    --primary-hover: #ea580c;
-    --bg-dark: #0f172a;
-    --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+        /* --- ANIMATIONS --- */
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(255, 107, 0, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.4); }
+            100% { box-shadow: 0 0 5px rgba(255, 107, 0, 0.2); }
+        }
 
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        /* --- LOGIN SCREEN (PREMIUM PORTAL) --- */
+        #lockScreen {
+            position: fixed; inset: 0; z-index: 5000;
+            background: radial-gradient(circle at 50% 50%, #1a1c2e 0%, #05070a 100%);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 40px; border-radius: 32px;
+            border: 1px solid var(--border);
+            width: 100%; max-width: 400px;
+            text-align: center; animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .login-card h2 { font-weight: 800; font-size: 28px; margin-bottom: 8px; letter-spacing: -1px; }
+        .login-card p { color: var(--text-dim); margin-bottom: 30px; font-size: 14px; }
 
-@keyframes slideInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        /* --- INPUTS & BUTTONS --- */
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        input, select {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            padding: 14px 18px; border-radius: 12px; color: white; font-size: 15px;
+            transition: all 0.3s;
+        }
+        input:focus { border-color: var(--brand); outline: none; background: rgba(0,0,0,0.5); }
 
-@keyframes pulse-glow {
-    0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
-}
+        .btn-prime {
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            background: var(--brand); color: white; font-weight: 700; font-size: 16px;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .btn-prime:hover { transform: translateY(-2px); filter: brightness(1.1); animation: glow 1.5s infinite; }
 
-body { 
-    margin: 0; 
-    font-family: 'Inter', sans-serif; 
-    background: radial-gradient(circle at top left, #1e293b, #0f172a);
-    color: var(--text-main);
-    display: flex; 
-    justify-content: center; 
-    min-height: 100vh; 
-    overflow-x: hidden;
-}
+        /* --- MAIN DASHBOARD --- */
+        #mainForm { 
+            display: none; width: 100%; max-width: 1100px; margin: auto; padding: 40px 20px;
+            animation: reveal 0.8s ease; 
+        }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .brand-logo { font-weight: 800; font-size: 24px; color: var(--brand); letter-spacing: -1px; }
+        .user-pill { background: var(--glass); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border); font-size: 13px; }
 
-/* MAIN CARD WITH GLASSMORPHISM */
-.main-card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    width: 95%;
-    max-width: 850px;
-    margin: 40px 10px;
-    padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-    animation: slideInUp 0.6s ease-out;
-    display: none;
-}
+        .grid-container {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 30px;
+        }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 24px; padding: 30px;
+        }
 
-/* HEADER DESIGN */
-.form-header { 
-    text-align: center; 
-    margin-bottom: 35px; 
-    position: relative;
-}
-.form-header h1 { 
-    margin: 0; 
-    color: var(--bg-dark); 
-    font-size: 32px; 
-    letter-spacing: -1px;
-    font-weight: 800; 
-}
-.user-badge { 
-    background: var(--bg-dark); 
-    color: #fff; 
-    padding: 6px 16px; 
-    border-radius: 50px; 
-    font-size: 13px; 
-    margin-top: 10px; 
-    display: inline-block;
-    transition: var(--transition);
-}
+        /* --- TABLE --- */
+        .table-container { margin-top: 30px; overflow: hidden; border-radius: 16px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; background: var(--surface); }
+        th { background: rgba(255,255,255,0.03); padding: 15px; text-align: left; font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
+        td { padding: 15px; border-top: 1px solid var(--border); font-size: 14px; }
+        tr:hover { background: rgba(255,255,255,0.02); cursor: pointer; }
 
-/* INPUT STYLING */
-.row { display: flex; gap: 20px; margin-bottom: 20px; }
-.col { flex: 1; }
+        /* --- RECEIPT OVERLAY --- */
+        #receiptOverlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        }
+        .receipt-paper {
+            background: white; color: #000; width: 380px; padding: 30px; border-radius: 4px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: reveal 0.4s ease;
+        }
 
-label { display: block; font-weight: 600; color: #64748b; margin-bottom: 8px; font-size: 14px; }
-input, select { 
-    width: 100%; padding: 12px 16px; 
-    border: 2px solid #e2e8f0; border-radius: 12px; 
-    font-size: 16px; transition: var(--transition);
-    background: #f8fafc;
-}
-input:focus { 
-    border-color: var(--primary); 
-    background: #fff; 
-    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
-    outline: none;
-}
-
-/* BUTTONS */
-button { 
-    padding: 14px 28px; border: none; border-radius: 12px; 
-    font-size: 16px; font-weight: 700; cursor: pointer; 
-    transition: var(--transition);
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-button:active { transform: scale(0.96); }
-
-.btn-orange { background: var(--primary); color: white; animation: pulse-glow 2s infinite; }
-.btn-orange:hover { background: var(--primary-hover); transform: translateY(-2px); }
-
-/* TABLE ANIMATION */
-#tableBody tr { transition: var(--transition); }
-#tableBody tr:hover { background: #fff7ed; transform: scale(1.01); z-index: 10; cursor: pointer; }
-
-/* RECEIPT NEW DESIGN */
-#receiptView { 
-    animation: fadeInDown 0.5s ease;
-    padding: 20px;
-}
-.receipt-box { 
-    border: 2px solid #000; 
-    border-radius: 4px; 
-    padding: 25px; 
-    background: #fff;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    position: relative;
-}
-.receipt-box::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: var(--primary);
-}
-
-/* LOGIN SCREEN */
-#lockScreen { position: fixed; inset: 0; background: var(--bg-dark); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-.lock-box { 
-    background: white; padding: 40px; border-radius: 24px; text-align: center; width: 340px; 
-    animation: fadeInDown 0.5s ease;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-
-@media (max-width: 600px) {
-    .row { flex-direction: column; }
-    .main-card { padding: 20px; margin: 15px; }
-}
-
-@media print {
-    .no-print { display: none !important; }
-    body { background: white; }
-    .receipt-box { box-shadow: none; border: 1px solid #000; }
-}
-</style>
+        @media (max-width: 900px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .header-section { flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
 </head>
 <body>
 
-<div id="lockScreen">
-    <div class="lock-box">
-        <div style="font-size: 40px; margin-bottom: 10px;">🔐</div>
-        <h2 style="margin:0 0 20px 0; color:var(--bg-dark);">Login System</h2>
-        <input type="text" id="userId" placeholder="User ID (shivam/ram)" style="margin-bottom:15px; text-align:center;">
-        <input type="password" id="userPass" placeholder="Password" style="margin-bottom:20px; text-align:center;" onkeyup="if(event.key==='Enter') attemptLogin()">
-        <button class="btn-orange" onclick="attemptLogin()" style="width:100%;">ACCESS DASHBOARD</button>
-        <p id="errorMsg" style="color:#ef4444; display:none; margin-top:15px; font-weight:600;">Invalid Credentials!</p>
-    </div>
-</div>
-
-<div class="main-card" id="mainForm">
-    <div class="form-header">
-        <h1>Shivam Online Services</h1>
-        <p style="color:#64748b; margin: 5px 0;">Vatica, Jaipur | +91 9664324706</p>
-        <span id="userBadge" class="user-badge">Initializing...</span>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <label>Customer Name</label>
-            <input type="text" id="custName" placeholder="Enter full name">
-        </div>
-        <div class="col">
-            <label>Mobile Number</label>
-            <input type="number" id="mobile" placeholder="Customer mobile">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <label>Service Provided</label>
-            <input type="text" id="service" placeholder="e.g. Aadhar Update, Pan Card">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <label>Total (₹)</label>
-            <input type="number" id="total" oninput="calcPending()" placeholder="0">
-        </div>
-        <div class="col">
-            <label>Paid (₹)</label>
-            <input type="number" id="paid" oninput="calcPending()" placeholder="0">
-        </div>
-        <div class="col">
-            <label>Pending (₹)</label>
-            <input type="number" id="pending" readonly style="background-color: #f1f5f9; color: #ef4444; font-weight: bold;">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <label>Payment Method</label>
-            <select id="payMode">
-                <option value="Cash">Cash (नकद)</option>
-                <option value="UPI / PhonePe">UPI / PhonePe</option>
-                <option value="Card Payment">Card Payment</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="btn-container" style="display:flex; gap:15px; margin-top:30px;">
-        <button class="btn-orange" id="saveBtn" onclick="generateReceipt()" style="flex:2;">✨ GENERATE & SAVE</button>
-        <button class="btn-blue" onclick="fetchRecords()" style="background:#2563eb; color:white; flex:1;">📂 RECORDS</button>
-    </div>
-
-    <div class="table-section" style="margin-top:40px;">
-        <h3 style="font-size:16px; margin-bottom:15px;">Recent Transactions</h3>
-        <div style="overflow-x:auto; border-radius:12px; border:1px solid #e2e8f0;">
-            <table style="width:100%; border-collapse:collapse; background:white;">
-                <thead style="background:#f8fafc;">
-                    <tr>
-                        <th style="padding:15px; text-align:left; border-bottom:2px solid #e2e8f0;">ID</th>
-                        <th style="padding:15px; text-align:left; border-bottom:2px solid #e2e8f0;">Customer</th>
-                        <th style="padding:15px; text-align:left; border-bottom:2px solid #e2e8f0;">Amount</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div id="receiptView" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:4000; overflow-y:auto;">
-    <div style="max-width:400px; margin:40px auto; background:white; padding:20px; border-radius:8px;">
-        <div class="receipt-box">
-            <div style="text-align:center; border-bottom:1px solid #ddd; padding-bottom:15px; margin-bottom:15px;">
-                <h2 style="margin:0; font-size:18px;">SHIVAM ONLINE SERVICES</h2>
-                <p style="margin:5px 0; font-size:12px;">Vatica, Jaipur | 9664324706</p>
+    <div id="lockScreen">
+        <div class="login-card">
+            <div style="font-size: 40px; margin-bottom: 10px;">💎</div>
+            <h2>Enterprise Access</h2>
+            <p>Welcome back, please authorize to continue.</p>
+            
+            <div class="input-group">
+                <label>Operator ID</label>
+                <input type="text" id="userId" placeholder="Operator Name" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>Security Key</label>
+                <input type="password" id="userPass" placeholder="••••">
             </div>
             
-            <div style="font-size:13px; margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between;"><span>Txn ID:</span> <b id="r_id"></b></div>
-                <div style="display:flex; justify-content:space-between;"><span>Date:</span> <span id="r_date"></span></div>
-                <div style="display:flex; justify-content:space-between;"><span>Time:</span> <span id="r_time"></span></div>
-            </div>
-
-            <div style="border-top:1px dashed #ccc; padding-top:10px; font-size:14px;">
-                <p><b>Customer:</b> <span id="r_name"></span></p>
-                <p><b>Mobile:</b> <span id="r_mob"></span></p>
-                <p><b>Service:</b> <span id="r_service"></span></p>
-            </div>
-
-            <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-top:15px;">
-                <div style="display:flex; justify-content:space-between;"><span>Total:</span> <span>₹<span id="r_total"></span></span></div>
-                <div style="display:flex; justify-content:space-between; color:green; font-weight:bold;"><span>Paid:</span> <span>₹<span id="r_paid"></span></span></div>
-                <div style="display:flex; justify-content:space-between; color:red;"><span>Pending:</span> <span>₹<span id="r_pend"></span></span></div>
-            </div>
-
-            <div style="text-align:center; margin-top:20px; font-size:12px; border-top:1px solid #eee; padding-top:10px;">
-                <p>Payment Mode: <b id="r_mode"></b></p>
-                <p style="font-style:italic;">Thank you for visiting! 🙏</p>
-                <p style="font-size:10px; color:gray;">Operator: <span id="r_op"></span></p>
-            </div>
-        </div>
-        
-        <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
-            <button class="btn-orange" onclick="window.print()" style="flex:1;">🖨️ PRINT</button>
-            <button onclick="closeReceipt()" style="background:#64748b; color:white; flex:1; border-radius:12px;">CLOSE</button>
+            <button class="btn-prime" onclick="attemptLogin()">INITIALIZE PORTAL</button>
+            <div id="errorMsg" style="color: #ff4757; font-size: 13px; margin-top: 15px; display: none;">Access Denied. Invalid credentials.</div>
         </div>
     </div>
-</div>
 
-<script>
-    const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-    let currentUser = { name: "", role: "" };
+    <div id="mainForm">
+        <div class="header-section">
+            <div class="brand-logo">SHIVAM <span style="color:white">ONLINE.</span></div>
+            <div id="userBadge" class="user-pill">Unauthorized Session</div>
+        </div>
 
-    function attemptLogin() {
-        let id = document.getElementById("userId").value.toLowerCase().trim();
-        let pass = document.getElementById("userPass").value.trim();
+        <div class="grid-container">
+            <div class="card">
+                <h3 style="margin-top:0; margin-bottom:25px; font-size:18px;">New Transaction</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="input-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="custName" placeholder="John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>Mobile Number</label>
+                        <input type="number" id="mobile" placeholder="91XXXXXXXX">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Service Description</label>
+                    <input type="text" id="service" placeholder="Aadhar / PAN / Recharge">
+                </div>
 
-        if((id === "shivam" || id === "admin") && pass === "8888") {
-            loginUser("Shivam", "Admin");
-        } else if((id === "ram" || id === "staff") && pass === "1111") {
-            loginUser("Ram", "Staff");
-        } else {
-            document.getElementById("errorMsg").style.display = "block";
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div class="input-group">
+                        <label>Grand Total</label>
+                        <input type="number" id="total" oninput="calcPending()" placeholder="0.00">
+                    </div>
+                    <div class="input-group">
+                        <label>Paid Amount</label>
+                        <input type="number" id="paid" oninput="calcPending()" placeholder="0.00">
+                    </div>
+                    <div class="input-group">
+                        <label>Balance</label>
+                        <input type="number" id="pending" readonly style="background: rgba(255,71,87,0.1); color:#ff4757; border-color:transparent;">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Payment Channel</label>
+                    <select id="payMode">
+                        <option>Cash Transaction</option>
+                        <option>Digital UPI</option>
+                        <option>Credit/Debit Card</option>
+                    </select>
+                </div>
+
+                <button class="btn-prime" onclick="generateReceipt()" id="saveBtn">AUTHORIZE & PRINT</button>
+            </div>
+
+            <div class="card" style="padding: 20px;">
+                <h3 style="margin-top:0; font-size:16px;">Activity Feed</h3>
+                <div class="table-container">
+                    <table id="recentTable">
+                        <thead>
+                            <tr><th>TXN</th><th>Name</th><th>Total</th></tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr><td colspan="3" style="text-align:center; color:var(--text-dim)">No data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="receiptOverlay">
+        <div class="receipt-paper">
+            <div style="text-align:center; border-bottom: 2px solid #000; padding-bottom: 20px;">
+                <h1 style="margin:0; font-size:22px; letter-spacing:-1px;">SHIVAM ONLINE</h1>
+                <p style="margin:5px 0; font-size:11px; opacity:0.8;">VATICA, JAIPUR | +91 9664324706</p>
+            </div>
+
+            <div style="margin: 20px 0; font-size: 13px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span style="font-weight:700">TXN ID:</span> <span id="r_id"></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>DATE & TIME:</span> <span id="r_datetime"></span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>OPERATOR:</span> <span id="r_op" style="text-transform:uppercase"></span>
+                </div>
+            </div>
+
+            <div style="border-top:1px dashed #ccc; padding: 15px 0;">
+                <div style="margin-bottom:15px;">
+                    <label style="font-size:10px; color:#666; display:block;">CUSTOMER DETAILS</label>
+                    <div style="font-weight:700; font-size:16px;" id="r_name"></div>
+                    <div style="font-size:13px;" id="r_mob"></div>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="font-size:10px; color:#666; display:block;">SERVICE</label>
+                    <div style="font-size:14px;" id="r_service"></div>
+                </div>
+            </div>
+
+            <div style="background:#f4f4f4; padding:15px; border-radius:4px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Bill Amount:</span> <span>₹<span id="r_total"></span></span></div>
+                <div style="display:flex; justify-content:space-between; font-weight:700; color:green;"><span>Amount Paid:</span> <span>₹<span id="r_paid"></span></span></div>
+                <div style="display:flex; justify-content:space-between; color:red; font-size:14px; margin-top:5px; border-top:1px solid #ddd; padding-top:5px;">
+                    <span>Due Balance:</span> <b>₹<span id="r_pend"></span></b>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:30px;">
+                <div style="font-size:12px; font-weight:700;">PAYMENT MODE: <span id="r_mode"></span></div>
+                <p style="font-size:10px; margin-top:10px; color:#888;">This is a computer generated receipt.</p>
+                <p style="font-size:14px; font-weight:800; margin-top:10px;">*** THANK YOU ***</p>
+            </div>
+
+            <div style="margin-top:20px; display:flex; gap:10px;" class="no-print">
+                <button onclick="window.print()" style="flex:1; padding:12px; background:#000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700;">PRINT</button>
+                <button onclick="closeReceipt()" style="flex:1; padding:12px; background:#eee; border:none; border-radius:8px; cursor:pointer;">DONE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = { name: "", role: "" };
+
+        function attemptLogin() {
+            const id = document.getElementById("userId").value.toLowerCase().trim();
+            const pass = document.getElementById("userPass").value.trim();
+
+            if((id === "shivam" || id === "admin") && pass === "8888") {
+                launchApp("Shivam", "Administrator");
+            } else if((id === "ram" || id === "staff") && pass === "1111") {
+                launchApp("Ram", "Service Desk");
+            } else {
+                document.getElementById("errorMsg").style.display = "block";
+            }
         }
-    }
 
-    function loginUser(name, role) {
-        currentUser = { name, role };
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("mainForm").style.display = "block";
-        document.getElementById("userBadge").innerText = `⚡ ${name} (${role})`;
-    }
-
-    function calcPending() {
-        let t = parseFloat(document.getElementById("total").value) || 0;
-        let p = parseFloat(document.getElementById("paid").value) || 0;
-        document.getElementById("pending").value = t - p;
-    }
-
-    function generateReceipt() {
-        const name = document.getElementById("custName").value;
-        const mobile = document.getElementById("mobile").value;
-        const total = document.getElementById("total").value;
-        
-        if(!name || !total || !mobile) { 
-            alert("⚠️ Please fill Name, Mobile and Total Amount"); 
-            return; 
+        function launchApp(name, role) {
+            currentUser = { name, role };
+            document.getElementById("lockScreen").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("lockScreen").style.display = "none";
+                document.getElementById("mainForm").style.display = "block";
+                document.getElementById("userBadge").innerText = `🟢 Session: ${name} (${role})`;
+            }, 500);
         }
 
-        const btn = document.getElementById("saveBtn");
-        btn.innerText = "Saving Data...";
-        btn.disabled = true;
+        function calcPending() {
+            const t = parseFloat(document.getElementById("total").value) || 0;
+            const p = parseFloat(document.getElementById("paid").value) || 0;
+            document.getElementById("pending").value = (t - p).toFixed(2);
+        }
 
-        const now = new Date();
-        const data = {
-            id: "SOS" + Math.floor(1000 + Math.random() * 9000),
-            name: name,
-            mobile: mobile,
-            service: document.getElementById("service").value,
-            total: total,
-            paid: document.getElementById("paid").value,
-            pending: document.getElementById("pending").value,
-            mode: document.getElementById("payMode").value,
-            date: now.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}),
-            time: now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12:true}),
-            operator: currentUser.name
-        };
+        function generateReceipt() {
+            const name = document.getElementById("custName").value;
+            const mob = document.getElementById("mobile").value;
+            const total = document.getElementById("total").value;
+            
+            if(!name || !total || !mob) { 
+                alert("Missing Information!"); 
+                return; 
+            }
 
-        // Fill UI
-        document.getElementById("r_id").innerText = data.id;
-        document.getElementById("r_date").innerText = data.date;
-        document.getElementById("r_time").innerText = data.time;
-        document.getElementById("r_name").innerText = data.name;
-        document.getElementById("r_mob").innerText = data.mobile;
-        document.getElementById("r_service").innerText = data.service;
-        document.getElementById("r_total").innerText = data.total;
-        document.getElementById("r_paid").innerText = data.paid;
-        document.getElementById("r_pend").innerText = data.pending;
-        document.getElementById("r_mode").innerText = data.mode;
-        document.getElementById("r_op").innerText = data.operator;
+            const now = new Date();
+            const txnId = "SOS-" + Date.now().toString().slice(-6);
 
-        // Show Receipt
-        document.getElementById("receiptView").style.display = "block";
-        
-        // Reset Form & Button
-        btn.innerText = "✨ GENERATE & SAVE";
-        btn.disabled = false;
-        // resetForm(); // Add your reset logic
-    }
+            // Fill Receipt Data
+            document.getElementById("r_id").innerText = txnId;
+            document.getElementById("r_datetime").innerText = now.toLocaleDateString('en-IN') + " | " + now.toLocaleTimeString('en-IN');
+            document.getElementById("r_name").innerText = name;
+            document.getElementById("r_mob").innerText = "+91 " + mob;
+            document.getElementById("r_service").innerText = document.getElementById("service").value || "General Service";
+            document.getElementById("r_total").innerText = total;
+            document.getElementById("r_paid").innerText = document.getElementById("paid").value || 0;
+            document.getElementById("r_pend").innerText = document.getElementById("pending").value;
+            document.getElementById("r_mode").innerText = document.getElementById("payMode").value;
+            document.getElementById("r_op").innerText = currentUser.name;
 
-    function closeReceipt() {
-        document.getElementById("receiptView").style.display = "none";
-    }
+            document.getElementById("receiptOverlay").style.display = "flex";
+            
+            // Add to activity table
+            const row = `<tr><td>#${txnId.slice(-4)}</td><td>${name}</td><td>₹${total}</td></tr>`;
+            document.getElementById("tableBody").insertAdjacentHTML('afterbegin', row);
+        }
 
-    function fetchRecords() {
-        alert("Fetching from Google Sheets... (Ensure Script URL is correct)");
-        // Logic to populate tableBody
-    }
-</script>
-
+        function closeReceipt() {
+            document.getElementById("receiptOverlay").style.display = "none";
+            // Optional: Clear form here
+        }
+    </script>
 </body>
 </html>
