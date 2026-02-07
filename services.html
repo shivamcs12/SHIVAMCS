@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shivam Online Services - Management Portal</title>
+    <title>Shivam Online Services - Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        /* Print settings: Sirf receipt print hogi, dashboard nahi */
         @media print {
             body * { visibility: hidden; }
             #receiptSection, #receiptSection * { visibility: visible; }
-            #receiptSection { position: absolute; left: 0; top: 0; width: 100%; border: none; }
+            #receiptSection { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
             .no-print { display: none !important; }
         }
         .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
@@ -19,162 +18,180 @@
 </head>
 <body class="bg-slate-100 font-sans">
 
-    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-indigo-900 p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md animate__animated animate__fadeInDown">
-            <h1 class="text-3xl font-black text-center text-indigo-700 mb-2 uppercase italic">Shivam Services</h1>
-            <p class="text-center text-gray-500 mb-8 font-medium">Portal Login</p>
-            <div id="loginError" class="hidden bg-red-100 text-red-700 p-3 rounded mb-4 text-sm text-center">Invalid ID or Password!</div>
+    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 to-blue-800 p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md animate__animated animate__zoomIn">
+            <h1 class="text-3xl font-black text-center text-indigo-700 mb-2 uppercase tracking-tighter italic">Shivam Services</h1>
+            <p class="text-center text-gray-500 mb-6 font-medium">Digital Portal Login</p>
+            <div id="loginError" class="hidden bg-red-100 text-red-700 p-3 rounded mb-4 text-sm text-center font-bold">❌ Galat User ID ya Password!</div>
+            
             <div class="space-y-4">
-                <input type="text" id="userid" placeholder="User ID" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <input type="password" id="password" placeholder="Password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition transform hover:scale-105 shadow-lg">LOGIN NOW</button>
-            </div>
-            <p class="text-center text-xs text-gray-400 mt-6 italic">Admin: admin/123 | Employee: emp01/123</p>
-        </div>
-    </div>
-
-    <div id="dashboard" class="hidden min-h-screen flex flex-col">
-        <nav class="bg-white shadow-md p-4 flex justify-between items-center no-print border-b-2 border-indigo-500">
-            <h2 class="text-xl font-black text-indigo-800 tracking-tighter uppercase">Shivam Online Services</h2>
-            <div class="flex items-center gap-4">
-                <span id="userBadge" class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full font-bold text-xs uppercase tracking-widest border border-indigo-200">Mode</span>
-                <button onclick="location.reload()" class="text-red-500 font-bold hover:bg-red-50 px-3 py-1 rounded transition">LOGOUT</button>
-            </div>
-        </nav>
-
-        <div class="container mx-auto p-6 grid lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 animate__animated animate__fadeInLeft no-print">
-                <h3 class="text-lg font-bold mb-5 text-indigo-700 border-b pb-2 flex items-center gap-2">
-                    <span class="bg-indigo-700 text-white p-1 rounded">📝</span> Generate New Receipt
-                </h3>
-                <form id="receiptForm" class="space-y-4">
-                    <input type="text" id="custName" placeholder="Customer Name" class="w-full p-3 border rounded-lg focus:bg-blue-50 outline-none transition" required>
-                    <input type="tel" id="custMobile" placeholder="Mobile Number" class="w-full p-3 border rounded-lg focus:bg-blue-50 outline-none transition" required>
-                    <input type="text" id="serviceName" placeholder="Service Name (e.g. CSC, Pan, Recharge)" class="w-full p-3 border rounded-lg focus:bg-blue-50 outline-none transition" required>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-bold text-gray-400 uppercase">Total ₹</label>
-                            <input type="number" id="totalAmt" oninput="calculate()" class="w-full p-3 border rounded-lg bg-yellow-50 font-bold">
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-gray-400 uppercase">Paid ₹</label>
-                            <input type="number" id="paidAmt" oninput="calculate()" class="w-full p-3 border rounded-lg bg-green-50 font-bold text-green-700">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-bold text-gray-400 uppercase">Pending Amount ₹</label>
-                        <input type="number" id="pendingAmt" readonly class="w-full p-3 border rounded-lg bg-red-50 font-black text-red-600">
-                    </div>
-
-                    <select id="payMode" class="w-full p-3 border rounded-lg bg-gray-50 font-semibold">
-                        <option value="Cash">💰 Cash Payment</option>
-                        <option value="Online / UPI">📱 Online / UPI</option>
-                    </select>
-
-                    <button type="button" onclick="preview()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-black hover:bg-indigo-700 transition shadow-lg uppercase tracking-wider">
-                        Generate Receipt
-                    </button>
-                </form>
+                <input type="text" id="userid" placeholder="User ID" class="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner">
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition transform hover:scale-105 shadow-lg uppercase">Login</button>
             </div>
 
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 animate__animated animate__fadeInRight no-print">
-                <h3 class="text-lg font-bold mb-5 text-indigo-700 border-b pb-2 flex items-center gap-2">
-                    <span class="bg-indigo-700 text-white p-1 rounded">📊</span> Recent Transaction History
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 text-gray-600">
-                            <tr>
-                                <th class="p-4 border-b">ID</th>
-                                <th class="p-4 border-b">Customer</th>
-                                <th class="p-4 border-b">Service</th>
-                                <th class="p-4 border-b">Total</th>
-                                <th class="p-4 border-b">Pending</th>
-                                <th class="p-4 border-b text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyBody">
-                            <tr class="hover:bg-indigo-50 transition border-b">
-                                <td class="p-4 font-bold text-gray-400">#001</td>
-                                <td class="p-4 font-bold">Ravi Kumar</td>
-                                <td class="p-4">E-Mitra Token</td>
-                                <td class="p-4 font-bold">₹250</td>
-                                <td class="p-4 text-red-500 font-bold">₹0</td>
-                                <td class="p-4 flex justify-center gap-3">
-                                    <button onclick="window.print()" class="text-indigo-600 font-black hover:underline">PRINT</button>
-                                    <button class="admin-only hidden text-orange-500 font-black hover:underline">EDIT</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="mt-6 bg-gray-50 p-4 rounded-lg text-[11px] text-gray-600 border border-gray-200">
+                <p class="font-bold border-b mb-1 uppercase">Sample Login Details:</p>
+                <div class="grid grid-cols-2 gap-1">
+                    <p>Admin: admin / 123</p>
+                    <p>Emp 1: emp01 / 123</p>
+                    <p>Emp 2: emp02 / 123</p>
+                    <p>Emp 3: emp03 / 123</p>
+                    <p>Emp 4: emp04 / 123</p>
+                    <p>Emp 5: emp05 / 123</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="receiptSection" class="hidden p-8 max-w-xl mx-auto bg-white border-2 border-black rounded-lg shadow-2xl my-10 animate__animated animate__zoomIn">
-        <div class="text-center border-b-4 border-indigo-800 pb-4 mb-6">
-            <h1 class="text-3xl font-black text-indigo-800">SHIVAM ONLINE SERVICES</h1>
-            <p class="text-sm font-bold text-gray-600 uppercase">Government Services & Digital Solutions</p>
-            <p class="text-xs text-gray-500 font-medium mt-1">Vatika, Jaipur (Rajasthan) | Mo: +91 99XXXXXX00</p>
+    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+        <nav class="bg-white shadow-md p-4 flex justify-between items-center border-b-4 border-indigo-600">
+            <h2 class="text-xl font-black text-indigo-800 tracking-tight">SHIVAM ONLINE SERVICES</h2>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p id="userNameDisplay" class="font-bold text-indigo-900 leading-none">Name</p>
+                    <p id="userRoleBadge" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest leading-none mt-1">Role</p>
+                </div>
+                <button onclick="location.reload()" class="bg-red-50 text-red-600 font-black px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition">LOGOUT</button>
+            </div>
+        </nav>
+
+        <div class="container mx-auto p-6 grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 animate__animated animate__fadeInLeft">
+                <h3 class="text-lg font-bold mb-5 text-indigo-700 flex items-center gap-2">📝 Nayi Receipt Kaatein</h3>
+                <form id="receiptForm" class="space-y-4">
+                    <input type="text" id="custName" placeholder="Customer Name" class="w-full p-3 border rounded-lg focus:bg-blue-50 outline-none transition" required>
+                    <input type="tel" id="custMobile" placeholder="Mobile Number" class="w-full p-3 border rounded-lg focus:bg-blue-50 outline-none transition" required>
+                    <input type="text" id="serviceName" placeholder="Service Name" class="w-full p-3 border rounded-lg focus:bg-blue-50 outline-none transition" required>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="totalAmt" oninput="calculate()" placeholder="Total ₹" class="p-3 border rounded-lg bg-yellow-50 font-bold">
+                        <input type="number" id="paidAmt" oninput="calculate()" placeholder="Paid ₹" class="p-3 border rounded-lg bg-green-50 font-bold text-green-700">
+                    </div>
+
+                    <input type="number" id="pendingAmt" readonly placeholder="Pending Amount ₹" class="w-full p-3 border rounded-lg bg-red-50 font-black text-red-600">
+
+                    <select id="payMode" class="w-full p-3 border rounded-lg bg-gray-50 font-semibold">
+                        <option value="Cash">💰 Cash</option>
+                        <option value="Online / UPI">📱 Online / UPI</option>
+                    </select>
+
+                    <button type="button" onclick="preview()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-black hover:bg-indigo-700 shadow-lg uppercase tracking-widest">
+                        Preview Receipt
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 animate__animated animate__fadeInRight overflow-x-auto">
+                <h3 class="text-lg font-bold mb-5 text-indigo-700 flex items-center gap-2">📊 Recent Records</h3>
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-indigo-50 text-indigo-900">
+                        <tr>
+                            <th class="p-4 rounded-tl-lg">Customer</th>
+                            <th class="p-4">Service</th>
+                            <th class="p-4">Total</th>
+                            <th class="p-4">Handled By</th>
+                            <th class="p-4 rounded-tr-lg">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="p-4 font-bold">Sample Record</td>
+                            <td class="p-4">E-Mitra</td>
+                            <td class="p-4">₹500</td>
+                            <td class="p-4 text-xs font-semibold text-gray-500">Employee 01</td>
+                            <td class="p-4">
+                                <button onclick="window.print()" class="text-blue-600 font-bold hover:underline">RE-PRINT</button>
+                                <button class="admin-only hidden text-red-500 font-bold ml-2">EDIT</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="receiptSection" class="hidden p-8 max-w-xl mx-auto bg-white border-2 border-black rounded shadow-2xl my-10 animate__animated animate__fadeInUp">
+        <div class="text-center border-b-4 border-indigo-900 pb-4 mb-6">
+            <h1 class="text-4xl font-black text-indigo-900">SHIVAM ONLINE SERVICES</h1>
+            <p class="text-sm font-bold uppercase text-gray-700">Digital CSC Center & E-Mitra Hub</p>
+            <p class="text-[10px] text-gray-500 font-bold mt-1">VATIKA, RAJASTHAN | CONTACT: +91 9XXXX XXX00</p>
         </div>
 
-        <div class="grid grid-cols-2 text-sm gap-y-3 mb-6 font-semibold">
-            <p>Receipt No: <span id="outNo" class="text-indigo-700">#SOS-786</span></p>
-            <p class="text-right">Date: <span id="outDate"></span></p>
-            <p>Customer: <span id="outName" class="uppercase"></span></p>
-            <p class="text-right">Mobile: <span id="outMobile"></span></p>
+        <div class="grid grid-cols-2 text-sm gap-y-2 mb-6 border-b pb-4">
+            <p>Receipt ID: <span class="font-bold text-indigo-800 uppercase">#SOS-REC-786</span></p>
+            <p class="text-right">Date: <span id="outDate" class="font-bold"></span></p>
+            <p>Customer: <span id="outName" class="font-bold uppercase border-b border-black"></span></p>
+            <p class="text-right">Mobile: <span id="outMobile" class="font-bold"></span></p>
         </div>
 
-        <table class="w-full border-2 border-gray-200 text-sm mb-6">
-            <tr class="bg-gray-100 border-b-2 border-gray-200">
-                <th class="p-3 text-left">Service Description</th>
-                <th class="p-3 text-right">Amount (₹)</th>
+        <table class="w-full border-2 border-gray-300 text-sm mb-6">
+            <tr class="bg-gray-100">
+                <th class="p-3 text-left border-b-2">Description of Service</th>
+                <th class="p-3 text-right border-b-2">Amount</th>
             </tr>
-            <tr class="h-16">
-                <td class="p-3 border-r font-bold" id="outService"></td>
-                <td class="p-3 text-right font-bold text-lg" id="outTotal"></td>
+            <tr class="h-12">
+                <td class="p-3 border-r font-bold text-gray-700 uppercase" id="outService"></td>
+                <td class="p-3 text-right font-black text-lg" id="outTotal"></td>
             </tr>
         </table>
 
-        <div class="space-y-2 text-right">
-            <p class="font-bold text-green-700">Paid Amount: ₹<span id="outPaid"></span></p>
-            <p class="font-black text-red-600 text-lg">Pending Amount: ₹<span id="outPending"></span></p>
-            <p class="text-xs text-gray-500 border-t pt-2">Payment Mode: <span id="outMode" class="font-bold"></span></p>
+        <div class="flex justify-between items-start border-b pb-4">
+            <div class="text-[10px] text-gray-400 font-bold italic w-1/2 leading-tight">
+                * Note: Payments are non-refundable.<br>
+                * Please check details before leaving.
+            </div>
+            <div class="text-right space-y-1 w-1/2">
+                <p class="text-green-700 font-bold">Paid Amount: ₹<span id="outPaid"></span></p>
+                <p class="text-red-600 font-black text-xl">Pending: ₹<span id="outPending"></span></p>
+                <p class="text-[10px] font-bold">Mode: <span id="outMode"></span></p>
+            </div>
         </div>
 
-        <div class="mt-8 pt-4 border-t border-dashed border-gray-400">
-            <p class="text-[10px] text-gray-500 font-bold uppercase underline">Terms & Conditions:</p>
-            <ul class="text-[9px] text-gray-400 list-disc ml-4 italic leading-tight">
-                <li>This is a computer-generated digital receipt.</li>
-                <li>Paid services are strictly non-refundable under any circumstances.</li>
-                <li>Please verify the details before leaving the counter.</li>
-            </ul>
+        <div class="mt-10 flex justify-between items-end border-t border-dashed pt-4">
+            <div class="text-center">
+                <div class="h-10 w-24 border-b border-gray-400 mx-auto"></div>
+                <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Customer Signature</p>
+            </div>
+            <div class="text-center">
+                <p class="text-[12px] font-black text-indigo-900 italic" id="issuedByName"></p>
+                <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest border-t border-gray-200 mt-1 px-4" id="issuedByRole"></p>
+                <p class="text-[8px] text-gray-300 font-bold">Authorized Signatory</p>
+            </div>
         </div>
 
         <div class="mt-8 flex gap-4 no-print">
-            <button onclick="window.print()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-black shadow-lg">PRINT NOW</button>
-            <button onclick="document.getElementById('receiptSection').classList.add('hidden')" class="flex-1 bg-gray-400 text-white py-3 rounded-xl font-bold">EDIT DATA</button>
+            <button onclick="window.print()" class="flex-1 bg-green-600 text-white py-4 rounded-xl font-black shadow-lg">CONFIRM & PRINT</button>
+            <button onclick="document.getElementById('receiptSection').classList.add('hidden')" class="flex-1 bg-gray-500 text-white py-4 rounded-xl font-bold uppercase">Edit Data</button>
         </div>
     </div>
 
     <script>
-        let currentRole = "";
+        // Accounts Data
+        const users = {
+            "admin": { name: "Shivam Sir", pass: "123", role: "Administrator" },
+            "emp01": { name: "Employee 01", pass: "123", role: "Service Executive" },
+            "emp02": { name: "Employee 02", pass: "123", role: "Service Executive" },
+            "emp03": { name: "Employee 03", pass: "123", role: "Service Executive" },
+            "emp04": { name: "Employee 04", pass: "123", role: "Service Executive" },
+            "emp05": { name: "Employee 05", pass: "123", role: "Service Executive" }
+        };
 
-        // LOGIN LOGIC
+        let activeUser = null;
+
         function handleLogin() {
             const uid = document.getElementById('userid').value;
             const pass = document.getElementById('password').value;
 
-            if((uid === 'admin' && pass === '123') || (uid === 'emp01' && pass === '123')) {
-                currentRole = (uid === 'admin') ? 'ADMIN' : 'EMPLOYEE';
+            if (users[uid] && users[uid].pass === pass) {
+                activeUser = users[uid];
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('userBadge').innerText = currentRole;
                 
-                if(currentRole === 'ADMIN') {
+                document.getElementById('userNameDisplay').innerText = activeUser.name;
+                document.getElementById('userRoleBadge').innerText = activeUser.role;
+
+                if (uid === 'admin') {
                     document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
                 }
             } else {
@@ -184,17 +201,15 @@
             }
         }
 
-        // CALCULATION LOGIC
         function calculate() {
             let total = parseFloat(document.getElementById('totalAmt').value) || 0;
             let paid = parseFloat(document.getElementById('paidAmt').value) || 0;
             document.getElementById('pendingAmt').value = total - paid;
         }
 
-        // RECEIPT PREVIEW
         function preview() {
             const name = document.getElementById('custName').value;
-            if(!name) return alert("Customer Name fill karein!");
+            if(!name) return alert("Pehle Customer ka naam likhein!");
 
             document.getElementById('outName').innerText = name;
             document.getElementById('outMobile').innerText = document.getElementById('custMobile').value;
@@ -204,6 +219,10 @@
             document.getElementById('outPending').innerText = document.getElementById('pendingAmt').value;
             document.getElementById('outMode').innerText = document.getElementById('payMode').value;
             document.getElementById('outDate').innerText = new Date().toLocaleString();
+
+            // Set Employee Name on Receipt
+            document.getElementById('issuedByName').innerText = activeUser.name;
+            document.getElementById('issuedByRole').innerText = activeUser.role;
 
             document.getElementById('receiptSection').classList.remove('hidden');
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
