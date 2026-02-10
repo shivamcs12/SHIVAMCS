@@ -1,183 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <title>Shivam Online Services - Advanced ERP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shivam ERP - Multi-Function System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --tally-blue: #002d4d; --tally-green: #28a745; }
-        body { background: #f0f2f5; font-size: 14px; }
-        .navbar { background: var(--tally-blue); color: white; }
-        .sidebar { background: #fff; height: 100vh; border-right: 1px solid #ddd; }
-        .card-header { background: var(--tally-blue); color: white; font-weight: bold; }
+        :root { --tally-blue: #1a3c5a; --sidebar-bg: #ffffff; }
+        body { background: #f4f6f9; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        /* Tally Print Style */
+        /* Sidebar styling */
+        .sidebar { height: 100vh; background: var(--sidebar-bg); border-right: 1px solid #dee2e6; position: fixed; width: 240px; }
+        .main-content { margin-left: 240px; padding: 20px; width: calc(100% - 240px); }
+        .nav-link { color: #333; padding: 12px 20px; border-bottom: 1px solid #f8f9fa; cursor: pointer; }
+        .nav-link:hover, .nav-link.active { background: var(--tally-blue); color: white; }
+        
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Print Settings */
         @media print {
-            .no-print { display: none; }
-            .print-only { display: block !important; }
-            .bill-container { border: 2px solid #000; padding: 10px; width: 100%; }
-            .table-bordered border-dark { border: 1px solid #000 !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; border: 1px solid #000; padding: 20px; }
+            body { background: white; }
+            .main-content { margin-left: 0; width: 100%; padding: 0; }
         }
         .print-only { display: none; }
     </style>
 </head>
 <body>
 
-<nav class="navbar px-3 no-print">
-    <span><i class="fas fa-calculator"></i> SHIVAM ONLINE SERVICES - VATIKA</span>
-    <span id="liveDate"></span>
-</nav>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2 sidebar p-0 no-print">
-            <div class="list-group list-group-flush">
-                <button class="list-group-item list-group-item-action active">Dashboard</button>
-                <button class="list-group-item list-group-item-action" onclick="showSection('sales')">Sales (F8)</button>
-                <button class="list-group-item list-group-item-action" onclick="showSection('purchase')">Purchase (F9)</button>
-                <button class="list-group-item list-group-item-action">Item Stock (Inventory)</button>
-                <button class="list-group-item list-group-item-action">Returns (RTO/DTO)</button>
-            </div>
-        </div>
-
-        <div class="col-md-10 p-4">
-            <div id="sales-section" class="card no-print">
-                <div class="card-header d-flex justify-content-between">
-                    <span>GST TAX INVOICE GENERATOR</span>
-                    <span>Date: <input type="date" id="billDate"></span>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label>Customer Name</label>
-                            <input type="text" id="custName" class="form-control" placeholder="Cash / Customer Name">
-                        </div>
-                        <div class="col-md-4">
-                            <label>GSTIN (Optional)</label>
-                            <input type="text" id="custGst" class="form-control" placeholder="08AAAAA0000A1Z5">
-                        </div>
-                    </div>
-
-                    <table class="table table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Item/Service Description</th>
-                                <th width="100">Qty</th>
-                                <th width="150">Rate (₹)</th>
-                                <th width="100">GST %</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="billItems">
-                            <tr>
-                                <td><input type="text" class="form-control itm-name" placeholder="E-mitra Service"></td>
-                                <td><input type="number" class="form-control itm-qty" value="1" oninput="calc()"></td>
-                                <td><input type="number" class="form-control itm-rate" placeholder="0.00" oninput="calc()"></td>
-                                <td>
-                                    <select class="form-select itm-gst" onchange="calc()">
-                                        <option value="0">0%</option>
-                                        <option value="5">5%</option>
-                                        <option value="12">12%</option>
-                                        <option value="18" selected>18%</option>
-                                    </select>
-                                </td>
-                                <td><input type="text" class="form-control itm-total" readonly></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button class="btn btn-sm btn-success" onclick="addRow()">+ Add Line</button>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-7">
-                            <p><strong>RTO/DTO Status:</strong> <span class="badge bg-info">Normal Delivery</span></p>
-                        </div>
-                        <div class="col-md-5 text-end">
-                            <h5>Sub Total: ₹<span id="subTotal">0.00</span></h5>
-                            <p>CGST: ₹<span id="cgst">0.00</span> | SGST: ₹<span id="sgst">0.00</span></p>
-                            <hr>
-                            <h3 class="text-primary">Grand Total: ₹<span id="grandTotal">0.00</span></h3>
-                            <button class="btn btn-primary btn-lg mt-2" onclick="printBill()">
-                                <i class="fas fa-print"></i> Print Tally Bill
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="printArea" class="print-only bill-container">
-                <center><h3>TAX INVOICE</h3></center>
-                <div class="row">
-                    <div class="col-6">
-                        <strong>SHIVAM ONLINE SERVICES</strong><br>
-                        Vatika, Rajasthan<br>
-                        GSTIN: 08XXXXX1234X1Z1
-                    </div>
-                    <div class="col-6 text-end">
-                        Invoice No: <span id="pInvoiceNo">#001</span><br>
-                        Date: <span id="pDate"></span>
-                    </div>
-                </div>
-                <hr>
-                <div id="printTable"></div>
-                <div class="row mt-3">
-                    <div class="col-8">Amount in words: <br><b id="amtWords"></b></div>
-                    <div class="col-4 text-end">
-                        <p>For Shivam Online Services</p>
-                        <br><br>
-                        <p>Authorized Signatory</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<div class="sidebar no-print">
+    <div class="p-3 text-center border-bottom">
+        <h5 class="text-primary">SHIVAM ONLINE</h5>
+    </div>
+    <div class="nav flex-column">
+        <div class="nav-link active" onclick="showSection('sales')">Sales (F8) - GST Bill</div>
+        <div class="nav-link" onclick="showSection('purchase')">Purchase (F9)</div>
+        <div class="nav-link" onclick="showSection('inventory')">Item Stock / Inventory</div>
+        <div class="nav-link" onclick="showSection('returns')">Returns (RTO/DTO)</div>
     </div>
 </div>
 
-<script>
-    // Set Current Date
-    document.getElementById('billDate').valueAsDate = new Date();
-    document.getElementById('pDate').innerText = new Date().toLocaleDateString();
+<div class="main-content">
+    
+    <div id="sales" class="section active no-print">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">GST TAX INVOICE</div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6"><input type="text" id="custName" class="form-control" placeholder="Customer Name"></div>
+                    <div class="col-md-6"><input type="date" id="invDate" class="form-control"></div>
+                </div>
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr><th>Item</th><th>Qty</th><th>Price</th><th>GST%</th><th>Total</th></tr>
+                    </thead>
+                    <tbody id="salesItems">
+                        <tr>
+                            <td><input type="text" class="form-control" placeholder="Service Name"></td>
+                            <td><input type="number" class="form-control qty" value="1" oninput="calcTotal()"></td>
+                            <td><input type="number" class="form-control rate" value="0" oninput="calcTotal()"></td>
+                            <td><select class="form-select gst" onchange="calcTotal()"><option value="18">18%</option><option value="12">12%</option><option value="5">5%</option><option value="0">0%</option></select></td>
+                            <td><input type="text" class="form-control total" readonly></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-dark btn-sm" onclick="addRow('salesItems')">+ Add Item</button>
+                <div class="text-end mt-3">
+                    <h4>Grand Total: ₹<span id="gTotal">0.00</span></h4>
+                    <button class="btn btn-success" onclick="printInvoice()">Print Tally Bill</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    function addRow() {
-        let row = `<tr>
-            <td><input type="text" class="form-control itm-name"></td>
-            <td><input type="number" class="form-control itm-qty" value="1" oninput="calc()"></td>
-            <td><input type="number" class="form-control itm-rate" oninput="calc()"></td>
-            <td><select class="form-select itm-gst" onchange="calc()"><option value="0">0%</option><option value="18">18%</option></select></td>
-            <td><input type="text" class="form-control itm-total" readonly></td>
-        </tr>`;
-        document.getElementById('billItems').innerHTML += row;
+    <div id="purchase" class="section no-print">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">PURCHASE ENTRY</div>
+            <div class="card-body">
+                <input type="text" class="form-control mb-3" placeholder="Supplier Name">
+                <table class="table table-bordered">
+                    <thead><tr><th>Item Name</th><th>Purchase Price</th><th>Qty</th></tr></thead>
+                    <tbody id="purchaseItems">
+                        <tr>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="number" class="form-control"></td>
+                            <td><input type="number" class="form-control"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-danger" onclick="alert('Purchase Saved!')">Save Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="inventory" class="section no-print">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning">ITEM STOCK LIST</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead><tr><th>Item Name</th><th>Stock In Hand</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>Photocopy Paper</td><td>50 Reams</td><td><span class="badge bg-success">In Stock</span></td></tr>
+                        <tr><td>Lamination Sheets</td><td>10 Pkts</td><td><span class="badge bg-warning text-dark">Low</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="returns" class="section no-print">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">RETURNS (RTO / DTO)</div>
+            <div class="card-body">
+                <p>Yahan aap wapas aaye huye parcel ya reject services ki entry kar sakte hain.</p>
+                <input type="text" class="form-control mb-2" placeholder="Tracking ID / Bill No">
+                <textarea class="form-control mb-2" placeholder="Reason for Return"></textarea>
+                <button class="btn btn-secondary">Update Return Status</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="print-only">
+        <h2 class="text-center">TAX INVOICE</h2>
+        <hr>
+        <p><strong>Seller:</strong> SHIVAM ONLINE SERVICES, VATIKA</p>
+        <p><strong>Customer:</strong> <span id="pCustName"></span></p>
+        <table class="table table-bordered border-dark mt-4">
+            <thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>GST</th><th>Total</th></tr></thead>
+            <tbody id="pTable"></tbody>
+        </table>
+        <div class="text-end">
+            <h5>Final Amount: ₹<span id="pFinal"></span></h5>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Section Switcher Logic (Isse saare button kaam karenge)
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    function calc() {
-        let rows = document.querySelectorAll('#billItems tr');
-        let subtotal = 0;
-        let totalGst = 0;
+    // Add Row Logic
+    function addRow(target) {
+        let tbody = document.getElementById(target);
+        let newRow = tbody.rows[0].cloneNode(true);
+        newRow.querySelectorAll('input').forEach(i => i.value = (i.type == 'number' ? 0 : ''));
+        tbody.appendChild(newRow);
+    }
 
+    // Calculation Logic
+    function calcTotal() {
+        let rows = document.querySelectorAll('#salesItems tr');
+        let grand = 0;
         rows.forEach(row => {
-            let qty = row.querySelector('.itm-qty').value;
-            let rate = row.querySelector('.itm-rate').value;
-            let gstPer = row.querySelector('.itm-gst').value;
-            
-            let lineTotal = qty * rate;
-            let tax = (lineTotal * gstPer) / 100;
-            
-            row.querySelector('.itm-total').value = (lineTotal + tax).toFixed(2);
-            subtotal += lineTotal;
-            totalGst += tax;
+            let q = row.querySelector('.qty').value;
+            let r = row.querySelector('.rate').value;
+            let g = row.querySelector('.gst').value;
+            let sub = q * r;
+            let total = sub + (sub * g / 100);
+            row.querySelector('.total').value = total.toFixed(2);
+            grand += total;
+        });
+        document.getElementById('gTotal').innerText = grand.toFixed(2);
+    }
+
+    // Print Logic
+    function printInvoice() {
+        document.getElementById('pCustName').innerText = document.getElementById('custName').value || 'Cash';
+        document.getElementById('pFinal').innerText = document.getElementById('gTotal').innerText;
+        
+        // Print table load
+        let pTable = document.getElementById('pTable');
+        pTable.innerHTML = "";
+        document.querySelectorAll('#salesItems tr').forEach(row => {
+            let name = row.cells[0].querySelector('input').value;
+            let qty = row.cells[1].querySelector('input').value;
+            let rate = row.cells[2].querySelector('input').value;
+            let gst = row.cells[3].querySelector('select').value;
+            let total = row.cells[4].querySelector('input').value;
+            pTable.innerHTML += `<tr><td>${name}</td><td>${qty}</td><td>${rate}</td><td>${gst}%</td><td>${total}</td></tr>`;
         });
 
-        document.getElementById('subTotal').innerText = subtotal.toFixed(2);
-        document.getElementById('cgst').innerText = (totalGst / 2).toFixed(2);
-        document.getElementById('sgst').innerText = (totalGst / 2).toFixed(2);
-        document.getElementById('grandTotal').innerText = (subtotal + totalGst).toFixed(2);
-    }
-
-    function printBill() {
-        // Tally style print logic
-        document.getElementById('pDate').innerText = document.getElementById('billDate').value;
         window.print();
     }
+
+    // Default Date
+    document.getElementById('invDate').valueAsDate = new Date();
 </script>
+
 </body>
 </html>
