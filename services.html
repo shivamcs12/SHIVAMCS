@@ -1,15 +1,11 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tircha Flip UI Design</title>
+    <title>Ultimate Animated UI</title>
     <style>
-        /* CSS Section */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;800&display=swap');
 
         * {
             margin: 0;
@@ -19,26 +15,28 @@
         }
 
         body {
-            background-color: #050505;
+            background: radial-gradient(circle at center, #0a191d 0%, #000 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             color: white;
+            overflow: hidden;
         }
 
         .container {
             position: relative;
-            width: 800px;
-            height: 500px;
-            background: #0f0f0f;
-            border-radius: 10px;
+            width: 900px;
+            height: 550px;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
-            border: 1px solid rgba(0, 242, 254, 0.3);
+            box-shadow: 0 0 60px rgba(0, 242, 254, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Forms Layout */
+        /* Form Layout */
         .form-box {
             position: absolute;
             top: 0;
@@ -47,92 +45,137 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 40px;
-            transition: 0.6s ease-in-out;
+            padding: 60px;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1;
         }
 
         .login-form { left: 0; }
-        .register-form { right: 0; opacity: 0; pointer-events: none; }
+        .register-form { left: 0; opacity: 0; transform: translateX(-50px) scale(0.9); pointer-events: none; }
 
-        /* Diagonal (Tircha) Overlay */
+        /* Tircha Overlay Overlay */
         .overlay-container {
             position: absolute;
             top: 0;
             left: 50%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(135deg, #00f2fe, #4facfe);
-            transition: 0.6s ease-in-out;
-            z-index: 2;
-            /* Tircha Cut Effect */
-            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+            background: linear-gradient(135deg, #00f2fe 0%, #00c9ff 50%, #005f6b 100%);
+            transition: all 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: 5;
+            clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%);
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: -10px 0 20px rgba(0,0,0,0.3);
         }
 
-        /* Active State (Jab Register par click ho) */
+        /* Active States (Toggle Logic) */
         .container.active .overlay-container {
             left: 0;
-            clip-path: polygon(0 0, 75% 0, 100% 100%, 0% 100%);
+            clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
         }
 
         .container.active .login-form {
             opacity: 0;
+            transform: translateX(50px) scale(0.8);
             pointer-events: none;
         }
 
         .container.active .register-form {
             opacity: 1;
+            transform: translateX(100%) scale(1);
             pointer-events: all;
         }
 
-        /* Form Elements */
-        h2 { font-size: 2rem; margin-bottom: 20px; }
+        /* Form Element Animations */
+        .form-box h2, .input-group, .btn, .switch-p {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: 0.5s ease-out;
+        }
+
+        /* Reveal Animation on Show */
+        .login-form h2, .login-form .input-group, .login-form .btn, .login-form .switch-p {
+            opacity: 1; transform: translateX(0);
+        }
+
+        .container.active .register-form h2, 
+        .container.active .register-form .input-group, 
+        .container.active .register-form .btn, 
+        .container.active .register-form .switch-p {
+            opacity: 1; transform: translateX(0);
+        }
+
+        /* Delays for Smooth Flow */
+        .form-box h2 { transition-delay: 0.4s; }
+        .input-group:nth-of-type(1) { transition-delay: 0.5s; }
+        .input-group:nth-of-type(2) { transition-delay: 0.6s; }
+        .input-group:nth-of-type(3) { transition-delay: 0.7s; }
+        .btn { transition-delay: 0.8s; }
+        .switch-p { transition-delay: 0.9s; }
+
+        /* Styling Details */
+        h2 { font-size: 2.5rem; margin-bottom: 20px; color: #00f2fe; text-transform: uppercase; letter-spacing: 2px; }
+
+        .input-group { position: relative; width: 100%; margin: 20px 0; }
+        
         input {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: transparent;
+            padding: 12px 10px;
+            background: rgba(255, 255, 255, 0.05);
             border: none;
-            border-bottom: 1px solid #444;
+            border-left: 3px solid #333;
             color: white;
             outline: none;
+            transition: 0.4s;
+            border-radius: 0 5px 5px 0;
         }
-        input:focus { border-bottom: 1px solid #00f2fe; }
+
+        input:focus {
+            background: rgba(0, 242, 254, 0.1);
+            border-left: 3px solid #00f2fe;
+            box-shadow: 10px 0 20px rgba(0, 242, 254, 0.1);
+        }
 
         .btn {
-            margin-top: 20px;
-            padding: 12px;
+            width: 100%;
+            padding: 15px;
             background: #00f2fe;
             border: none;
             color: #000;
-            font-weight: 600;
+            font-weight: 800;
             cursor: pointer;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-
-        .btn:hover { box-shadow: 0 0 15px #00f2fe; }
-
-        .switch-text {
+            border-radius: 50px;
             margin-top: 15px;
-            font-size: 0.8rem;
-            color: #888;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        .switch-text span {
-            color: #00f2fe;
-            cursor: pointer;
-            text-decoration: underline;
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.4);
         }
 
+        .switch-p { margin-top: 25px; font-size: 0.9rem; color: #aaa; text-align: center; }
+        .switch-p span { color: #00f2fe; cursor: pointer; font-weight: bold; }
+
+        /* Overlay Text Animation */
         .welcome-text {
             color: #000;
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            text-align: center;
+            text-shadow: 2px 2px 10px rgba(255,255,255,0.2);
+            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pop-in {
+            animation: pop 0.6s forwards;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
     </style>
 </head>
@@ -141,39 +184,41 @@
     <div class="container" id="container">
         <div class="form-box login-form">
             <h2>Login</h2>
-            <input type="text" placeholder="Username">
-            <input type="password" placeholder="Password">
-            <button class="btn">Login</button>
-            <p class="switch-text">Don't have an account? <span onclick="toggle()">Sign Up</span></p>
+            <div class="input-group"><input type="text" placeholder="Username"></div>
+            <div class="input-group"><input type="password" placeholder="Password"></div>
+            <button class="btn">Get Started</button>
+            <p class="switch-p">Need an account? <span onclick="toggle()">Sign Up</span></p>
         </div>
 
         <div class="form-box register-form">
-            <h2>Register</h2>
-            <input type="text" placeholder="Username">
-            <input type="email" placeholder="Email">
-            <input type="password" placeholder="Password">
-            <button class="btn">Register</button>
-            <p class="switch-text">Already have an account? <span onclick="toggle()">Sign In</span></p>
+            <h2>Sign Up</h2>
+            <div class="input-group"><input type="text" placeholder="Full Name"></div>
+            <div class="input-group"><input type="email" placeholder="Email Address"></div>
+            <div class="input-group"><input type="password" placeholder="Password"></div>
+            <button class="btn">Create Account</button>
+            <p class="switch-p">Joined us before? <span onclick="toggle()">Sign In</span></p>
         </div>
 
         <div class="overlay-container">
-            <div class="welcome-text" id="welcome-txt">WELCOME!</div>
+            <div id="text-box" class="welcome-text pop-in">WELCOME!</div>
         </div>
     </div>
 
     <script>
         const container = document.getElementById('container');
-        const welcomeTxt = document.getElementById('welcome-txt');
+        const textBox = document.getElementById('text-box');
 
         function toggle() {
             container.classList.toggle('active');
             
-            // Text change logic
-            if(container.classList.contains('active')) {
-                welcomeTxt.innerText = "HI THERE!";
-            } else {
-                welcomeTxt.innerText = "WELCOME!";
-            }
+            // Trigger Pop Animation for Overlay Text
+            textBox.classList.remove('pop-in');
+            void textBox.offsetWidth; // Reset animation
+            
+            setTimeout(() => {
+                textBox.innerText = container.classList.contains('active') ? "HI THERE!" : "WELCOME!";
+                textBox.classList.add('pop-in');
+            }, 50);
         }
     </script>
 </body>
