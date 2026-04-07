@@ -1,425 +1,265 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<title>Shivam Online Services</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-/* ===== GLOBAL ===== */
-body{ margin:0; font-family:Arial, sans-serif; background:#0f2027; }
-
-/* ===== PASSCODE SCREEN ===== */
-#lockScreen{
-  position:fixed; inset:0; display:flex; justify-content:center; align-items:center;
-  background:linear-gradient(135deg,#141e30,#243b55); z-index:1000;
-}
-.lock-box{
-  background:#fff; padding:25px; width:300px; border-radius:16px;
-  text-align:center; box-shadow:0 15px 40px rgba(0,0,0,.4);
-}
-.lock-box h2{margin:0 0 10px;}
-.lock-box input{
-  width:100%; padding:12px; text-align:center; font-size:18px;
-  letter-spacing:4px; border-radius:10px; border:1px solid #ccc;
-  box-sizing: border-box;
-}
-.lock-box button{
-  width:100%; margin-top:15px; padding:12px; border:none;
-  border-radius:10px; background:#1d2671; color:#fff; font-size:16px; cursor: pointer;
-}
-.error{ color:red; margin-top:8px; display:none; }
-
-/* ===== LOADER ===== */
-#loader{
-  position:fixed; inset:0; display:none; justify-content:center; align-items:center;
-  background:linear-gradient(135deg,#000428,#004e92); z-index:999;
-}
-.loader-box{ text-align:center; color:#fff; }
-.spinner{
-  width:70px; height:70px; border:6px solid rgba(255,255,255,.3);
-  border-top:6px solid #00ffcc; border-radius:50%;
-  animation:spin 1s linear infinite; margin:auto;
-}
-@keyframes spin{ 100%{transform:rotate(360deg);} }
-
-/* ===== MAIN CONTAINER ===== */
-.container{
-  max-width:420px; margin:20px auto; background:#fff;
-  padding:15px; border-radius:12px;
-}
-h1,h3{text-align:center;margin:6px 0;}
-label{font-weight:bold;margin-top:10px;display:block;}
-input,select,button{
-  width:100%; padding:8px; margin-top:6px; box-sizing: border-box;
-}
-button{
-  background:#1d2671; color:#fff; border:none; border-radius:6px; cursor: pointer; padding: 10px;
-}
-.print-btn{background:#0a7d2c; margin-bottom: 10px;}
-.record-btn{background:#ff9800; margin-top: 15px;}
-.back-btn{background:#555; margin-top: 10px;}
-
-#receiptPage, #dashboardPage {display:none;}
-
-/* ===== DASHBOARD STYLES ===== */
-.stats-box {
-    display: flex; justify-content: space-between; background: #eee;
-    padding: 10px; border-radius: 8px; margin-bottom: 15px;
-}
-.stat-item { text-align: center; font-size: 12px; }
-.stat-item b { display: block; font-size: 16px; color: #1d2671; }
-.search-box { margin-bottom: 10px; }
-.table-wrapper { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; white-space: nowrap; }
-th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-th { background-color: #1d2671; color: white; position: sticky; top: 0; }
-tr:nth-child(even) {background-color: #f2f2f2;}
-
-/* ===== RECEIPT DESIGN ===== */
-.receipt-box{ border:1px solid #000; padding:15px; margin-bottom:20px; position: relative; }
-.header{ text-align:center; border-bottom:2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
-
-.logo { max-width: 80px; display: block; margin: 0 auto 5px; }
-.shop-name { font-size: 22px; margin: 5px 0; color: #1d2671; text-transform: uppercase; font-weight: 800; }
-.tagline { font-size: 12px; font-style: italic; margin-top: -5px; margin-bottom: 5px; color: #555; font-weight: bold; }
-.address-line { font-size: 12px; margin-bottom: 2px; }
-.contact-line { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
-
-.copy-title{ text-align:center; font-weight:bold; background:#eee; margin:6px 0; border: 1px solid #ddd; font-size: 12px; }
-.row{ display:flex; justify-content:space-between; font-size:14px; margin-bottom: 4px; }
-.amount{ border-top:1px dashed #000; margin-top:8px; padding-top:8px; }
-.cut{ border-top:2px dashed #000; margin:25px 0; }
-.receipt-id { font-weight: bold; font-family: monospace; }
-
-/* TERMS SECTION UPDATED */
-.terms-box {
-    margin-top: 15px;
-    border-top: 1px solid #000;
-    padding-top: 5px;
-    font-size: 10px;
-    text-align: left;
-}
-.terms-box b { text-decoration: underline; font-size: 11px; }
-.terms-box ul { margin: 5px 0; padding-left: 15px; }
-.terms-box li { margin-bottom: 6px; line-height: 1.3; } 
-.hindi-text { font-size: 9px; font-weight: normal; display: block; margin-top: 1px; color: #333; } 
-
-.thank-you { text-align: center; font-weight: bold; margin-top: 10px; font-size: 12px; }
-
-/* ===== PRINT ===== */
-@media print{
-  body *{visibility:hidden;}
-  #printArea,#printArea *{visibility:visible;}
-  #printArea{ position:absolute; left:0; top:0; width:100%; }
-  button{display:none;}
-}
-</style>
-</head>
-
-<body>
-
-<div id="lockScreen">
-  <div class="lock-box">
-    <h2>🔐 Secure Entry</h2>
-    <p>Enter Passcode</p>
-    <input type="password" id="passcode" onkeyup="checkEnter(event)">
-    <button onclick="unlock()">ENTER</button>
-    <div class="error" id="error">Wrong Passcode ❌</div>
-  </div>
-</div>
-
-<div id="loader">
-  <div class="loader-box">
-    <div class="spinner"></div>
-    <p>Loading System...</p>
-  </div>
-</div>
-
-<div class="container" id="formPage">
-  <h1>Shivam Online Services</h1>
-  <p style="text-align:center; margin-top:-10px; color:#666;">Your Digital Partner</p>
-
-  <label>Customer Name</label>
-  <input id="custName">
-
-  <label>Mobile Number</label>
-  <input id="mobile" type="number">
-
-  <label>Service</label>
-  <input id="service">
-
-  <label>Total Amount</label>
-  <input type="number" id="total" oninput="calcPending()">
-
-  <label>Paid Amount</label>
-  <input type="number" id="paid" oninput="calcPending()">
-
-  <label>Pending Amount</label>
-  <input type="number" id="pending" readonly>
-
-  <label>Payment Mode</label>
-  <select id="mode">
-    <option>Cash</option>
-    <option>Online</option>
-  </select>
-
-  <button onclick="generateReceipt()">Generate Receipt & Save</button>
-  <button class="record-btn" onclick="openDashboard()">📊 View Records / Hisaab</button>
-</div>
-
-<div class="container" id="dashboardPage">
-  <h1>Daily Report</h1>
-  <div class="stats-box">
-      <div class="stat-item"><b><span id="d_cust">0</span></b>Customers</div>
-      <div class="stat-item"><b>₹<span id="d_income">0</span></b>Income</div>
-      <div class="stat-item"><b>₹<span id="d_pending">0</span></b>Pending</div>
-  </div>
-  <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchData()">
-  </div>
-  <div class="table-wrapper">
-      <table id="dataTable">
-          <thead>
-              <tr>
-                  <th>ID</th><th>Name</th><th>Mobile</th><th>Service</th>
-                  <th>Total</th><th>Paid</th><th>Pending</th><th>Date</th>
-              </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-      </table>
-  </div>
-  <button class="back-btn" onclick="closeDashboard()">⬅ Back to Form</button>
-</div>
-
-<div class="container" id="receiptPage">
-  <div id="printArea">
-    
-    <div class="receipt-box">
-      <div class="header">
-        <img src="shivamonline.jpg" alt="shivam online" class="logo">
-        <h2 class="shop-name">Shivam Online Services</h2>
-        <p class="tagline">Your Digital Partner</p>
-        <div class="address-line">Jaipur, Rajasthan</div>
-        <div class="contact-line">Mob: 8875761835</div>
-      </div>
-      
-      <div class="copy-title">Customer Copy</div>
-      
-      <div class="row"><b>Receipt No:</b><span class="receipt-id" id="rid1"></span></div>
-      <div class="row" style="margin-bottom:5px;"><small>Date: <span id="rdate1"></span> | <span id="rtime1"></span></small></div>
-
-      <div class="row"><span>Name</span><span id="rname1"></span></div>
-      <div class="row"><span>Mobile</span><span id="rmobile1"></span></div>
-      <div class="row"><span>Service</span><span id="rservice1"></span></div>
-      
-      <div class="amount">
-        <div class="row"><b>Total Amount</b><b>₹<span id="rtotal1"></span></b></div>
-        <div class="row"><span>Paid Amount</span><span>₹<span id="rpaid1"></span></span></div>
-        <div class="row"><span>Pending</span><span>₹<span id="rpending1"></span></span></div>
-      </div>
-
-      <div class="terms-box">
-          <b>Terms & Conditions / नियम व शर्तें:</b>
-          <ul>
-              <li>
-                  Recharge, Bill, Loan/Card Repayment & Online Services are non-refundable.
-                  <span class="hindi-text">रिचार्ज, बिल, लोन/क्रेडिट कार्ड पेमेंट और अन्य ऑनलाइन सेवाएं रिफंड नहीं होंगी।</span>
-              </li>
-              <li>
-                  Please check Mobile No. & ID before payment.
-                  <span class="hindi-text">पेमेंट से पहले अपना नंबर और ID चेक कर लें।</span>
-              </li>
-              <li>
-                  Duplicate receipt will not be issued if lost.
-                  <span class="hindi-text">रसीद खो जाने पर दूसरी रसीद नहीं दी जाएगी।</span>
-              </li>
-              <li>
-                  Verify details by visiting Shivam Online Services.
-                  <span class="hindi-text">आप शिवम ऑनलाइन सर्विसेज पर जाकर जानकारी चेक करवा सकते हैं।</span>
-              </li>
-              <li>
-                  As per Shivam Online Services rules.
-                  <span class="hindi-text">शिवम ऑनलाइन सर्विसेज के नियमों के अनुसार।</span>
-              </li>
-          </ul>
-          <div class="thank-you">Thank You! Visit Again.</div>
-      </div>
-    </div>
-
-    <div class="cut">--- Cut Here ---</div>
-
-    <div class="receipt-box">
-      <div class="header">
-        <img src="shivamonline.jpg" alt="[LOGO]" class="logo">
-        <h2 class="shop-name">Shivam Online Services</h2>
-        <p class="tagline">Your Digital Partner</p>
-        <div class="address-line">Jaipur, Rajasthan</div>
-        <div class="contact-line">Mob: 8875761835</div>
-      </div>
-      
-      <div class="copy-title">Office Copy</div>
-      
-      <div class="row"><b>Receipt No:</b><span class="receipt-id" id="rid2"></span></div>
-      <div class="row" style="margin-bottom:5px;"><small>Date: <span id="rdate2"></span> | <span id="rtime2"></span></small></div>
-
-      <div class="row"><span>Name</span><span id="rname2"></span></div>
-      <div class="row"><span>Mobile</span><span id="rmobile2"></span></div>
-      <div class="row"><span>Service</span><span id="rservice2"></span></div>
-      
-      <div class="amount">
-        <div class="row"><b>Total Amount</b><b>₹<span id="rtotal2"></span></b></div>
-        <div class="row"><span>Paid Amount</span><span>₹<span id="rpaid2"></span></span></div>
-        <div class="row"><span>Pending</span><span>₹<span id="rpending2"></span></span></div>
-      </div>
-
-      <div class="terms-box">
-        <b>Terms & Conditions / नियम व शर्तें:</b>
-        <ul>
-            <li>
-                Recharge, Bill, Loan/Card Repayment & Online Services are non-refundable.
-                <span class="hindi-text">रिचार्ज, बिल, लोन/क्रेडिट कार्ड पेमेंट और अन्य ऑनलाइन सेवाएं रिफंड नहीं होंगी।</span>
-            </li>
-            <li>
-                Duplicate receipt will not be issued if lost.
-                <span class="hindi-text">रसीद खो जाने पर दूसरी रसीद नहीं दी जाएगी।</span>
-            </li>
-            <li>
-                As per Shivam Online Services rules.
-                <span class="hindi-text">शिवम ऑनलाइन सर्विसेज के नियमों के अनुसार।</span>
-            </li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-  <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
-  <button class="back-btn" onclick="location.reload()">🔄 New Entry</button>
-</div>
-
-<script>
-const PASSCODE = "38765700";
-
-// Enter Key Logic
-function checkEnter(event) { if (event.key === "Enter") unlock(); }
-
-function unlock(){
-  const passInp = document.getElementById("passcode");
-  const errDiv = document.getElementById("error");
-  if(passInp.value === PASSCODE){
-    errDiv.style.display="none";
-    document.getElementById("lockScreen").style.display="none";
-    document.getElementById("loader").style.display="flex";
-    setTimeout(()=>{ document.getElementById("loader").style.display="none"; }, 1500);
-  }else{ errDiv.style.display="block"; }
-}
-
-function calcPending(){
-  const total = document.getElementById("total").value;
-  const paid = document.getElementById("paid").value;
-  document.getElementById("pending").value = (Number(total||0) - Number(paid||0));
-}
-
-function saveRecord(data) {
-    let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
-    records.push(data);
-    localStorage.setItem("emitra_records", JSON.stringify(records));
-}
-
-function generateReceipt(){
-  const name = document.getElementById("custName").value;
-  const mob = document.getElementById("mobile").value;
-  const srv = document.getElementById("service").value;
-  const tot = document.getElementById("total").value;
-  const pd = document.getElementById("paid").value;
-  const pnd = document.getElementById("pending").value;
-  
-  const dateStr = new Date().toLocaleDateString('en-IN');
-  const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-  const uniqueID = "#SOS-" + Math.floor(100000 + Math.random() * 900000); 
-
-  if(!name || !tot) { alert("Please fill Name and Amount!"); return; }
-
-  const dataObj = {
-      id: uniqueID, name: name, mobile: mob, service: srv,
-      total: tot, paid: pd, pending: pnd,
-      date: dateStr, time: timeStr, timestamp: new Date().getTime()
-  };
-  saveRecord(dataObj);
-
-  // Fill Data in Both Receipts
-  document.getElementById("rid1").innerText=uniqueID; document.getElementById("rid2").innerText=uniqueID;
-  document.getElementById("rdate1").innerText=dateStr; document.getElementById("rdate2").innerText=dateStr;
-  document.getElementById("rtime1").innerText=timeStr; document.getElementById("rtime2").innerText=timeStr;
-  document.getElementById("rname1").innerText=name; document.getElementById("rname2").innerText=name;
-  document.getElementById("rmobile1").innerText=mob; document.getElementById("rmobile2").innerText=mob;
-  document.getElementById("rservice1").innerText=srv; document.getElementById("rservice2").innerText=srv;
-  document.getElementById("rtotal1").innerText=tot; document.getElementById("rtotal2").innerText=tot;
-  document.getElementById("rpaid1").innerText=pd; document.getElementById("rpaid2").innerText=pd;
-  document.getElementById("rpending1").innerText=pnd; document.getElementById("rpending2").innerText=pnd;
-  
-  document.getElementById("formPage").style.display="none";
-  document.getElementById("receiptPage").style.display="block";
-}
-
-function openDashboard() {
-    document.getElementById("formPage").style.display="none";
-    document.getElementById("dashboardPage").style.display="block";
-    loadData();
-}
-
-function closeDashboard() {
-    document.getElementById("dashboardPage").style.display="none";
-    document.getElementById("formPage").style.display="block";
-}
-
-function loadData() {
-    let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
-    records.sort((a, b) => b.timestamp - a.timestamp);
-    renderTable(records);
-    calculateTodayStats(records);
-}
-
-function calculateTodayStats(records) {
-    const todayStr = new Date().toLocaleDateString('en-IN');
-    let custCount = 0; let income = 0; let pending = 0;
-    records.forEach(rec => {
-        if(rec.date === todayStr) {
-            custCount++; income += Number(rec.paid || 0); pending += Number(rec.pending || 0);
+    <meta charset="UTF-8">
+    <title>SOS - Super Admin Authority Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Rajdhani', sans-serif; background-color: #f8fafc; }
+        .clock-box { background: #0f172a; border: 1px solid rgba(99, 102, 241, 0.4); padding: 5px 15px; border-radius: 10px; color: #818cf8; font-family: 'Orbitron', sans-serif; box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
+        .stat-card { background: white; padding: 20px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .sheet-table th { background: #f1f5f9; border: 1px solid #e2e8f0; font-size: 11px; padding: 12px; color: #475569; text-transform: uppercase; position: sticky; top: 0; z-index: 10; }
+        .sheet-table td { border: 1px solid #e2e8f0; padding: 10px; font-size: 14px; text-align: center; font-weight: 500; }
+        .receipt-box { width: 100%; background: #fff; padding: 20px; border: 2.5px solid #000; position: relative; overflow: hidden; height: 430px; }
+        .cut-line { border-top: 2px dashed #000; margin: 25px 0; position: relative; width: 100%; }
+        .cut-line::after { content: '✂ CUT HERE'; position: absolute; top: -11px; left: 45%; background: #fff; padding: 0 10px; font-size: 12px; font-weight: bold; }
+        #settingsPanel { transition: all 0.5s cubic-bezier(0.85, 0, 0.15, 1); transform: translateX(100%); z-index: 100; }
+        #settingsPanel.open { transform: translateX(0); }
+        .admin-view { display: none !important; }
+        @media print { 
+            @page { margin: 5mm; size: auto; }
+            .no-print { display: none !important; } 
+            #dashboard, #settingsPanel { display: none !important; } 
+            #receiptSection { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } 
+            .receipt-box { border: 2.5px solid #000 !important; page-break-inside: avoid; } 
+            .cut-line { display: block !important; border-top: 2px dashed #000 !important; }
         }
-    });
-    document.getElementById("d_cust").innerText = custCount;
-    document.getElementById("d_income").innerText = income;
-    document.getElementById("d_pending").innerText = pending;
-}
+    </style>
+</head>
+<body class="overflow-x-hidden">
 
-function renderTable(data) {
-    const tbody = document.getElementById("tableBody");
-    tbody.innerHTML = "";
-    data.forEach(rec => {
-        const row = `<tr>
-            <td style="font-weight:bold">${rec.id||'-'}</td>
-            <td>${rec.name}</td><td>${rec.mobile}</td><td>${rec.service}</td>
-            <td>${rec.total}</td><td style="color:green">${rec.paid}</td>
-            <td style="color:${rec.pending > 0 ? 'red' : 'green'}; font-weight:bold">${rec.pending}</td>
-            <td>${rec.date} <small>${rec.time||''}</small></td>
-        </tr>`;
-        tbody.innerHTML += row;
-    });
-}
+    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center border-t-8 border-indigo-600 animate__animated animate__fadeIn">
+            <h1 class="text-4xl font-black text-slate-800 mb-2 italic uppercase tracking-tighter">SHIVAM ONLINE</h1>
+            <p class="text-[10px] text-indigo-500 font-bold mb-8 uppercase tracking-[0.4em]">Enterprise Authority System</p>
+            <div class="space-y-4">
+                <input type="text" id="userid" placeholder="User ID" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner">
+                <input type="password" id="password" onkeypress="if(event.keyCode===13)handleLogin()" placeholder="Password" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner">
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase shadow-xl hover:bg-indigo-700 transition transform active:scale-95">Login</button>
+            </div>
+        </div>
+    </div>
 
-function searchData() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    let records = JSON.parse(localStorage.getItem("emitra_records")) || [];
-    const filtered = records.filter(rec => 
-        rec.name.toLowerCase().includes(query) || 
-        rec.mobile.includes(query) ||
-        (rec.id && rec.id.toLowerCase().includes(query))
-    );
-    renderTable(filtered);
-}
-</script>
+    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+        <nav class="bg-white border-b-2 border-slate-100 px-8 py-3 flex justify-between items-center no-print sticky top-0 z-50">
+            <div class="flex items-center gap-6">
+                <h2 class="text-2xl font-black text-slate-800 italic uppercase">SOS<span class="text-indigo-600">.</span></h2>
+                <div class="clock-box"><div id="liveClock" class="text-sm font-bold tracking-widest">00:00:00 AM</div></div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-right leading-none border-r pr-6">
+                    <p id="displayUser" class="font-bold text-slate-800 text-lg uppercase"></p>
+                    <button onclick="toggleSettings()" class="text-[10px] text-indigo-500 font-black uppercase mt-1 hover:underline">Settings ⚙️</button>
+                </div>
+                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl text-xs font-black border border-red-100 uppercase hover:bg-red-600 transition">Logout</button>
+            </div>
+        </nav>
 
-</body>
-</html>
+        <div class="p-8 pb-0 grid grid-cols-1 md:grid-cols-3 gap-6 admin-view" id="adminStats">
+            <div class="stat-card border-l-8 border-indigo-600">
+                <p class="text-xs uppercase font-bold text-slate-400">Total Revenue</p>
+                <h2 class="text-3xl font-black text-slate-800" id="totalSale">₹ 0.00</h2>
+            </div>
+            <div class="stat-card border-l-8 border-emerald-500">
+                <p class="text-xs uppercase font-bold text-slate-400">Cash Flow</p>
+                <h2 class="text-3xl font-black text-emerald-600" id="totalCash">₹ 0.00</h2>
+            </div>
+            <div class="stat-card border-l-8 border-blue-500">
+                <p class="text-xs uppercase font-bold text-slate-400">Online / UPI</p>
+                <h2 class="text-3xl font-black text-blue-600" id="totalOnline">₹ 0.00</h2>
+            </div>
+        </div>
+
+        <div class="p-8 grid lg:grid-cols-4 gap-8 no-print">
+            <div class="lg:col-span-1 bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100">
+                <div class="space-y-4">
+                    <input type="text" id="custName" placeholder="CUSTOMER NAME" class="w-full p-4 border rounded-2xl bg-slate-50 uppercase font-bold outline-none">
+                    <input type="tel" id="custMobile" placeholder="MOBILE" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none">
+                    <input type="text" id="serviceName" placeholder="SERVICE" class="w-full p-4 border rounded-2xl bg-slate-50 uppercase font-bold outline-none">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="totalAmt" oninput="calc()" placeholder="TOTAL" class="p-4 border rounded-2xl bg-blue-50 font-black text-blue-700 outline-none">
+                        <input type="number" id="paidAmt" oninput="calc()" placeholder="PAID" class="p-4 border rounded-2xl bg-green-50 font-black text-green-700 outline-none">
+                    </div>
+                    <input type="number" id="pendingAmt" readonly class="w-full p-4 border rounded-2xl bg-red-50 text-red-600 font-black text-2xl text-center">
+                    <select id="payMode" class="w-full p-4 border rounded-2xl bg-slate-100 font-bold uppercase text-sm">
+                        <option value="Cash Payment">Cash Payment</option>
+                        <option value="Online / UPI">Online / UPI</option>
+                    </select>
+                    <button id="saveBtn" onclick="saveAndPreview()" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-bold uppercase shadow-lg hover:bg-indigo-700 transition">Save & Preview</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 bg-white p-4 rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="font-black text-slate-800 uppercase tracking-widest italic text-sm">Database Records</h3>
+                    <button onclick="fetchSheetData()" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase">Refresh</button>
+                </div>
+                <div class="overflow-x-auto h-[550px]">
+                    <table class="w-full sheet-table">
+                        <thead>
+                            <tr><th>TXN ID</th><th>NAME</th><th>MOBILE</th><th>SERVICE</th><th>TOTAL</th><th>PAID</th><th>PENDING</th><th>DATE</th><th>TIME</th><th>MODE</th><th>OPERATOR</th><th>ACTION</th></tr>
+                        </thead>
+                        <tbody id="sheetBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="settingsPanel" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl p-10 border-l-4 border-indigo-600 no-print">
+            <button onclick="toggleSettings()" class="text-slate-400 font-bold hover:text-red-500 mb-10 uppercase text-xs">✕ Close Control</button>
+            <h3 class="text-2xl font-black mb-8 uppercase italic underline decoration-indigo-500">Security Control</h3>
+            <div class="space-y-6">
+                <div id="adminUserSelector" class="hidden">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Select Account</label>
+                    <select id="targetUser" class="w-full p-3 border rounded-xl bg-slate-50 font-bold outline-none"></select>
+                </div>
+                <input type="password" id="newPass" placeholder="New Secret Key" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none">
+                <button onclick="changePassword()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase shadow-lg">Confirm Update</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="receiptSection" class="hidden max-w-2xl mx-auto my-4 space-y-2 no-print p-4">
+        <div id="dualContainer" class="flex flex-col"></div>
+        <div class="flex gap-4 mt-6 no-print">
+            <button onclick="window.print()" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-2xl uppercase tracking-widest">Execute Print</button>
+            <button onclick="closeReceipt()" class="flex-1 bg-slate-200 text-slate-700 py-4 rounded-2xl font-bold uppercase">Back</button>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwDht3miZBNRVCCTVn0_GI5t4DS2VH_Lym3UcYHfLFjJjMI3k04kwL9nc76HhV9A8a8/exec";
+        
+        let users = JSON.parse(localStorage.getItem('SOS_USERS')) || {
+            "admin": {name: "SHIVAM (SUPER ADMIN)", pass: "admin123", role: "admin"},
+            "sos01": {name: "Staff-01", pass: "123", role: "staff"},
+            "sos02": {name: "Staff-02", pass: "123", role: "staff"},
+            "sos03": {name: "Staff-03", pass: "123", role: "staff"},
+            "sos04": {name: "Staff-04", pass: "123", role: "staff"},
+            "sos05": {name: "Staff-05", pass: "123", role: "staff"},
+            "sos06": {name: "Staff-06", pass: "123", role: "staff"},
+            "sos07": {name: "Staff-07", pass: "123", role: "staff"},
+            "sos08": {name: "Staff-08", pass: "123", role: "staff"},
+            "sos09": {name: "Staff-09", pass: "123", role: "staff"},
+            "sos10": {name: "Staff-10", pass: "123", role: "staff"}
+        };
+
+        let activeUser = null;
+        let localCloudData = []; // Store data for reprinting
+
+        setInterval(() => {
+            document.getElementById('liveClock').innerText = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }, 1000);
+
+        function handleLogin() {
+            const u = document.getElementById('userid').value.toLowerCase();
+            const p = document.getElementById('password').value;
+            if(users[u] && users[u].pass === p) {
+                activeUser = { ...users[u], id: u };
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('displayUser').innerText = activeUser.name;
+                if(activeUser.role === 'admin') {
+                    document.getElementById('adminStats').classList.remove('admin-view');
+                    document.getElementById('adminUserSelector')?.classList.remove('hidden');
+                    const sel = document.getElementById('targetUser'); sel.innerHTML = "";
+                    Object.keys(users).forEach(id => sel.innerHTML += `<option value="${id}">${users[id].name}</option>`);
+                } else {
+                    document.getElementById('adminStats').classList.add('admin-view');
+                }
+                fetchSheetData(); 
+            } else alert("Access Denied!");
+        }
+
+        async function fetchSheetData() {
+            const body = document.getElementById('sheetBody'); body.innerHTML = '<tr><td colspan="12">Cloud Syncing...</td></tr>';
+            try {
+                const response = await fetch(SCRIPT_URL); 
+                localCloudData = await response.json(); 
+                body.innerHTML = "";
+                let s = 0, c = 0, o = 0;
+                
+                localCloudData.reverse().forEach((row, index) => {
+                    const v = parseFloat(row.paid) || 0; s += v;
+                    if(row.mode.includes("Cash")) c += v; else o += v;
+                    
+                    // Button has data-id to help identify the row
+                    body.innerHTML += `<tr class="border-b transition hover:bg-indigo-50/50">
+                        <td class="font-bold text-indigo-600 text-xs">${row.id}</td><td class="font-bold uppercase">${row.name}</td><td>${row.mobile}</td>
+                        <td class="uppercase text-[10px] font-bold text-slate-400">${row.service}</td><td class="font-bold">₹${row.total}</td>
+                        <td class="text-green-700 font-black">₹${row.paid}</td><td class="text-red-600 font-black">₹${row.pending}</td>
+                        <td>${row.date}</td><td>${row.time}</td><td class="text-[10px] italic font-black">${row.mode}</td><td class="uppercase font-bold text-xs">${row.operator}</td>
+                        <td><button onclick="reprintTXN('${row.id}')" class="bg-indigo-50 text-indigo-600 px-4 py-1 rounded-lg text-[9px] font-black uppercase">Reprint</button></td></tr>`;
+                });
+                
+                if(activeUser.role === 'admin') {
+                    document.getElementById('totalSale').innerText = '₹ ' + s.toLocaleString();
+                    document.getElementById('totalCash').innerText = '₹ ' + c.toLocaleString();
+                    document.getElementById('totalOnline').innerText = '₹ ' + o.toLocaleString();
+                }
+            } catch (err) { body.innerHTML = '<tr><td colspan="12">Cloud Failure!</td></tr>'; }
+        }
+
+        function reprintTXN(txnId) {
+            // Find item in localCloudData array
+            const item = localCloudData.find(x => x.id === txnId);
+            if(item) {
+                const content = getReceiptHTML(item, "Customer") + '<div class="cut-line"></div>' + getReceiptHTML(item, "Office");
+                document.getElementById('dualContainer').innerHTML = content;
+                document.getElementById('dashboard').classList.add('hidden'); 
+                document.getElementById('receiptSection').classList.remove('hidden');
+            } else {
+                alert("Transaction not found in current session. Please Refresh.");
+            }
+        }
+
+        function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); }
+        function changePassword() {
+            const newP = document.getElementById('newPass').value;
+            const tId = (activeUser.role === 'admin') ? document.getElementById('targetUser').value : activeUser.id;
+            if(newP.length < 3) return alert("Security too low!");
+            users[tId].pass = newP;
+            localStorage.setItem('SOS_USERS', JSON.stringify(users));
+            alert("Security Updated!"); toggleSettings();
+        }
+
+        function calc() { document.getElementById('pendingAmt').value = (parseFloat(document.getElementById('totalAmt').value) || 0) - (parseFloat(document.getElementById('paidAmt').value) || 0); }
+        function closeReceipt() { document.getElementById('receiptSection').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); }
+
+        function getReceiptHTML(data, type) {
+            return `<div class="receipt-box">
+                <span style="position: absolute; top: 12px; right: 15px; font-size: 8px; font-weight: bold; border: 1.5px solid #000; padding: 2px 8px;">${type} COPY</span>
+                <div class="text-center border-b-2 border-black pb-2 mb-2">
+                    <h1 class="text-2xl font-black uppercase italic tracking-tighter text-slate-800 leading-none">SHIVAM ONLINE SERVICES</h1>
+                    <p class="text-[9px] font-bold text-gray-400 mt-1 uppercase italic text-center">Vatika, jaipur | Mo: +91 8875761835 </p>
+                </div>
+                <div class="text-[14px] font-bold mb-2 border-b-2 border-slate-50 pb-1 uppercase italic">
+                    <span class="text-indigo-600 pr-2">#${data.id}</span> NAME: ${data.name}
+                </div>
+                <div class="text-[11px] font-bold mb-2 border-b pb-1 uppercase italic">MOBILE: ${data.mobile}</div>
+                <div class="text-[11px] font-bold mb-3 border-b pb-1 uppercase italic">SERVICE: <span>${data.service}</span></div>
+                <div class="space-y-1 mb-3 text-[13px] font-semibold border-b pb-3">
+                    <p class="flex justify-between uppercase">Gross Bill: <span>₹${data.total}</span></p>
+                    <p class="flex justify-between text-green-700 font-black uppercase decoration-double">Paid Amount: <span>₹${data.paid}</span></p>
+                    <p class="flex justify-between text-red-600 font-black border-t pt-2 text-[15px] uppercase">Pending Balance: <span>₹${data.pending}</span></p>
+                </div>
+                <div class="text-[9px] font-black uppercase italic flex justify-between tracking-tighter">
+                    <span>DATE: ${data.date} | TIME: ${data.time}</span><span>PAY: ${data.mode}</span>
+                </div>
+                <div class="flex justify-end mt-4 italic"><div class="text-right border-t border-black pt-1 w-1/3 text-[10px] font-black uppercase tracking-tighter">${data.operator}</div></div>
+            </div>`;
+        }
+
+        async function saveAndPreview() {
+            const btn = document.getElementById('saveBtn');
+            const data = { id: "SOS-" + Math.floor(1000 + Math.random() * 9000), name: document.getElementById('custName').value.toUpperCase(), mobile: document.getElementById('custMobile').value, service: document.getElementById('serviceName').value.toUpperCase(), total: document.getElementById('totalAmt').value || 0, paid: document.getElementById('paidAmt').value || 0, pending: document.getElementById('pendingAmt').value || 0, mode: document.getElementById('payMode').value, operator: activeUser.name };
+            if(!data.name || !data.total) return alert("Pehle details bharein!");
+            const now = new Date(); const currD = now.toLocaleDateString('en-GB'); const currT = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', hour12:true});
+            const content = getReceiptHTML({...data, date: currD, time: currT}, "Customer") + '<div class="cut-line"></div>' + getReceiptHTML({...data, date: currD, time: currT}, "Office");
+            document.getElementById('dualContainer').innerHTML = content;
+            document.getElementById('dashboard').classList.add('hidden'); document.getElementById('receiptSection').classList.remove('hidden');
+            btn.innerText = "SAVING..."; btn.disabled = true;
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); 
+            btn.innerText = "Save & Preview"; btn.disabled = fals
