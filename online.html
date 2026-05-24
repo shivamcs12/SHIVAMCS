@@ -1,265 +1,306 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SOS - Super Admin Authority Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rajasthan Patrika | Authentication & CRM Center</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background-color: #f8fafc; }
-        .clock-box { background: #0f172a; border: 1px solid rgba(99, 102, 241, 0.4); padding: 5px 15px; border-radius: 10px; color: #818cf8; font-family: 'Orbitron', sans-serif; box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
-        .stat-card { background: white; padding: 20px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .sheet-table th { background: #f1f5f9; border: 1px solid #e2e8f0; font-size: 11px; padding: 12px; color: #475569; text-transform: uppercase; position: sticky; top: 0; z-index: 10; }
-        .sheet-table td { border: 1px solid #e2e8f0; padding: 10px; font-size: 14px; text-align: center; font-weight: 500; }
-        .receipt-box { width: 100%; background: #fff; padding: 20px; border: 2.5px solid #000; position: relative; overflow: hidden; height: 430px; }
-        .cut-line { border-top: 2px dashed #000; margin: 25px 0; position: relative; width: 100%; }
-        .cut-line::after { content: '✂ CUT HERE'; position: absolute; top: -11px; left: 45%; background: #fff; padding: 0 10px; font-size: 12px; font-weight: bold; }
-        #settingsPanel { transition: all 0.5s cubic-bezier(0.85, 0, 0.15, 1); transform: translateX(100%); z-index: 100; }
-        #settingsPanel.open { transform: translateX(0); }
-        .admin-view { display: none !important; }
-        @media print { 
-            @page { margin: 5mm; size: auto; }
-            .no-print { display: none !important; } 
-            #dashboard, #settingsPanel { display: none !important; } 
-            #receiptSection { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } 
-            .receipt-box { border: 2.5px solid #000 !important; page-break-inside: avoid; } 
-            .cut-line { display: block !important; border-top: 2px dashed #000 !important; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        .patrika-red { background-color: #c71e2b; }
+        .text-patrika { color: #c71e2b; }
+        .active-filter {
+            background-color: #c71e2b;
+            color: white;
+            box-shadow: 0 4px 12px rgba(199, 30, 43, 0.15);
+        }
+        /* Login Specific Styles */
+        .login-bg {
+            background: linear-gradient(135deg, #4a0007, #7a0010, #1a0003);
+            position: relative;
+        }
+        .login-bg::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+            z-index: 0;
         }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="text-slate-800 min-h-screen">
 
-    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-slate-900 p-4">
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center border-t-8 border-indigo-600 animate__animated animate__fadeIn">
-            <h1 class="text-4xl font-black text-slate-800 mb-2 italic uppercase tracking-tighter">SHIVAM ONLINE</h1>
-            <p class="text-[10px] text-indigo-500 font-bold mb-8 uppercase tracking-[0.4em]">Enterprise Authority System</p>
-            <div class="space-y-4">
-                <input type="text" id="userid" placeholder="User ID" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner">
-                <input type="password" id="password" onkeypress="if(event.keyCode===13)handleLogin()" placeholder="Password" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner">
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase shadow-xl hover:bg-indigo-700 transition transform active:scale-95">Login</button>
+    <!-- ==================== SECTION 1: LOGIN PANEL ==================== -->
+    <div id="loginScreen" class="login-bg min-h-screen flex justify-center items-center p-4">
+        <div class="relative z-10 bg-white p-8 w-full max-w-md rounded-2xl shadow-2xl border-t-[6px] border-[#d4af37] text-center">
+            
+            <!-- Patrika Logo Header Space -->
+            <div class="w-full h-20 mb-6 flex justify-center items-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl">
+                <div class="text-center">
+                    <i class="fas fa-newspaper text-patrika text-2xl mb-1"></i>
+                    <div class="text-xs font-black tracking-widest text-slate-800">RAJASTHAN PATRIKA</div>
+                </div>
             </div>
+
+            <!-- Tabs Section -->
+            <div class="flex bg-slate-100 rounded-full p-1 mb-6 border border-slate-200">
+                <button id="adminTab" class="flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 patrika-red text-white shadow-md" onclick="switchTab('admin')">
+                    <i class="fas fa-user-shield"></i> Admin Portal
+                </button>
+                <button id="userTab" class="flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 text-slate-600 hover:text-patrika" onclick="switchTab('user')">
+                    <i class="fas fa-users"></i> Staff / Users
+                </button>
+            </div>
+
+            <!-- Dynamic Title -->
+            <h2 id="loginTitle" class="text-slate-900 text-xl font-bold mb-5 tracking-tight">Admin Authentication</h2>
+
+            <!-- Internal Status Messages Box -->
+            <div id="msgBox" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold text-center border"></div>
+
+            <!-- Form Section -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                
+                <!-- 5 Other Users Dropdown (Hidden initially for Admin) -->
+                <div class="relative hidden" id="roleGroup">
+                    <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-patrika text-sm"></i>
+                    <select id="userRole" class="w-full bg-slate-50 border border-slate-200 p-3.5 pl-11 rounded-xl text-sm focus:outline-none focus:border-red-500 font-medium text-slate-700">
+                        <option value="" disabled selected>Select Your Department</option>
+                        <option value="manager">Manager</option>
+                        <option value="operator">Operator</option>
+                        <option value="accountant">Accountant</option>
+                        <option value="support">Support Staff</option>
+                        <option value="customer">Customer / Subscriber</option>
+                    </select>
+                </div>
+
+                <!-- Username Input -->
+                <div class="relative">
+                    <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-patrika text-sm"></i>
+                    <input type="text" id="username" placeholder="Enter User ID" required class="w-full bg-slate-50 border border-slate-200 p-3.5 pl-11 rounded-xl text-sm focus:outline-none focus:border-red-500 text-slate-800">
+                </div>
+
+                <!-- Password Input -->
+                <div class="relative">
+                    <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-patrika text-sm"></i>
+                    <input type="password" id="password" placeholder="Enter Password" required class="w-full bg-slate-50 border border-slate-200 p-3.5 pl-11 rounded-xl text-sm focus:outline-none focus:border-red-500 text-slate-800">
+                </div>
+
+                <!-- Form Extras -->
+                <div class="flex justify-between items-center text-xs font-medium text-slate-500 pt-1 pb-2">
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-[#c71e2b]"> Keep me logged in</label>
+                    <a href="#" class="text-patrika hover:underline font-bold">Forgot Password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full patrika-red hover:bg-red-800 text-white p-3.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-red-700/20 flex justify-center items-center gap-2 cursor-pointer">
+                    <span>Secure Login</span> <i class="fas fa-sign-in-alt"></i>
+                </button>
+            </form>
         </div>
     </div>
 
-    <div id="dashboard" class="hidden min-h-screen flex flex-col">
-        <nav class="bg-white border-b-2 border-slate-100 px-8 py-3 flex justify-between items-center no-print sticky top-0 z-50">
-            <div class="flex items-center gap-6">
-                <h2 class="text-2xl font-black text-slate-800 italic uppercase">SOS<span class="text-indigo-600">.</span></h2>
-                <div class="clock-box"><div id="liveClock" class="text-sm font-bold tracking-widest">00:00:00 AM</div></div>
-            </div>
-            <div class="flex items-center gap-6">
-                <div class="text-right leading-none border-r pr-6">
-                    <p id="displayUser" class="font-bold text-slate-800 text-lg uppercase"></p>
-                    <button onclick="toggleSettings()" class="text-[10px] text-indigo-500 font-black uppercase mt-1 hover:underline">Settings ⚙️</button>
+
+    <!-- ==================== SECTION 2: MAIN DASHBOARD (HIDDEN ON START) ==================== -->
+    <div id="dashboardScreen" class="hidden">
+        <!-- TOP HEADER -->
+        <nav class="patrika-red p-4 shadow-md sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="bg-white text-patrika text-xs font-black px-2 py-0.5 rounded">RP</span>
+                    <h1 class="text-lg font-black text-white tracking-widest">RAJASTHAN PATRIKA</h1>
                 </div>
-                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl text-xs font-black border border-red-100 uppercase hover:bg-red-600 transition">Logout</button>
+                <div class="flex items-center gap-4">
+                    <span id="sessionBadge" class="bg-white/10 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-full border border-white/20">Session: Admin</span>
+                    <button onclick="handleLogout()" class="bg-black/20 hover:bg-black/40 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
             </div>
         </nav>
 
-        <div class="p-8 pb-0 grid grid-cols-1 md:grid-cols-3 gap-6 admin-view" id="adminStats">
-            <div class="stat-card border-l-8 border-indigo-600">
-                <p class="text-xs uppercase font-bold text-slate-400">Total Revenue</p>
-                <h2 class="text-3xl font-black text-slate-800" id="totalSale">₹ 0.00</h2>
-            </div>
-            <div class="stat-card border-l-8 border-emerald-500">
-                <p class="text-xs uppercase font-bold text-slate-400">Cash Flow</p>
-                <h2 class="text-3xl font-black text-emerald-600" id="totalCash">₹ 0.00</h2>
-            </div>
-            <div class="stat-card border-l-8 border-blue-500">
-                <p class="text-xs uppercase font-bold text-slate-400">Online / UPI</p>
-                <h2 class="text-3xl font-black text-blue-600" id="totalOnline">₹ 0.00</h2>
-            </div>
-        </div>
-
-        <div class="p-8 grid lg:grid-cols-4 gap-8 no-print">
-            <div class="lg:col-span-1 bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100">
-                <div class="space-y-4">
-                    <input type="text" id="custName" placeholder="CUSTOMER NAME" class="w-full p-4 border rounded-2xl bg-slate-50 uppercase font-bold outline-none">
-                    <input type="tel" id="custMobile" placeholder="MOBILE" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none">
-                    <input type="text" id="serviceName" placeholder="SERVICE" class="w-full p-4 border rounded-2xl bg-slate-50 uppercase font-bold outline-none">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="totalAmt" oninput="calc()" placeholder="TOTAL" class="p-4 border rounded-2xl bg-blue-50 font-black text-blue-700 outline-none">
-                        <input type="number" id="paidAmt" oninput="calc()" placeholder="PAID" class="p-4 border rounded-2xl bg-green-50 font-black text-green-700 outline-none">
-                    </div>
-                    <input type="number" id="pendingAmt" readonly class="w-full p-4 border rounded-2xl bg-red-50 text-red-600 font-black text-2xl text-center">
-                    <select id="payMode" class="w-full p-4 border rounded-2xl bg-slate-100 font-bold uppercase text-sm">
-                        <option value="Cash Payment">Cash Payment</option>
-                        <option value="Online / UPI">Online / UPI</option>
-                    </select>
-                    <button id="saveBtn" onclick="saveAndPreview()" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-bold uppercase shadow-lg hover:bg-indigo-700 transition">Save & Preview</button>
+        <!-- MAIN DASHBOARD CONTENT -->
+        <main class="max-w-7xl mx-auto p-4 md:p-8">
+            
+            <!-- ROW 1: ACTIONS & SEARCH -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Telecalling Records</h2>
+                    <p class="text-slate-500 text-xs mt-0.5">Enter data, click to call, change status, and update permanent live remarks.</p>
                 </div>
+                <button onclick="toggleEntryModal(true)" class="patrika-red hover:bg-red-800 text-white font-bold text-xs uppercase tracking-wide px-5 py-3 rounded-xl shadow-lg shadow-red-700/20 transition-all cursor-pointer">
+                    + Add Fresh Lead Data
+                </button>
             </div>
 
-            <div class="lg:col-span-3 bg-white p-4 rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden">
-                <div class="flex justify-between items-center p-4 border-b">
-                    <h3 class="font-black text-slate-800 uppercase tracking-widest italic text-sm">Database Records</h3>
-                    <button onclick="fetchSheetData()" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase">Refresh</button>
-                </div>
-                <div class="overflow-x-auto h-[550px]">
-                    <table class="w-full sheet-table">
+            <!-- CATEGORY LIST FILTERS -->
+            <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 mb-6 max-w-3xl overflow-x-auto">
+                <button id="defaultFilterBtn" onclick="applyListFilter('All', this)" class="active-filter px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Show All Data</button>
+                <button onclick="applyListFilter('Order Confirmed', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Order Confirmed List</button>
+                <button onclick="applyListFilter('Pending', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Pending Calls</button>
+                <button onclick="applyListFilter('Disconnected', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Disconnected / Busy</button>
+                <button onclick="applyListFilter('No Coverage', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Out of Coverage</button>
+            </div>
+
+            <!-- MAIN CENTRAL TABLE -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr><th>TXN ID</th><th>NAME</th><th>MOBILE</th><th>SERVICE</th><th>TOTAL</th><th>PAID</th><th>PENDING</th><th>DATE</th><th>TIME</th><th>MODE</th><th>OPERATOR</th><th>ACTION</th></tr>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-widest border-b border-slate-200">
+                                <th class="p-4 pl-6">Client Name & Area</th>
+                                <th class="p-4">Phone Number</th>
+                                <th class="p-4">Current Status</th>
+                                <th class="p-4">Latest Call Remark (Feedback)</th>
+                                <th class="p-4 text-right pr-6">Action</th>
+                            </tr>
                         </thead>
-                        <tbody id="sheetBody"></tbody>
+                        <tbody id="crmTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Data dynamically injected -->
+                        </tbody>
                     </table>
+                    <div id="noDataView" class="p-12 text-center text-slate-400 text-sm font-medium hidden">
+                        No data matches this selected category list.
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+    </div>
 
-        <div id="settingsPanel" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl p-10 border-l-4 border-indigo-600 no-print">
-            <button onclick="toggleSettings()" class="text-slate-400 font-bold hover:text-red-500 mb-10 uppercase text-xs">✕ Close Control</button>
-            <h3 class="text-2xl font-black mb-8 uppercase italic underline decoration-indigo-500">Security Control</h3>
-            <div class="space-y-6">
-                <div id="adminUserSelector" class="hidden">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Select Account</label>
-                    <select id="targetUser" class="w-full p-3 border rounded-xl bg-slate-50 font-bold outline-none"></select>
+    <!-- MODAL 1: ADD DATA MODAL -->
+    <div id="entryModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-5 border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-black text-slate-900">New Entry Input</h3>
+                <button onclick="toggleEntryModal(false)" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="addLeadForm" onsubmit="insertNewLead(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Customer Name</label>
+                    <input type="text" id="custName" placeholder="Full Name" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50">
                 </div>
-                <input type="password" id="newPass" placeholder="New Secret Key" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none">
-                <button onclick="changePassword()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase shadow-lg">Confirm Update</button>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location / Area</label>
+                    <input type="text" id="custArea" placeholder="e.g. Vatika, Rajasthan" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number</label>
+                    <input type="tel" id="custPhone" pattern="[0-9]{10}" placeholder="10-Digit Mobile" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 font-mono">
+                </div>
+                <button type="submit" class="patrika-red hover:bg-red-800 text-white w-full py-3.5 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer">SAVE ENTRY</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CALL LOG & REMARK UPDATE BOX -->
+    <div id="remarkModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="text-base font-black text-slate-900" id="modalCustomerName">Update Call Feedback</h3>
+                    <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalCustomerPhone">9999999999</p>
+                </div>
+                <button onclick="toggleRemarkModal(false)" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="mb-5">
+                <a id="modalDialLink" href="tel:" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    CLICK TO CALL NOW
+                </a>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Set Call Status</label>
+                    <select id="modalStatusSelect" class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 font-semibold text-slate-700">
+                        <option value="Pending">Pending (Fresh Data)</option>
+                        <option value="Order Confirmed">Order Confirmed (Haan Kar Di)</option>
+                        <option value="Disconnected">Disconnected / Busy</option>
+                        <option value="No Coverage">Out of Coverage Area</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Type Call Remark / Summary</label>
+                    <textarea id="modalRemarkText" rows="3" placeholder="Write talk summary here..." class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 resize-none"></textarea>
+                </div>
+                <button onclick="saveCallLogFeedback()" class="patrika-red hover:bg-red-800 text-white w-full py-3 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer">SAVE REMARK & UPDATE</button>
             </div>
         </div>
     </div>
 
-    <div id="receiptSection" class="hidden max-w-2xl mx-auto my-4 space-y-2 no-print p-4">
-        <div id="dualContainer" class="flex flex-col"></div>
-        <div class="flex gap-4 mt-6 no-print">
-            <button onclick="window.print()" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-2xl uppercase tracking-widest">Execute Print</button>
-            <button onclick="closeReceipt()" class="flex-1 bg-slate-200 text-slate-700 py-4 rounded-2xl font-bold uppercase">Back</button>
-        </div>
-    </div>
 
+    <!-- ==================== CORE MIXED JAVASCRIPT LOGIC ==================== -->
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwDht3miZBNRVCCTVn0_GI5t4DS2VH_Lym3UcYHfLFjJjMI3k04kwL9nc76HhV9A8a8/exec";
+        /* ---------------- DATABASE CREDENTIALS ---------------- */
+        let currentMode = 'admin';
         
-        let users = JSON.parse(localStorage.getItem('SOS_USERS')) || {
-            "admin": {name: "SHIVAM (SUPER ADMIN)", pass: "admin123", role: "admin"},
-            "sos01": {name: "Staff-01", pass: "123", role: "staff"},
-            "sos02": {name: "Staff-02", pass: "123", role: "staff"},
-            "sos03": {name: "Staff-03", pass: "123", role: "staff"},
-            "sos04": {name: "Staff-04", pass: "123", role: "staff"},
-            "sos05": {name: "Staff-05", pass: "123", role: "staff"},
-            "sos06": {name: "Staff-06", pass: "123", role: "staff"},
-            "sos07": {name: "Staff-07", pass: "123", role: "staff"},
-            "sos08": {name: "Staff-08", pass: "123", role: "staff"},
-            "sos09": {name: "Staff-09", pass: "123", role: "staff"},
-            "sos10": {name: "Staff-10", pass: "123", role: "staff"}
+        const credentialsData = {
+            admin: [{ userid: "admin101", pass: "admin@2026" }],
+            manager: [{ userid: "manager01", pass: "mgr#pass1" }, { userid: "manager02", pass: "mgr#pass2" }],
+            operator: [{ userid: "operator01", pass: "op#pass1" }, { userid: "operator02", pass: "op#pass2" }],
+            accountant: [{ userid: "account01", pass: "acnt#pass1" }, { userid: "account02", pass: "acnt#pass2" }],
+            support: [{ userid: "support01", pass: "spt#pass1" }, { userid: "support02", pass: "spt#pass2" }],
+            customer: [{ userid: "customer01", pass: "cust#pass1" }, { userid: "customer02", pass: "cust#pass2" }]
         };
 
-        let activeUser = null;
-        let localCloudData = []; // Store data for reprinting
+        /* ---------------- LOGIN ENGINE FUNCTIONS ---------------- */
+        function switchTab(mode) {
+            currentMode = mode;
+            const adminTab = document.getElementById('adminTab');
+            const userTab = document.getElementById('userTab');
+            const loginTitle = document.getElementById('loginTitle');
+            const roleGroup = document.getElementById('roleGroup');
+            const userRoleSelect = document.getElementById('userRole');
+            
+            hideMessage();
 
-        setInterval(() => {
-            document.getElementById('liveClock').innerText = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-        }, 1000);
-
-        function handleLogin() {
-            const u = document.getElementById('userid').value.toLowerCase();
-            const p = document.getElementById('password').value;
-            if(users[u] && users[u].pass === p) {
-                activeUser = { ...users[u], id: u };
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('displayUser').innerText = activeUser.name;
-                if(activeUser.role === 'admin') {
-                    document.getElementById('adminStats').classList.remove('admin-view');
-                    document.getElementById('adminUserSelector')?.classList.remove('hidden');
-                    const sel = document.getElementById('targetUser'); sel.innerHTML = "";
-                    Object.keys(users).forEach(id => sel.innerHTML += `<option value="${id}">${users[id].name}</option>`);
-                } else {
-                    document.getElementById('adminStats').classList.add('admin-view');
-                }
-                fetchSheetData(); 
-            } else alert("Access Denied!");
-        }
-
-        async function fetchSheetData() {
-            const body = document.getElementById('sheetBody'); body.innerHTML = '<tr><td colspan="12">Cloud Syncing...</td></tr>';
-            try {
-                const response = await fetch(SCRIPT_URL); 
-                localCloudData = await response.json(); 
-                body.innerHTML = "";
-                let s = 0, c = 0, o = 0;
-                
-                localCloudData.reverse().forEach((row, index) => {
-                    const v = parseFloat(row.paid) || 0; s += v;
-                    if(row.mode.includes("Cash")) c += v; else o += v;
-                    
-                    // Button has data-id to help identify the row
-                    body.innerHTML += `<tr class="border-b transition hover:bg-indigo-50/50">
-                        <td class="font-bold text-indigo-600 text-xs">${row.id}</td><td class="font-bold uppercase">${row.name}</td><td>${row.mobile}</td>
-                        <td class="uppercase text-[10px] font-bold text-slate-400">${row.service}</td><td class="font-bold">₹${row.total}</td>
-                        <td class="text-green-700 font-black">₹${row.paid}</td><td class="text-red-600 font-black">₹${row.pending}</td>
-                        <td>${row.date}</td><td>${row.time}</td><td class="text-[10px] italic font-black">${row.mode}</td><td class="uppercase font-bold text-xs">${row.operator}</td>
-                        <td><button onclick="reprintTXN('${row.id}')" class="bg-indigo-50 text-indigo-600 px-4 py-1 rounded-lg text-[9px] font-black uppercase">Reprint</button></td></tr>`;
-                });
-                
-                if(activeUser.role === 'admin') {
-                    document.getElementById('totalSale').innerText = '₹ ' + s.toLocaleString();
-                    document.getElementById('totalCash').innerText = '₹ ' + c.toLocaleString();
-                    document.getElementById('totalOnline').innerText = '₹ ' + o.toLocaleString();
-                }
-            } catch (err) { body.innerHTML = '<tr><td colspan="12">Cloud Failure!</td></tr>'; }
-        }
-
-        function reprintTXN(txnId) {
-            // Find item in localCloudData array
-            const item = localCloudData.find(x => x.id === txnId);
-            if(item) {
-                const content = getReceiptHTML(item, "Customer") + '<div class="cut-line"></div>' + getReceiptHTML(item, "Office");
-                document.getElementById('dualContainer').innerHTML = content;
-                document.getElementById('dashboard').classList.add('hidden'); 
-                document.getElementById('receiptSection').classList.remove('hidden');
+            if (mode === 'admin') {
+                adminTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 patrika-red text-white shadow-md";
+                userTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 text-slate-600 hover:text-patrika";
+                loginTitle.innerText = 'Admin Authentication';
+                roleGroup.classList.add('hidden');
+                userRoleSelect.removeAttribute('required');
             } else {
-                alert("Transaction not found in current session. Please Refresh.");
+                userTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 patrika-red text-white shadow-md";
+                adminTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 text-slate-600 hover:text-patrika";
+                loginTitle.innerText = 'Staff & User Portal';
+                roleGroup.classList.remove('hidden');
+                userRoleSelect.setAttribute('required', 'required');
             }
         }
 
-        function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); }
-        function changePassword() {
-            const newP = document.getElementById('newPass').value;
-            const tId = (activeUser.role === 'admin') ? document.getElementById('targetUser').value : activeUser.id;
-            if(newP.length < 3) return alert("Security too low!");
-            users[tId].pass = newP;
-            localStorage.setItem('SOS_USERS', JSON.stringify(users));
-            alert("Security Updated!"); toggleSettings();
+        function showMessage(type, text) {
+            const msgBox = document.getElementById('msgBox');
+            msgBox.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'bg-red-50', 'text-red-700', 'border-red-200');
+            
+            if (type === 'success') {
+                msgBox.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+            } else {
+                msgBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+            }
+            msgBox.innerHTML = text;
+            msgBox.classList.remove('hidden');
         }
 
-        function calc() { document.getElementById('pendingAmt').value = (parseFloat(document.getElementById('totalAmt').value) || 0) - (parseFloat(document.getElementById('paidAmt').value) || 0); }
-        function closeReceipt() { document.getElementById('receiptSection').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); }
-
-        function getReceiptHTML(data, type) {
-            return `<div class="receipt-box">
-                <span style="position: absolute; top: 12px; right: 15px; font-size: 8px; font-weight: bold; border: 1.5px solid #000; padding: 2px 8px;">${type} COPY</span>
-                <div class="text-center border-b-2 border-black pb-2 mb-2">
-                    <h1 class="text-2xl font-black uppercase italic tracking-tighter text-slate-800 leading-none">SHIVAM ONLINE SERVICES</h1>
-                    <p class="text-[9px] font-bold text-gray-400 mt-1 uppercase italic text-center">Vatika, jaipur | Mo: +91 8875761835 </p>
-                </div>
-                <div class="text-[14px] font-bold mb-2 border-b-2 border-slate-50 pb-1 uppercase italic">
-                    <span class="text-indigo-600 pr-2">#${data.id}</span> NAME: ${data.name}
-                </div>
-                <div class="text-[11px] font-bold mb-2 border-b pb-1 uppercase italic">MOBILE: ${data.mobile}</div>
-                <div class="text-[11px] font-bold mb-3 border-b pb-1 uppercase italic">SERVICE: <span>${data.service}</span></div>
-                <div class="space-y-1 mb-3 text-[13px] font-semibold border-b pb-3">
-                    <p class="flex justify-between uppercase">Gross Bill: <span>₹${data.total}</span></p>
-                    <p class="flex justify-between text-green-700 font-black uppercase decoration-double">Paid Amount: <span>₹${data.paid}</span></p>
-                    <p class="flex justify-between text-red-600 font-black border-t pt-2 text-[15px] uppercase">Pending Balance: <span>₹${data.pending}</span></p>
-                </div>
-                <div class="text-[9px] font-black uppercase italic flex justify-between tracking-tighter">
-                    <span>DATE: ${data.date} | TIME: ${data.time}</span><span>PAY: ${data.mode}</span>
-                </div>
-                <div class="flex justify-end mt-4 italic"><div class="text-right border-t border-black pt-1 w-1/3 text-[10px] font-black uppercase tracking-tighter">${data.operator}</div></div>
-            </div>`;
+        function hideMessage() {
+            document.getElementById('msgBox').classList.add('hidden');
         }
 
-        async function saveAndPreview() {
-            const btn = document.getElementById('saveBtn');
-            const data = { id: "SOS-" + Math.floor(1000 + Math.random() * 9000), name: document.getElementById('custName').value.toUpperCase(), mobile: document.getElementById('custMobile').value, service: document.getElementById('serviceName').value.toUpperCase(), total: document.getElementById('totalAmt').value || 0, paid: document.getElementById('paidAmt').value || 0, pending: document.getElementById('pendingAmt').value || 0, mode: document.getElementById('payMode').value, operator: activeUser.name };
-            if(!data.name || !data.total) return alert("Pehle details bharein!");
-            const now = new Date(); const currD = now.toLocaleDateString('en-GB'); const currT = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', hour12:true});
-            const content = getReceiptHTML({...data, date: currD, time: currT}, "Customer") + '<div class="cut-line"></div>' + getReceiptHTML({...data, date: currD, time: currT}, "Office");
-            document.getElementById('dualContainer').innerHTML = content;
-            document.getElementById('dashboard').classList.add('hidden'); document.getElementById('receiptSection').classList.remove('hidden');
-            btn.innerText = "SAVING..."; btn.disabled = true;
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); 
-            btn.innerText = "Save & Preview"; btn.disabled = fals
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const usernameInput = document.getElemen
