@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rajasthan Patrika | Advanced Call & Remark Tracker</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        .patrika-red { background-color: #c71e2b; }
+        .text-patrika { color: #c71e2b; }
+        .active-filter {
+            background-color: #c71e2b;
+            color: white;
+            box-shadow: 0 4px 12px rgba(199, 30, 43, 0.15);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen">
+
+    <!-- TOP HEADER -->
+    <nav class="patrika-red p-4 shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="bg-white text-patrika text-xs font-black px-2 py-0.5 rounded">RP</span>
+                <h1 class="text-lg font-black text-white tracking-widest">RAJASTHAN PATRIKA</h1>
+            </div>
+            <span class="text-white/90 text-xs font-bold tracking-wider uppercase">Call Logs & CRM Center</span>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD -->
+    <main class="max-w-7xl mx-auto p-4 md:p-8">
+        
+        <!-- ROW 1: ACTIONS & SEARCH -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div>
+                <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Telecalling Records</h2>
+                <p class="text-slate-500 text-xs mt-0.5">Enter data, click to call, change status, and update permanent live remarks.</p>
+            </div>
+            <button onclick="toggleEntryModal(true)" class="patrika-red hover:bg-red-800 text-white font-bold text-xs uppercase tracking-wide px-5 py-3 rounded-xl shadow-lg shadow-red-700/20 transition-all cursor-pointer">
+                + Add Fresh Lead Data
+            </button>
+        </div>
+
+        <!-- CATEGORY LIST FILTERS (Click karne par wahi list samne aayegi) -->
+        <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 mb-6 max-w-3xl overflow-x-auto">
+            <button onclick="applyListFilter('All', this)" class="active-filter px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Show All Data</button>
+            <button onclick="applyListFilter('Order Confirmed', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Order Confirmed List</button>
+            <button onclick="applyListFilter('Pending', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Pending Calls</button>
+            <button onclick="applyListFilter('Disconnected', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Disconnected / Busy</button>
+            <button onclick="applyListFilter('No Coverage', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Out of Coverage</button>
+        </div>
+
+        <!-- MAIN CENTRAL TABLE -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-widest border-b border-slate-200">
+                            <th class="p-4 pl-6">Client Name & Area</th>
+                            <th class="p-4">Phone Number</th>
+                            <th class="p-4">Current Status</th>
+                            <th class="p-4">Latest Call Remark (Feadback)</th>
+                            <th class="p-4 text-right pr-6">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crmTableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Data will automatically load here dynamically -->
+                    </tbody>
+                </table>
+                <div id="noDataView" class="p-12 text-center text-slate-400 text-sm font-medium hidden">
+                    No data matches this selected category list.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL 1: ADD DATA MODAL -->
+    <div id="entryModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-5 border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-black text-slate-900">New Entry Input</h3>
+                <button onclick="toggleEntryModal(false)" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="addLeadForm" onsubmit="insertNewLead(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Customer Name</label>
+                    <input type="text" id="custName" placeholder="Full Name" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location / Area</label>
+                    <input type="text" id="custArea" placeholder="e.g. Vatika, Rajasthan" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number</label>
+                    <input type="tel" id="custPhone" pattern="[0-9]{10}" placeholder="10-Digit Mobile" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 font-mono">
+                </div>
+                <button type="submit" class="patrika-red hover:bg-red-800 text-white w-full py-3.5 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer">SAVE ENTRY</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CALL LOG & REMARK UPDATE BOX -->
+    <div id="remarkModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="text-base font-black text-slate-900" id="modalCustomerName">Update Call Feedback</h3>
+                    <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalCustomerPhone">9999999999</p>
+                </div>
+                <button onclick="toggleRemarkModal(false)" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <!-- Quick Dial Button trigger mobile dialer directly -->
+            <div class="mb-5">
+                <a id="modalDialLink" href="tel:" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    CLICK TO CALL NOW
+                </a>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Set Call Status</label>
+                    <select id="modalStatusSelect" class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 font-semibold text-slate-700">
+                        <option value="Pending">Pending (Fresh Data)</option>
+                        <option value="Order Confirmed">Order Confirmed (Haan Kar Di)</option>
+                        <option value="Disconnected">Disconnected / Busy</option>
+                        <option value="No Coverage">Out of Coverage Area</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Type Call Remark / Summary</label>
+                    <textarea id="modalRemarkText" rows="3" placeholder="Write talk summary here... (e.g. Kal subah firse call karna h)" class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 resize-none"></textarea>
+                </div>
+                <button onclick="saveCallLogFeedback()" class="patrika-red hover:bg-red-800 text-white w-full py-3 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer">SAVE REMARK & UPDATE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RE-ENGINEERED DATABASE LOGIC -->
+    <script>
+        // Core Array Object acts as local storage database architecture
+        let databaseLeads = [
+            { id: 101, name: "Kamlesh Sharma", area: "Vatika, Rajasthan", phone: "9414234567", status: "Pending", remark: "Abhi tak baat nahi hui hai." },
+            { id: 102, name: "Rajendra Kumar", area: "Sanganer, Jaipur", phone: "9829112233", status: "Order Confirmed", remark: "Deal confirm ho gayi hai, unhone kal aane ko bola hai." },
+            { id: 103, name: "Vijay Pal Singh", area: "Tonk Road, Jaipur", phone: "9636554433", status: "Disconnected", remark: "3 baar lagaya par phone cut kar diya." }
+        ];
+
+        let targetEditingId = null;
+        let selectedListFilter = "All";
+
+        // Modal triggers
+        function toggleEntryModal(show) { document.getElementById('entryModal').style.display = show ? 'flex' : 'none'; }
+        function toggleRemarkModal(show) { document.getElementById('remarkModal').style.display = show ? 'flex' : 'none'; }
+
+        // Load & Draw Table View
+        function drawCrmTable() {
+            const tbody = document.getElementById('crmTableBody');
+            tbody.innerHTML = '';
+            
+            let filteredArray = databaseLeads;
+            if(selectedListFilter !== "All") {
+                filteredArray = databaseLeads.filter(item => item.status === selectedListFilter);
+            }
+
+            if(filteredArray.length === 0) {
+                document.getElementById('noDataView').classList.remove('hidden');
+            } else {
+                document.getElementById('noDataView').classList.add('hidden');
+            }
+
+            filteredArray.forEach(lead => {
+                // Set color dynamic wrappers for badges
+                let badgeClass = "bg-slate-100 text-slate-700 border-slate-200";
+                if(lead.status === "Order Confirmed") badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                if(lead.status === "Disconnected") badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                if(lead.status === "No Coverage") badgeClass = "bg-purple-100 text-purple-800 border-purple-200";
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 pl-6">
+                        <div class="font-bold text-slate-900">${lead.name}</div>
+                        <div class="text-xs text-slate-400">${lead.area}</div>
+                    </td>
+                    <td class="p-4 font-mono font-medium text-slate-600">${lead.phone}</td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 text-xs font-bold rounded-full border ${badgeClass}">${lead.status}</span>
+                    </td>
+                    <td class="p-4 text-xs font-medium text-slate-600 max-w-xs truncate">${lead.remark}</td>
+                    <td class="p-4 text-right pr-6">
+                        <button onclick="openRemarkModalEngine(${lead.id})" class="text-patrika hover:text-red-800 font-extrabold text-xs uppercase tracking-wider cursor-pointer bg-red-50 px-3 py-2 rounded-lg border border-red-100 transition-all">
+                            Call / Log
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Insert Action Entry
+        function insertNewLead(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const area = document.getElementById('custArea').value;
+            const phone = document.getElementById('custPhone').value;
+
+            const newObject = {
+                id: Date.now(),
+                name: name,
+                area: area,
+                phone: phone,
+                status: "Pending",
+                remark: "Freshly added entry. No remarks logged yet."
+            };
+
+            databaseLeads.unshift(newObject);
+            toggleEntryModal(false);
+            document.getElementById('addLeadForm').reset();
+            drawCrmTable();
+        }
+
+        // Prepare Remark Window UI
+        function openRemarkModalEngine(id) {
+            targetEditingId = id;
+            const targetObject = databaseLeads.find(item => item.id === id);
+
+            if(targetObject) {
+                document.getElementById('modalCustomerName').innerText = `Update: ${targetObject.name}`;
+                document.getElementById('modalCustomerPhone').innerText = `Phone Layout: +91 ${targetObject.phone}`;
+                document.getElementById('modalDialLink').setAttribute('href', `tel:${targetObject.phone}`);
+                document.getElementById('modalStatusSelect').value = targetObject.status;
+                document.getElementById('modalRemarkText').value = targetObject.remark === "Freshly added entry. No remarks logged yet." || targetObject.remark === "No calls yet" ? "" : targetObject.remark;
+                
+                toggleRemarkModal(true);
+            }
+        }
+
+        // Save Remark Input Back to Database Object
+        function saveCallLogFeedback() {
+            const updatedStatus = document.getElementById('modalStatusSelect').value;
+            const updatedRemark = document.getElementById('modalRemarkText').value;
+
+            const index = databaseLeads.findIndex(item => item.id === targetEditingId);
+            if(index !== -1) {
+                databaseLeads[index].status = updatedStatus;
+                databaseLeads[index].remark = updatedRemark.trim() === "" ? "No details written." : updatedRemark;
+                
+                toggleRemarkModal(false);
+                drawCrmTable();
+            }
+        }
+
+        // List Category filtering tab changer
+        function applyListFilter(statusType, buttonElement) {
+            selectedListFilter = statusType;
+            
+            // Clear layout classes from tabs
+            document.querySelectorAll('button').forEach(btn => btn.classList.remove('active-filter'));
+            buttonElement.classList.add('active-filter');
+
+            drawCrmTable();
+        }
+
+        // Initial launch binder
+        window.onload = function() {
+            drawCrmTable();
+        };
+    </script>
+</body>
+</html>
