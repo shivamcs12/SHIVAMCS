@@ -1,306 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rajasthan Patrika | Authentication & CRM Center</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-        }
-        .patrika-red { background-color: #c71e2b; }
-        .text-patrika { color: #c71e2b; }
-        .active-filter {
-            background-color: #c71e2b;
-            color: white;
-            box-shadow: 0 4px 12px rgba(199, 30, 43, 0.15);
-        }
-        /* Login Specific Styles */
-        .login-bg {
-            background: linear-gradient(135deg, #4a0007, #7a0010, #1a0003);
-            position: relative;
-        }
-        .login-bg::before {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 0);
-            background-size: 24px 24px;
-            z-index: 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rajasthan Patrika Login Panel</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body{
+      background:#0f172a;
+      font-family:Arial, sans-serif;
+    }
+  </style>
 </head>
-<body class="text-slate-800 min-h-screen">
+<body class="min-h-screen flex items-center justify-center p-5">
 
-    <!-- ==================== SECTION 1: LOGIN PANEL ==================== -->
-    <div id="loginScreen" class="login-bg min-h-screen flex justify-center items-center p-4">
-        <div class="relative z-10 bg-white p-8 w-full max-w-md rounded-2xl shadow-2xl border-t-[6px] border-[#d4af37] text-center">
-            
-            <!-- Patrika Logo Header Space -->
-            <div class="w-full h-20 mb-6 flex justify-center items-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl">
-                <div class="text-center">
-                    <i class="fas fa-newspaper text-patrika text-2xl mb-1"></i>
-                    <div class="text-xs font-black tracking-widest text-slate-800">RAJASTHAN PATRIKA</div>
-                </div>
-            </div>
+  <!-- LOGIN PANEL -->
+  <div id="loginBox" class="bg-slate-900 text-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
 
-            <!-- Tabs Section -->
-            <div class="flex bg-slate-100 rounded-full p-1 mb-6 border border-slate-200">
-                <button id="adminTab" class="flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 patrika-red text-white shadow-md" onclick="switchTab('admin')">
-                    <i class="fas fa-user-shield"></i> Admin Portal
-                </button>
-                <button id="userTab" class="flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 text-slate-600 hover:text-patrika" onclick="switchTab('user')">
-                    <i class="fas fa-users"></i> Staff / Users
-                </button>
-            </div>
+    <!-- LOGO -->
+    <div class="flex flex-col items-center mb-6">
 
-            <!-- Dynamic Title -->
-            <h2 id="loginTitle" class="text-slate-900 text-xl font-bold mb-5 tracking-tight">Admin Authentication</h2>
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"
+        alt="Logo"
+        class="w-24 h-24 mb-3"
+      >
 
-            <!-- Internal Status Messages Box -->
-            <div id="msgBox" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold text-center border"></div>
+      <h2 class="text-2xl font-bold text-white">
+        Rajasthan Patrika
+      </h2>
 
-            <!-- Form Section -->
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                
-                <!-- 5 Other Users Dropdown (Hidden initially for Admin) -->
-                <div class="relative hidden" id="roleGroup">
-                    <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-patrika text-sm"></i>
-                    <select id="userRole" class="w-full bg-slate-50 border border-slate-200 p-3.5 pl-11 rounded-xl text-sm focus:outline-none focus:border-red-500 font-medium text-slate-700">
-                        <option value="" disabled selected>Select Your Department</option>
-                        <option value="manager">Manager</option>
-                        <option value="operator">Operator</option>
-                        <option value="accountant">Accountant</option>
-                        <option value="support">Support Staff</option>
-                        <option value="customer">Customer / Subscriber</option>
-                    </select>
-                </div>
+    </div>
 
-                <!-- Username Input -->
-                <div class="relative">
-                    <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-patrika text-sm"></i>
-                    <input type="text" id="username" placeholder="Enter User ID" required class="w-full bg-slate-50 border border-slate-200 p-3.5 pl-11 rounded-xl text-sm focus:outline-none focus:border-red-500 text-slate-800">
-                </div>
+    <!-- TITLE -->
+    <h1 class="text-3xl font-bold text-center mb-6">
+      Login Panel
+    </h1>
 
-                <!-- Password Input -->
-                <div class="relative">
-                    <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-patrika text-sm"></i>
-                    <input type="password" id="password" placeholder="Enter Password" required class="w-full bg-slate-50 border border-slate-200 p-3.5 pl-11 rounded-xl text-sm focus:outline-none focus:border-red-500 text-slate-800">
-                </div>
+    <!-- USER ID -->
+    <input 
+      type="text"
+      id="userid"
+      placeholder="Enter User ID"
+      class="w-full p-3 rounded-lg bg-slate-800 border border-slate-700 mb-4 outline-none focus:border-blue-500"
+    >
 
-                <!-- Form Extras -->
-                <div class="flex justify-between items-center text-xs font-medium text-slate-500 pt-1 pb-2">
-                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-[#c71e2b]"> Keep me logged in</label>
-                    <a href="#" class="text-patrika hover:underline font-bold">Forgot Password?</a>
-                </div>
+    <!-- PASSWORD -->
+    <input 
+      type="password"
+      id="password"
+      placeholder="Enter Password"
+      class="w-full p-3 rounded-lg bg-slate-800 border border-slate-700 mb-4 outline-none focus:border-blue-500"
+    >
 
-                <!-- Submit Button -->
-                <button type="submit" class="w-full patrika-red hover:bg-red-800 text-white p-3.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-red-700/20 flex justify-center items-center gap-2 cursor-pointer">
-                    <span>Secure Login</span> <i class="fas fa-sign-in-alt"></i>
-                </button>
-            </form>
+    <!-- LOGIN BUTTON -->
+    <button 
+      onclick="login()"
+      class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-bold transition"
+    >
+      Login
+    </button>
+
+    <!-- ERROR MESSAGE -->
+    <p id="msg" class="text-center mt-4 text-red-400"></p>
+
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden w-full max-w-7xl">
+
+    <!-- TOP BAR -->
+    <div class="flex justify-between items-center mb-6">
+
+      <h1 class="text-white text-3xl font-bold">
+        Dashboard
+      </h1>
+
+      <button 
+        onclick="logout()"
+        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg"
+      >
+        Logout
+      </button>
+
+    </div>
+
+    <!-- 5 DIV -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+
+      <!-- DIV 1 -->
+      <a href="https://google.com" target="_blank">
+        <div class="bg-slate-900 hover:bg-slate-800 transition text-white rounded-2xl p-10 text-center shadow-xl cursor-pointer">
+
+          <h2 class="text-2xl font-bold mb-3">
+            Coming Soon
+          </h2>
+
+          <p class="text-slate-400">
+            Site Link 1
+          </p>
+
         </div>
-    </div>
+      </a>
 
+      <!-- DIV 2 -->
+      <a href="https://youtube.com" target="_blank">
+        <div class="bg-slate-900 hover:bg-slate-800 transition text-white rounded-2xl p-10 text-center shadow-xl cursor-pointer">
 
-    <!-- ==================== SECTION 2: MAIN DASHBOARD (HIDDEN ON START) ==================== -->
-    <div id="dashboardScreen" class="hidden">
-        <!-- TOP HEADER -->
-        <nav class="patrika-red p-4 shadow-md sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span class="bg-white text-patrika text-xs font-black px-2 py-0.5 rounded">RP</span>
-                    <h1 class="text-lg font-black text-white tracking-widest">RAJASTHAN PATRIKA</h1>
-                </div>
-                <div class="flex items-center gap-4">
-                    <span id="sessionBadge" class="bg-white/10 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-full border border-white/20">Session: Admin</span>
-                    <button onclick="handleLogout()" class="bg-black/20 hover:bg-black/40 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </div>
-            </div>
-        </nav>
+          <h2 class="text-2xl font-bold mb-3">
+            Coming Soon
+          </h2>
 
-        <!-- MAIN DASHBOARD CONTENT -->
-        <main class="max-w-7xl mx-auto p-4 md:p-8">
-            
-            <!-- ROW 1: ACTIONS & SEARCH -->
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
-                <div>
-                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Telecalling Records</h2>
-                    <p class="text-slate-500 text-xs mt-0.5">Enter data, click to call, change status, and update permanent live remarks.</p>
-                </div>
-                <button onclick="toggleEntryModal(true)" class="patrika-red hover:bg-red-800 text-white font-bold text-xs uppercase tracking-wide px-5 py-3 rounded-xl shadow-lg shadow-red-700/20 transition-all cursor-pointer">
-                    + Add Fresh Lead Data
-                </button>
-            </div>
+          <p class="text-slate-400">
+            Site Link 2
+          </p>
 
-            <!-- CATEGORY LIST FILTERS -->
-            <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 mb-6 max-w-3xl overflow-x-auto">
-                <button id="defaultFilterBtn" onclick="applyListFilter('All', this)" class="active-filter px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Show All Data</button>
-                <button onclick="applyListFilter('Order Confirmed', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Order Confirmed List</button>
-                <button onclick="applyListFilter('Pending', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Pending Calls</button>
-                <button onclick="applyListFilter('Disconnected', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Disconnected / Busy</button>
-                <button onclick="applyListFilter('No Coverage', this)" class="text-slate-600 hover:text-patrika px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap">Out of Coverage</button>
-            </div>
-
-            <!-- MAIN CENTRAL TABLE -->
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-widest border-b border-slate-200">
-                                <th class="p-4 pl-6">Client Name & Area</th>
-                                <th class="p-4">Phone Number</th>
-                                <th class="p-4">Current Status</th>
-                                <th class="p-4">Latest Call Remark (Feedback)</th>
-                                <th class="p-4 text-right pr-6">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="crmTableBody" class="divide-y divide-slate-100 text-sm">
-                            <!-- Data dynamically injected -->
-                        </tbody>
-                    </table>
-                    <div id="noDataView" class="p-12 text-center text-slate-400 text-sm font-medium hidden">
-                        No data matches this selected category list.
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- MODAL 1: ADD DATA MODAL -->
-    <div id="entryModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100">
-            <div class="flex justify-between items-center mb-5 border-b border-slate-100 pb-3">
-                <h3 class="text-lg font-black text-slate-900">New Entry Input</h3>
-                <button onclick="toggleEntryModal(false)" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <form id="addLeadForm" onsubmit="insertNewLead(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Customer Name</label>
-                    <input type="text" id="custName" placeholder="Full Name" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Location / Area</label>
-                    <input type="text" id="custArea" placeholder="e.g. Vatika, Rajasthan" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number</label>
-                    <input type="tel" id="custPhone" pattern="[0-9]{10}" placeholder="10-Digit Mobile" required class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 font-mono">
-                </div>
-                <button type="submit" class="patrika-red hover:bg-red-800 text-white w-full py-3.5 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer">SAVE ENTRY</button>
-            </form>
         </div>
-    </div>
+      </a>
 
-    <!-- MODAL 2: CALL LOG & REMARK UPDATE BOX -->
-    <div id="remarkModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                <div>
-                    <h3 class="text-base font-black text-slate-900" id="modalCustomerName">Update Call Feedback</h3>
-                    <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalCustomerPhone">9999999999</p>
-                </div>
-                <button onclick="toggleRemarkModal(false)" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            
-            <div class="mb-5">
-                <a id="modalDialLink" href="tel:" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                    CLICK TO CALL NOW
-                </a>
-            </div>
+      <!-- DIV 3 -->
+      <a href="https://instagram.com" target="_blank">
+        <div class="bg-slate-900 hover:bg-slate-800 transition text-white rounded-2xl p-10 text-center shadow-xl cursor-pointer">
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Set Call Status</label>
-                    <select id="modalStatusSelect" class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 font-semibold text-slate-700">
-                        <option value="Pending">Pending (Fresh Data)</option>
-                        <option value="Order Confirmed">Order Confirmed (Haan Kar Di)</option>
-                        <option value="Disconnected">Disconnected / Busy</option>
-                        <option value="No Coverage">Out of Coverage Area</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Type Call Remark / Summary</label>
-                    <textarea id="modalRemarkText" rows="3" placeholder="Write talk summary here..." class="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-none focus:border-red-500 bg-slate-50 resize-none"></textarea>
-                </div>
-                <button onclick="saveCallLogFeedback()" class="patrika-red hover:bg-red-800 text-white w-full py-3 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer">SAVE REMARK & UPDATE</button>
-            </div>
+          <h2 class="text-2xl font-bold mb-3">
+            Coming Soon
+          </h2>
+
+          <p class="text-slate-400">
+            Site Link 3
+          </p>
+
         </div>
+      </a>
+
+      <!-- DIV 4 -->
+      <a href="https://facebook.com" target="_blank">
+        <div class="bg-slate-900 hover:bg-slate-800 transition text-white rounded-2xl p-10 text-center shadow-xl cursor-pointer">
+
+          <h2 class="text-2xl font-bold mb-3">
+            Coming Soon
+          </h2>
+
+          <p class="text-slate-400">
+            Site Link 4
+          </p>
+
+        </div>
+      </a>
+
+      <!-- DIV 5 -->
+      <a href="https://chatgpt.com" target="_blank">
+        <div class="bg-slate-900 hover:bg-slate-800 transition text-white rounded-2xl p-10 text-center shadow-xl cursor-pointer">
+
+          <h2 class="text-2xl font-bold mb-3">
+            Coming Soon
+          </h2>
+
+          <p class="text-slate-400">
+            Site Link 5
+          </p>
+
+        </div>
+      </a>
+
     </div>
 
+  </div>
 
-    <!-- ==================== CORE MIXED JAVASCRIPT LOGIC ==================== -->
-    <script>
-        /* ---------------- DATABASE CREDENTIALS ---------------- */
-        let currentMode = 'admin';
-        
-        const credentialsData = {
-            admin: [{ userid: "admin101", pass: "admin@2026" }],
-            manager: [{ userid: "manager01", pass: "mgr#pass1" }, { userid: "manager02", pass: "mgr#pass2" }],
-            operator: [{ userid: "operator01", pass: "op#pass1" }, { userid: "operator02", pass: "op#pass2" }],
-            accountant: [{ userid: "account01", pass: "acnt#pass1" }, { userid: "account02", pass: "acnt#pass2" }],
-            support: [{ userid: "support01", pass: "spt#pass1" }, { userid: "support02", pass: "spt#pass2" }],
-            customer: [{ userid: "customer01", pass: "cust#pass1" }, { userid: "customer02", pass: "cust#pass2" }]
-        };
+  <script>
 
-        /* ---------------- LOGIN ENGINE FUNCTIONS ---------------- */
-        function switchTab(mode) {
-            currentMode = mode;
-            const adminTab = document.getElementById('adminTab');
-            const userTab = document.getElementById('userTab');
-            const loginTitle = document.getElementById('loginTitle');
-            const roleGroup = document.getElementById('roleGroup');
-            const userRoleSelect = document.getElementById('userRole');
-            
-            hideMessage();
+    // 5 USERS
+    const users = [
+      { id: "user1", pass: "1234" },
+      { id: "user2", pass: "1234" },
+      { id: "user3", pass: "1234" },
+      { id: "user4", pass: "1234" },
+      { id: "user5", pass: "1234" }
+    ];
 
-            if (mode === 'admin') {
-                adminTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 patrika-red text-white shadow-md";
-                userTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 text-slate-600 hover:text-patrika";
-                loginTitle.innerText = 'Admin Authentication';
-                roleGroup.classList.add('hidden');
-                userRoleSelect.removeAttribute('required');
-            } else {
-                userTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 patrika-red text-white shadow-md";
-                adminTab.className = "flex-1 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex justify-center items-center gap-2 text-slate-600 hover:text-patrika";
-                loginTitle.innerText = 'Staff & User Portal';
-                roleGroup.classList.remove('hidden');
-                userRoleSelect.setAttribute('required', 'required');
-            }
-        }
+    // LOGIN FUNCTION
+    function login(){
 
-        function showMessage(type, text) {
-            const msgBox = document.getElementById('msgBox');
-            msgBox.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'bg-red-50', 'text-red-700', 'border-red-200');
-            
-            if (type === 'success') {
-                msgBox.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-            } else {
-                msgBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
-            }
-            msgBox.innerHTML = text;
-            msgBox.classList.remove('hidden');
-        }
+      const userid = document.getElementById("userid").value;
+      const password = document.getElementById("password").value;
 
-        function hideMessage() {
-            document.getElementById('msgBox').classList.add('hidden');
-        }
+      const validUser = users.find(
+        user => user.id === userid && user.pass === password
+      );
 
-        function handleLogin(event) {
-            event.preventDefault();
-            
-            const usernameInput = document.getElemen
+      if(validUser){
+
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+
+      }else{
+
+        document.getElementById("msg").innerText = "Invalid User ID or Password";
+
+      }
+
+    }
+
+    // LOGOUT FUNCTION
+    function logout(){
+
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("loginBox").classList.remove("hidden");
+
+      document.getElementById("userid").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("msg").innerText = "";
+
+    }
+
+  </script>
+
+</body>
+</html>
