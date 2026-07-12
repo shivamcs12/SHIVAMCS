@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shivam Online Services | Login</title>
-    <!-- Tailwind CSS Integration -->
+    <title>Shivam Online Services | Workspace</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         /* Smooth Entry Animation */
@@ -19,13 +18,10 @@
 </head>
 <body class="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans antialiased text-slate-100">
 
-    <!-- MAIN APP WRAPPER -->
-    <main class="w-full max-w-5xl">
+    <main class="w-full max-w-6xl">
         
-        <!-- ==================== USER LOGIN CARD ==================== -->
         <div id="login-container" class="max-w-md mx-auto w-full bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl transition-all page-load-bounce">
             
-            <!-- App Logo & Welcome Header -->
             <div class="text-center space-y-2 mb-8">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                     <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span> Live Portal
@@ -36,10 +32,8 @@
                 <p id="subtitle" class="text-sm text-slate-400">Apna registered email daalkar login karein</p>
             </div>
 
-            <!-- Dynamic Status Messages (Success/Error) -->
             <div id="status-msg" class="hidden p-4 rounded-2xl text-sm font-medium border mb-6 transition-all duration-300"></div>
 
-            <!-- STEP 1: Enter Email Form -->
             <form id="email-form" class="space-y-5">
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Email ID</label>
@@ -52,7 +46,6 @@
                 </button>
             </form>
 
-            <!-- STEP 2: Enter OTP Form (Hidden Initially) -->
             <form id="otp-form" class="space-y-5 hidden">
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">6-Digit OTP Dalein</label>
@@ -71,79 +64,131 @@
             </form>
         </div>
 
-        <!-- ==================== MAIN SERVICE DASHBOARD ==================== -->
         <div id="dashboard-container" class="hidden w-full space-y-8 page-load-bounce">
             
-            <!-- Dashboard Top Navbar -->
             <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
                 <div>
-                    <h1 class="text-3xl font-black text-white tracking-tight">Main Dashboard</h1>
-                    <p class="text-sm text-slate-400 mt-1">Shivam Online Services ke saare tools yahan hain</p>
+                    <h1 class="text-3xl font-black text-white tracking-tight">Control Workspace</h1>
+                    <p class="text-sm text-slate-400 mt-1">Shivam Online Services | System Control Center</p>
                 </div>
                 <button id="btn-logout" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold rounded-xl transition-all active:scale-95 cursor-pointer flex items-center gap-1.5">
                     🚪 Logout Karein
                 </button>
             </header>
 
-            <!-- USER LINK CARDS MULTI-MATRIX -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                <!-- CARD 1: RECEIPT SYSTEM -->
-                <a href="receipt.html" class="group relative block p-6 bg-slate-900 rounded-3xl border border-slate-800/80 hover:border-indigo-500/40 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-indigo-500/5">
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative space-y-4">
-                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
-                            🧾
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">Receipt Engine</h3>
-                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Naye orders generate karein, receipts download karein aur unique custom transaction codes manage karein.</p>
-                        </div>
-                        <div class="pt-2 flex items-center text-xs font-bold text-indigo-400 group-hover:translate-x-1 transition-transform">
-                            Open Receipt System →
-                        </div>
+                <div class="lg:col-span-1 bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">🧮 Smart Calculator</h3>
+                        <span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 font-semibold px-2 py-0.5 rounded-md uppercase tracking-wider">Keyboard Enabled</span>
                     </div>
-                </a>
+                    
+                    <div class="space-y-1">
+                        <input id="calc-screen" type="text" readonly value="0" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-right text-white text-2xl font-mono font-bold focus:outline-none tracking-wide ring-1 ring-slate-800">
+                    </div>
 
-                <!-- CARD 2: TIME SCHEDULE -->
-                <a href="#time-schedule" class="group relative block p-6 bg-slate-900 rounded-3xl border border-slate-800/80 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-emerald-500/5">
-                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative space-y-4">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
-                            📅
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">Time Schedule</h3>
-                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Apne daily appointments, shifts timings aur important calendar alerts ko yahan check aur plan karein.</p>
-                        </div>
-                        <div class="pt-2 flex items-center text-xs font-bold text-emerald-400 group-hover:translate-x-1 transition-transform">
-                            Open Scheduler Hub →
-                        </div>
+                    <div class="grid grid-cols-4 gap-2 pt-1">
+                        <button onclick="clearCalc()" class="py-3 bg-slate-800 hover:bg-slate-700 text-rose-400 font-bold rounded-xl text-sm transition-all active:scale-95 cursor-pointer">C</button>
+                        <button onclick="pressCalc('/')" class="py-3 bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold rounded-xl text-sm transition-all active:scale-95 cursor-pointer">÷</button>
+                        <button onclick="pressCalc('*')" class="py-3 bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold rounded-xl text-sm transition-all active:scale-95 cursor-pointer">×</button>
+                        <button onclick="pressCalc('-')" class="py-3 bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold rounded-xl text-sm transition-all active:scale-95 cursor-pointer">-</button>
+                        
+                        <button onclick="pressCalc('7')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">7</button>
+                        <button onclick="pressCalc('8')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">8</button>
+                        <button onclick="pressCalc('9')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">9</button>
+                        <button onclick="pressCalc('+')" class="py-3 bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold rounded-xl text-sm transition-all active:scale-95 cursor-pointer">+</button>
+                        
+                        <button onclick="pressCalc('4')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">4</button>
+                        <button onclick="pressCalc('5')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">5</button>
+                        <button onclick="pressCalc('6')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">6</button>
+                        <button onclick="backspaceCalc()" class="py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold rounded-xl text-sm transition-all active:scale-95 cursor-pointer">⌫</button>
+                        
+                        <button onclick="pressCalc('1')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">1</button>
+                        <button onclick="pressCalc('2')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">2</button>
+                        <button onclick="pressCalc('3')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">3</button>
+                        <button onclick="calculateResult()" class="row-span-2 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl text-sm flex items-center justify-center transition-all active:scale-95 cursor-pointer">=</button>
+                        
+                        <button onclick="pressCalc('0')" class="col-span-2 py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">0</button>
+                        <button onclick="pressCalc('.')" class="py-3 bg-slate-950 hover:bg-slate-800 text-white font-medium rounded-xl text-sm transition-all active:scale-95 cursor-pointer">.</button>
                     </div>
-                </a>
+                </div>
 
-                <!-- CARD 3: PENDING WORK -->
-                <a href="#pending-tasks" class="group relative block p-6 bg-slate-900 rounded-3xl border border-slate-800/80 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-amber-500/5">
-                    <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative space-y-4">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
-                            ⏳
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between shadow-lg">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Interface Matrix</p>
+                                <h4 class="text-xl font-black text-white mt-1">Dual Control Active</h4>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-bold">💻</div>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">Pending Work</h3>
-                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Bache hue kaamo ki list, onboarding tasks, aur pending customer tickets ko jaldi se niptayein.</p>
-                        </div>
-                        <div class="pt-2 flex items-center text-xs font-bold text-amber-400 group-hover:translate-x-1 transition-transform">
-                            Check Pending List →
+                        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between shadow-lg">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Database Security</p>
+                                <h4 class="text-xl font-black text-white mt-1">Supabase Secure Auth</h4>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold">🔐</div>
                         </div>
                     </div>
-                </a>
+
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">🔗 Operational Links Dashboard</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <a href="https://sso.rajasthan.gov.in" target="_blank" class="group flex items-center justify-between p-4 bg-slate-950 hover:bg-slate-800/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">💼</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-white">SSO Portal Rajasthan</h4>
+                                        <p class="text-[10px] text-slate-500">Government Portal Access</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-slate-600 group-hover:text-indigo-400 transition-all">→</span>
+                            </a>
+
+                            <a href="https://janaadhaar.rajasthan.gov.in" target="_blank" class="group flex items-center justify-between p-4 bg-slate-950 hover:bg-slate-800/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">🆔</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-white">Jan Aadhaar Engine</h4>
+                                        <p class="text-[10px] text-slate-500">Citizen Services Panel</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-slate-600 group-hover:text-indigo-400 transition-all">→</span>
+                            </a>
+
+                            <a href="#" class="group flex items-center justify-between p-4 bg-slate-950 hover:bg-slate-800/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">🏦</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-white">Fintech BC Bank</h4>
+                                        <p class="text-[10px] text-slate-500">AEPS Portal Panel</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-slate-600 group-hover:text-indigo-400 transition-all">→</span>
+                            </a>
+
+                            <a href="#" class="group flex items-center justify-between p-4 bg-slate-950 hover:bg-slate-800/50 border border-slate-800 hover:border-indigo-500/40 rounded-2xl transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">⚙️</div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-white">System Tools</h4>
+                                        <p class="text-[10px] text-slate-500">Internal Operations</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-slate-600 group-hover:text-indigo-400 transition-all">→</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
         </div>
     </main>
 
-    <!-- CORE FUNCTIONAL CONTROL SCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://vjbwmiwzqtapzwtykesv.supabase.co';
@@ -163,6 +208,10 @@
         const btnBack = document.getElementById('btn-back');
         const btnLogout = document.getElementById('btn-logout');
 
+        // Calculator Screen Dom Target
+        const calcScreen = document.getElementById('calc-screen');
+        let dashboardActive = false;
+
         function showAlert(type, text) {
             statusMsg.innerText = text;
             if (type === 'success') {
@@ -177,7 +226,6 @@
         emailForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = emailInput.value.trim().toLowerCase();
-            
             btnSend.disabled = true;
             btnSend.innerText = 'Email check ho raha hai...';
             statusMsg.classList.add('hidden');
@@ -189,7 +237,7 @@
                     .eq('email', email)
                     .maybeSingle();
 
-                if (error) throw new Error("Database error! Dobara koshish karein.");
+                if (error) throw new Error("Database error!");
                 if (!data) {
                     showAlert('error', 'Yeh email id authorized nahi hai!');
                     return;
@@ -202,18 +250,13 @@
 
                 if (otpError) throw otpError;
 
-                showAlert('success', 'OTP aapke Gmail par bhej diya gaya hai! Check karein.');
+                showAlert('success', 'OTP aapke Gmail par bhej diya gaya hai!');
                 subtitle.innerText = 'Apna 6-digit ka code daalein';
                 emailForm.classList.add('hidden');
                 otpForm.classList.remove('hidden');
 
             } catch (err) {
-                // Formatting user rate limit message nicely
-                if(err.message.includes('request this after')) {
-                    showAlert('error', 'Kuch seconds baad dobara try karein (Security Rule).');
-                } else {
-                    showAlert('error', 'OTP bhejne mein dikkat aayi. Ek baar check karein.');
-                }
+                showAlert('error', 'OTP bhejne mein dikkat aayi.');
             } finally {
                 btnSend.disabled = false;
                 btnSend.innerText = 'Get OTP Code';
@@ -225,7 +268,6 @@
             e.preventDefault();
             const email = emailInput.value.trim().toLowerCase();
             const otp = otpInput.value.trim();
-
             btnVerify.disabled = true;
             btnVerify.innerText = 'Checking Code...';
 
@@ -238,13 +280,13 @@
 
                 if (error) throw error;
 
-                // Success Transition to Dashboard Matrix
                 loginContainer.classList.add('hidden');
-                document.body.className = "min-h-screen bg-slate-950 p-6 md:p-12 font-sans antialiased text-slate-200";
+                document.body.className = "min-h-screen bg-slate-950 p-6 md:p-12 font-sans antialiased text-slate-200 flex items-start justify-center";
                 dashboardContainer.classList.remove('hidden');
+                dashboardActive = true; // Activate physical keyboard listeners
 
             } catch (err) {
-                showAlert('error', 'Galat OTP code! Apne mail par naya code check karein.');
+                showAlert('error', 'Galat OTP code!');
             } finally {
                 btnVerify.disabled = false;
                 btnVerify.innerText = 'Verify & Login';
@@ -262,6 +304,64 @@
         btnLogout.addEventListener('click', async () => {
             await supabaseClient.auth.signOut();
             window.location.reload();
+        });
+
+        // ==================== KEYBOARD CONTROLLABLE CALCULATOR LOGIC ====================
+        function pressCalc(val) {
+            if (calcScreen.value === '0' || calcScreen.value === 'Error') {
+                calcScreen.value = val;
+            } else {
+                calcScreen.value += val;
+            }
+        }
+
+        function clearCalc() {
+            calcScreen.value = '0';
+        }
+
+        function backspaceCalc() {
+            if (calcScreen.value.length > 1 && calcScreen.value !== 'Error') {
+                calcScreen.value = calcScreen.value.slice(0, -1);
+            } else {
+                calcScreen.value = '0';
+            }
+        }
+
+        function calculateResult() {
+            try {
+                const result = Function('"use strict";return (' + calcScreen.value + ')')();
+                calcScreen.value = result !== undefined ? result : '0';
+            } catch (error) {
+                calcScreen.value = 'Error';
+            }
+        }
+
+        // Global Computer Keyboard Event Listener
+        document.addEventListener('keydown', (event) => {
+            if (!dashboardActive) return; // Sirf login hone ke baad kaam karega
+
+            const key = event.key;
+            
+            // Allow numbers & basic math symbols
+            if (/[0-9\+\-\*\/\.]/.test(key)) {
+                event.preventDefault();
+                pressCalc(key);
+            } 
+            // Enter key mapping for evaluation
+            else if (key === 'Enter') {
+                event.preventDefault();
+                calculateResult();
+            } 
+            // Backspace mapping for deleting single character
+            else if (key === 'Backspace') {
+                event.preventDefault();
+                backspaceCalc();
+            } 
+            // Escape or Delete key for clear all
+            else if (key === 'Escape' || key === 'Delete') {
+                event.preventDefault();
+                clearCalc();
+            }
         });
     </script>
 </body>
