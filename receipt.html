@@ -28,21 +28,9 @@
         }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden" onload="initDashboard()">
 
-    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-slate-900 p-4">
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center border-t-8 border-indigo-600 animate__animated animate__fadeIn">
-            <h1 class="text-4xl font-black text-slate-800 mb-2 italic uppercase tracking-tighter">SHIVAM ONLINE</h1>
-            <p class="text-[10px] text-indigo-500 font-bold mb-8 uppercase tracking-[0.4em]">Enterprise Authority System</p>
-            <div class="space-y-4">
-                <input type="text" id="userid" placeholder="User ID" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner">
-                <input type="password" id="password" onkeypress="if(event.keyCode===13)handleLogin()" placeholder="Password" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner">
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase shadow-xl hover:bg-indigo-700 transition transform active:scale-95">Login</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+    <div id="dashboard" class="min-h-screen flex flex-col">
         <nav class="bg-white border-b-2 border-slate-100 px-8 py-3 flex justify-between items-center no-print sticky top-0 z-50">
             <div class="flex items-center gap-6">
                 <h2 class="text-2xl font-black text-slate-800 italic uppercase">SOS<span class="text-indigo-600">.</span></h2>
@@ -50,14 +38,14 @@
             </div>
             <div class="flex items-center gap-6">
                 <div class="text-right leading-none border-r pr-6">
-                    <p id="displayUser" class="font-bold text-slate-800 text-lg uppercase"></p>
+                    <p id="displayUser" class="font-bold text-slate-800 text-lg uppercase">SHIVAM (SUPER ADMIN)</p>
                     <button onclick="toggleSettings()" class="text-[10px] text-indigo-500 font-black uppercase mt-1 hover:underline">Settings ⚙️</button>
                 </div>
-                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl text-xs font-black border border-red-100 uppercase hover:bg-red-600 transition">Logout</button>
+                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl text-xs font-black border border-red-100 uppercase hover:bg-red-600 transition">Reset Portal</button>
             </div>
         </nav>
 
-        <div class="p-8 pb-0 grid grid-cols-1 md:grid-cols-3 gap-6 admin-view" id="adminStats">
+        <div class="p-8 pb-0 grid grid-cols-1 md:grid-cols-3 gap-6" id="adminStats">
             <div class="stat-card border-l-8 border-indigo-600">
                 <p class="text-xs uppercase font-bold text-slate-400">Total Revenue</p>
                 <h2 class="text-3xl font-black text-slate-800" id="totalSale">₹ 0.00</h2>
@@ -83,10 +71,16 @@
                         <input type="number" id="paidAmt" oninput="calc()" placeholder="PAID" class="p-4 border rounded-2xl bg-green-50 font-black text-green-700 outline-none">
                     </div>
                     <input type="number" id="pendingAmt" readonly class="w-full p-4 border rounded-2xl bg-red-50 text-red-600 font-black text-2xl text-center">
-                    <select id="payMode" class="w-full p-4 border rounded-2xl bg-slate-100 font-bold uppercase text-sm">
+                    
+                    <select id="payMode" onchange="toggleUtrField()" class="w-full p-4 border rounded-2xl bg-slate-100 font-bold uppercase text-sm">
                         <option value="Cash Payment">Cash Payment</option>
                         <option value="Online / UPI">Online / UPI</option>
                     </select>
+
+                    <div id="utrContainer" class="hidden animate__animated animate__fadeIn">
+                        <input type="text" id="utrNo" placeholder="UTR NO. / REF NO. *" class="w-full p-4 border-2 border-amber-500 rounded-2xl bg-amber-50 font-bold uppercase outline-none text-slate-800">
+                    </div>
+
                     <button id="saveBtn" onclick="saveAndPreview()" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-bold uppercase shadow-lg hover:bg-indigo-700 transition">Save & Preview</button>
                 </div>
             </div>
@@ -111,12 +105,11 @@
             <button onclick="toggleSettings()" class="text-slate-400 font-bold hover:text-red-500 mb-10 uppercase text-xs">✕ Close Control</button>
             <h3 class="text-2xl font-black mb-8 uppercase italic underline decoration-indigo-500">Security Control</h3>
             <div class="space-y-6">
-                <div id="adminUserSelector" class="hidden">
+                <div id="adminUserSelector">
                     <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">Select Account</label>
-                    <select id="targetUser" class="w-full p-3 border rounded-xl bg-slate-50 font-bold outline-none"></select>
+                    <select id="targetUser" onchange="switchOperator(this.value)" class="w-full p-3 border rounded-xl bg-slate-50 font-bold outline-none"></select>
                 </div>
-                <input type="password" id="newPass" placeholder="New Secret Key" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none">
-                <button onclick="changePassword()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase shadow-lg">Confirm Update</button>
+                <p class="text-xs text-slate-500 italic">Portal is open. Security keys disabled.</p>
             </div>
         </div>
     </div>
@@ -132,45 +125,48 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwDht3miZBNRVCCTVn0_GI5t4DS2VH_Lym3UcYHfLFjJjMI3k04kwL9nc76HhV9A8a8/exec";
         
-        let users = JSON.parse(localStorage.getItem('SOS_USERS')) || {
-            "admin": {name: "SHIVAM (SUPER ADMIN)", pass: "admin123", role: "admin"},
-            "sos01": {name: "Staff-01", pass: "123", role: "staff"},
-            "sos02": {name: "Staff-02", pass: "123", role: "staff"},
-            "sos03": {name: "Staff-03", pass: "123", role: "staff"},
-            "sos04": {name: "Staff-04", pass: "123", role: "staff"},
-            "sos05": {name: "Staff-05", pass: "123", role: "staff"},
-            "sos06": {name: "Staff-06", pass: "123", role: "staff"},
-            "sos07": {name: "Staff-07", pass: "123", role: "staff"},
-            "sos08": {name: "Staff-08", pass: "123", role: "staff"},
-            "sos09": {name: "Staff-09", pass: "123", role: "staff"},
-            "sos10": {name: "Staff-10", pass: "123", role: "staff"}
+        let users = {
+            "admin": {name: "SHIVAM (SUPER ADMIN)", role: "admin"},
+            "sos01": {name: "Staff-01", role: "staff"},
+            "sos02": {name: "Staff-02", role: "staff"},
+            "sos03": {name: "Staff-03", role: "staff"},
+            "sos04": {name: "Staff-04", role: "staff"},
+            "sos05": {name: "Staff-05", role: "staff"},
+            "sos06": {name: "Staff-06", role: "staff"},
+            "sos07": {name: "Staff-07", role: "staff"},
+            "sos08": {name: "Staff-08", role: "staff"},
+            "sos09": {name: "Staff-09", role: "staff"},
+            "sos10": {name: "Staff-10", role: "staff"}
         };
 
-        let activeUser = null;
-        let localCloudData = []; // Store data for reprinting
+        let activeUser = users["admin"]; 
+        let localCloudData = [];
 
         setInterval(() => {
             document.getElementById('liveClock').innerText = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
         }, 1000);
 
-        function handleLogin() {
-            const u = document.getElementById('userid').value.toLowerCase();
-            const p = document.getElementById('password').value;
-            if(users[u] && users[u].pass === p) {
-                activeUser = { ...users[u], id: u };
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('displayUser').innerText = activeUser.name;
-                if(activeUser.role === 'admin') {
-                    document.getElementById('adminStats').classList.remove('admin-view');
-                    document.getElementById('adminUserSelector')?.classList.remove('hidden');
-                    const sel = document.getElementById('targetUser'); sel.innerHTML = "";
-                    Object.keys(users).forEach(id => sel.innerHTML += `<option value="${id}">${users[id].name}</option>`);
-                } else {
-                    document.getElementById('adminStats').classList.add('admin-view');
-                }
-                fetchSheetData(); 
-            } else alert("Access Denied!");
+        function initDashboard() {
+            const sel = document.getElementById('targetUser'); 
+            sel.innerHTML = "";
+            Object.keys(users).forEach(id => sel.innerHTML += `<option value="${id}">${users[id].name}</option>`);
+            fetchSheetData();
+        }
+
+        function switchOperator(id) {
+            activeUser = users[id];
+            document.getElementById('displayUser').innerText = activeUser.name;
+        }
+
+        function toggleUtrField() {
+            const payMode = document.getElementById('payMode').value;
+            const utrContainer = document.getElementById('utrContainer');
+            if(payMode === "Online / UPI") {
+                utrContainer.classList.remove('hidden');
+            } else {
+                utrContainer.classList.add('hidden');
+                document.getElementById('utrNo').value = ""; // Clear input if switched back
+            }
         }
 
         async function fetchSheetData() {
@@ -181,11 +177,10 @@
                 body.innerHTML = "";
                 let s = 0, c = 0, o = 0;
                 
-                localCloudData.reverse().forEach((row, index) => {
+                localCloudData.reverse().forEach((row) => {
                     const v = parseFloat(row.paid) || 0; s += v;
                     if(row.mode.includes("Cash")) c += v; else o += v;
                     
-                    // Button has data-id to help identify the row
                     body.innerHTML += `<tr class="border-b transition hover:bg-indigo-50/50">
                         <td class="font-bold text-indigo-600 text-xs">${row.id}</td><td class="font-bold uppercase">${row.name}</td><td>${row.mobile}</td>
                         <td class="uppercase text-[10px] font-bold text-slate-400">${row.service}</td><td class="font-bold">₹${row.total}</td>
@@ -194,16 +189,13 @@
                         <td><button onclick="reprintTXN('${row.id}')" class="bg-indigo-50 text-indigo-600 px-4 py-1 rounded-lg text-[9px] font-black uppercase">Reprint</button></td></tr>`;
                 });
                 
-                if(activeUser.role === 'admin') {
-                    document.getElementById('totalSale').innerText = '₹ ' + s.toLocaleString();
-                    document.getElementById('totalCash').innerText = '₹ ' + c.toLocaleString();
-                    document.getElementById('totalOnline').innerText = '₹ ' + o.toLocaleString();
-                }
+                document.getElementById('totalSale').innerText = '₹ ' + s.toLocaleString();
+                document.getElementById('totalCash').innerText = '₹ ' + c.toLocaleString();
+                document.getElementById('totalOnline').innerText = '₹ ' + o.toLocaleString();
             } catch (err) { body.innerHTML = '<tr><td colspan="12">Cloud Failure!</td></tr>'; }
         }
 
         function reprintTXN(txnId) {
-            // Find item in localCloudData array
             const item = localCloudData.find(x => x.id === txnId);
             if(item) {
                 const content = getReceiptHTML(item, "Customer") + '<div class="cut-line"></div>' + getReceiptHTML(item, "Office");
@@ -216,15 +208,6 @@
         }
 
         function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); }
-        function changePassword() {
-            const newP = document.getElementById('newPass').value;
-            const tId = (activeUser.role === 'admin') ? document.getElementById('targetUser').value : activeUser.id;
-            if(newP.length < 3) return alert("Security too low!");
-            users[tId].pass = newP;
-            localStorage.setItem('SOS_USERS', JSON.stringify(users));
-            alert("Security Updated!"); toggleSettings();
-        }
-
         function calc() { document.getElementById('pendingAmt').value = (parseFloat(document.getElementById('totalAmt').value) || 0) - (parseFloat(document.getElementById('paidAmt').value) || 0); }
         function closeReceipt() { document.getElementById('receiptSection').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); }
 
@@ -254,12 +237,41 @@
 
         async function saveAndPreview() {
             const btn = document.getElementById('saveBtn');
-            const data = { id: "SOS-" + Math.floor(1000 + Math.random() * 9000), name: document.getElementById('custName').value.toUpperCase(), mobile: document.getElementById('custMobile').value, service: document.getElementById('serviceName').value.toUpperCase(), total: document.getElementById('totalAmt').value || 0, paid: document.getElementById('paidAmt').value || 0, pending: document.getElementById('pendingAmt').value || 0, mode: document.getElementById('payMode').value, operator: activeUser.name };
+            const mode = document.getElementById('payMode').value;
+            const utrNo = document.getElementById('utrNo').value.trim();
+
+            const data = { 
+                id: "SOS-" + Math.floor(1000 + Math.random() * 9000), 
+                name: document.getElementById('custName').value.toUpperCase(), 
+                mobile: document.getElementById('custMobile').value, 
+                service: document.getElementById('serviceName').value.toUpperCase(), 
+                total: document.getElementById('totalAmt').value || 0, 
+                paid: document.getElementById('paidAmt').value || 0, 
+                pending: document.getElementById('pendingAmt').value || 0, 
+                mode: mode, 
+                operator: activeUser.name 
+            };
+
             if(!data.name || !data.total) return alert("Pehle details bharein!");
+            
+            // Validation Check for Online Mode UTR
+            if(mode === "Online / UPI" && !utrNo) {
+                return alert("कृपया UTR नंबर या Reference नंबर दर्ज करें! इसके बिना रसीद नहीं काटी जा सकती।");
+            }
+
+            // If UTR exists, append to mode or manage as required
+            if(utrNo) {
+                data.mode = `${mode} (${utrNo})`;
+            }
+
             const now = new Date(); const currD = now.toLocaleDateString('en-GB'); const currT = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', hour12:true});
             const content = getReceiptHTML({...data, date: currD, time: currT}, "Customer") + '<div class="cut-line"></div>' + getReceiptHTML({...data, date: currD, time: currT}, "Office");
             document.getElementById('dualContainer').innerHTML = content;
             document.getElementById('dashboard').classList.add('hidden'); document.getElementById('receiptSection').classList.remove('hidden');
             btn.innerText = "SAVING..."; btn.disabled = true;
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); 
-            btn.innerText = "Save & Preview"; btn.disabled = fals
+            btn.innerText = "Save & Preview"; btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
